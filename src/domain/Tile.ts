@@ -7,6 +7,5 @@ export type Tile = {
   readonly color: Color
 };
 
-
-export const toNameImage = (tile: Tile) => Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
-  Object.keys(Form)[Object.values(Form).indexOf(tile.form)] + '.svg';
+export const toImageName = (tile: Tile) =>
+  Object.keys(Color)[Object.values(Color).indexOf(tile.color)] + Object.keys(Form)[Object.values(Form).indexOf(tile.form)] + '.svg';

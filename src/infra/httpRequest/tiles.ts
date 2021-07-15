@@ -6,5 +6,4 @@ export interface Tiles {
     id: number;
     color: Color;
     form: Form;
-
 }
