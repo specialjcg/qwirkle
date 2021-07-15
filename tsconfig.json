@@ -1,0 +1,29 @@
+
+{
+  "files": [],
+  "types": [
+    "jest"
+  ],
+
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@App/*": ["src/*"],
+      "lib/*": ["common/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "allowJs": true
+  }
+}
