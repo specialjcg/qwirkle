@@ -9,7 +9,7 @@
 </head>
 <body>
 <button (click)="game()">Start</button>
-<div class="flex-container">
+<div *ngIf="result.length===6" class="flex-container">
 
   <div *ngFor="let i of [0,1,2,3,4,5]" class="flex-items"><app-my-button [image]="getRackTileImage(i)" [style]="getRackTileStyle(i)"></app-my-button></div>
 </div>

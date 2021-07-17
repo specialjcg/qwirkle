@@ -1,7 +1,9 @@
-import {RestGame} from "./restGame";
-import {toWebTiles} from "../../domain/Tile";
-import {Color} from "../../domain/Color";
-import {Form} from "../../domain/Form";
+import {RestGame, toWebTiles} from './restGame';
+import {Color} from '../../domain/Color';
+import {Form} from '../../domain/Form';
+import {Tile} from '../../domain/Tile';
+import {HttpClient} from '@angular/common/http';
+
 
 describe('Get response from qwirkle api', () => {
   it('should create first Tile from qwirkle Game API ', () => {
