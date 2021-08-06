@@ -9,10 +9,37 @@
 </head>
 <body>
 <button (click)="game()">Start</button>
-<div *ngIf="result.length===6" class="flex-container">
-
-  <div *ngFor="let i of [0,1,2,3,4,5]" class="flex-items"><app-my-button [image]="getRackTileImage(i)" [style]="getRackTileStyle(i)"></app-my-button></div>
+<div class="example-container ">
+  <div *ngIf="result.length===6" >
+    <div  cdkDropList
+         #todoList="cdkDropList"
+         [cdkDropListData]="this.result"
+         [cdkDropListConnectedTo]="resultList"
+          class="example-list"
+         (cdkDropListDropped)="drop($event)" >
+      <div  *ngFor="let i of [0,1,2,3,4,5]"  cdkDrag>
+      <app-my-button [image]="getRackTileImage(i)" [style]="getRackTileStyle(i)" class="example-box"></app-my-button></div>
+    </div>
+  </div>
 </div>
+<div class="flex-container2" >
+  <div *ngIf="this.plate.length===6" >
+    <div cdkDropList
+         #doneList="cdkDropList"
+         [cdkDropListData]="this.plate"
+         [cdkDropListConnectedTo]="plateList"
+
+         (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let i of [0,1,2,3,4,5]" class="flex-items" cdkDrag>
+      <app-my-button [image]="getRackTileImage(i)" [style]="getRackTileStyle(i)" cdkDrag>
+
+    </app-my-button></div>
+    </div>
+  </div>
+</div>
+
+
+
 
 </body>
 </html>

@@ -7,11 +7,11 @@
   transform-style: preserve-3d;
 }
 .scene {
-  width: 80em;
-  height: 80em;
-  top: 50%;
+  width: 15em;
+  /*height: ;*/
 
-  margin: -40em 0 0 -40em;
+
+  /*margin: -10em 0 0 -10em;*/
 }
 .shape {
   top: 50%;
