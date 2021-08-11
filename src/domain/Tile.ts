@@ -8,5 +8,5 @@ export type Tile = {
 };
 
 
-export const toNameImage = (tile: Tile) => Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
+export const toNameImage = (tile: Tile) => tile.form === 0 ? '' : Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
   Object.keys(Form)[Object.values(Form).indexOf(tile.form)] + '.png';

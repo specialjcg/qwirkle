@@ -15,7 +15,7 @@ export default class HttpTileRepositoryService  implements TileRepository{
 }
 
   get(): Promise<Tile[]> {
-    return this.http.post<RestGame[]>('http://localhost:5000/Games/', [10], { headers })
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/10')
       .toPromise().then(response => toWebTiles(response));
   }
 
