@@ -83,7 +83,7 @@ left :25vw
 
 
 button {
-  position: absolute;
+  position: relative;
   left: 5vw;
   top: 5vh;
   background: #3D94F6;

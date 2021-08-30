@@ -17,37 +17,44 @@ describe('Get response from qwirkle api', () => {
         rack: {
           tiles: [
             {
-              rackPosition: 5,
+disabled:true,
               id: 99,
               color: 6,
-              form: 6
+              form: 6,
+              x: 0,
+              y: 0
             },
-            {
-              rackPosition: 4,
+            {disabled:true,
+              x: 0,
+              y: 0,
               id: 74,
               color: 1,
               form: 6
             },
-            {
-              rackPosition: 3,
+            {disabled:true,
+              x: 0,
+              y: 0,
               id: 5,
               color: 1,
               form: 4
             },
-            {
-              rackPosition: 2,
+            {disabled:true,
+              x: 0,
+              y: 0,
               id: 52,
               color: 2,
               form: 4
             },
-            {
-              rackPosition: 1,
+            {disabled:true,
+              x: 0,
+              y: 0,
               id: 21,
               color: 4,
               form: 6
             },
-            {
-              rackPosition: 0,
+            {disabled:true,
+              x: 0,
+              y: 0,
               id: 102,
               color: 6,
               form: 3
@@ -57,8 +64,8 @@ describe('Get response from qwirkle api', () => {
         isTurn: true
       }
     ];
-    expect(toWebTiles(result)[0]).toEqual({ id: 99, color: Color.Yellow, form: Form.EightPointStar});
-    expect(toWebTiles(result)[1]).toEqual({ id: 74, color: Color.Green, form: Form.EightPointStar});
+    expect(toWebTiles(result[0])[0]).toEqual({ id: 99, color: Color.Yellow, form: Form.EightPointStar});
+    expect(toWebTiles(result[0])[1]).toEqual({ id: 74, color: Color.Green, form: Form.EightPointStar});
 
   });
 
