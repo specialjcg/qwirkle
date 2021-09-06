@@ -1,14 +1,10 @@
-import {Component} from '@angular/core';
-import {changePosition, insertPosition, PlayerTile, Tile, toNameImage, toPlate} from '../domain/Tile';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {fromBoard, RestTilesPlay, Result} from '../infra/httpRequest/restGame';
+import panzoom from 'panzoom';
 
-
-
-const tofront = (item: number, testFrontiere: number[]): boolean => {
-
-  return testFrontiere.reduce((acc, val) => acc || Math.abs(item - val ) <= 1, false);
-};
 
 @Component({
   selector: 'app-root',
@@ -16,15 +12,43 @@ const tofront = (item: number, testFrontiere: number[]): boolean => {
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
-
+export class AppComponent implements AfterViewInit, OnInit {
+  @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwircle';
   result: Tile[] = [];
   board: Tile[] = [];
   plate: Tile[][] = [[]];
-  playTile: PlayerTile[] = [];
+  playTile: RestTilesPlay[] = [];
+  panZoomController;
+  score: Result = {code: 0,
+    tilesPlayed: [],
+    newRack: [],
+    points: 0};
 
   constructor(private serviceQwirkle: HttpTileRepositoryService) {
+
+  }
+  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.panZoomController = panzoom(this.scene.nativeElement, {minZoom: 0.5, zoomDoubleClickSpeed: 1});
+
+  }
+
+  autoZoom(): void {
+
+    const topLeft = {x: 0, y: 0};
+    this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
+    const shelveDesign = document.getElementById('scene');
+    const shelveDisplay = document.querySelector('.container');
+    const MARGELEFT = 50;
+    if (shelveDisplay.clientWidth - MARGELEFT < shelveDesign.offsetWidth) {
+
+      this.panZoomController.zoomAbs(0, 0, shelveDisplay.clientWidth / (shelveDesign.offsetWidth + MARGELEFT));
+
+    } else {
+
+      this.panZoomController.zoomAbs(0, 0, 1);
+    }
 
   }
 
@@ -42,19 +66,15 @@ export class AppComponent {
   }
 
   drop(event: CdkDragDrop<Tile[]>, index: number): void {
-    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
+    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
+      this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
 
     if (event.previousContainer === event.container) {
 
 
+    } else {
+      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
-      } else {
-
-      event.previousContainer.data[event.previousIndex] = {id: 0
-        , form: 0,
-        color: 0
-        , x: event.previousContainer.data[event.previousIndex].x ,
-        y: event.previousContainer.data[event.previousIndex].y , disabled: false};
 
     }
     this.plate = toPlate(this.board);
@@ -71,21 +91,26 @@ export class AppComponent {
   }
 
   valid(): void {
-    this.serviceQwirkle.playTile(this.playTile).then();
+    this.playTile = fromBoard(this.board.filter(tile => tile.disabled));
+    this.serviceQwirkle.playTile(this.playTile).then((resp) => {
+      this.score = resp;
+      this.game().then(); }
+    );
+
   }
 
 
-
-
-
-  dropResult(event: CdkDragDrop<Tile[], any>): void{
+  dropResult(event: CdkDragDrop<Tile[], any>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      this.board = this.board.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex);
+      this.plate = toPlate(this.board);
     }
+
   }
 }
