@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {toNameImage} from '../domain/Tile';
-import {toWebTiles} from '../infra/httpRequest/restGame';
+import { Component } from '@angular/core';
+import { toImageName } from '../domain/Tile';
+import { toWebTiles } from '../infra/httpRequest/restGame';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,7 @@ import {toWebTiles} from '../infra/httpRequest/restGame';
 })
 
 export class AppComponent {
-  title = 'qwircle';
+  title = 'qwirkle';
   result = [
     {
       id: 5,
@@ -23,19 +23,19 @@ export class AppComponent {
             rackPosition: 5,
             id: 99,
             color: 6,
-            form: 6
+            form: 1
           },
           {
             rackPosition: 4,
             id: 74,
             color: 1,
-            form: 6
+            form: 2
           },
           {
             rackPosition: 3,
             id: 5,
-            color: 1,
-            form: 4
+            color: 3,
+            form: 5
           },
           {
             rackPosition: 2,
@@ -52,7 +52,7 @@ export class AppComponent {
           {
             rackPosition: 0,
             id: 102,
-            color: 6,
+            color: 5,
             form: 3
           }
         ]
@@ -62,12 +62,11 @@ export class AppComponent {
   ];
 
   getRackTileImage(index: number): string {
-
-    return '../../assets/img/' + toNameImage(toWebTiles(this.result)[index]);
+    return '../../assets/img/' + toImageName(toWebTiles(this.result)[index]);
   }
 
   getRackTileStyle(index: number): string {
-    return 'left: ' + (index * 4.5 + 40) + '%;-webkit-transform:rotateX(-32deg) rotateY(78deg); -moz-transform:rotateX(-32deg) rotateY(78deg); -ms-transform:rotateX(-32deg) rotateY(78deg); transform:rotateX(-32deg) rotateY(78deg);';
+    return 'left: ' + (40 + index * 4.5) + '%;-webkit-transform:rotateX(-45deg) rotateY(85deg); -moz-transform:rotateX(-45deg) rotateY(85deg); -ms-transform:rotateX(-45deg) rotateY(85deg); transform:rotateX(-45deg) rotateY(85deg);';
   }
 
 

@@ -1,5 +1,4 @@
-import {RestGame} from "./restGame";
-import {toWebTiles} from "../../domain/Tile";
+import {RestGame, toWebTiles} from "./restGame";
 import {Color} from "../../domain/Color";
 import {Form} from "../../domain/Form";
 

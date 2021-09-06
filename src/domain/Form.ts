@@ -5,5 +5,4 @@ export enum Form {
     Clover,
     FourPointStar,
     EightPointStar,
-
 }
