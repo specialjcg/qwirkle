@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 4201",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -24,7 +24,8 @@
     "rxjs": "~6.5.5",
     "ts-jest": "^26.1.4",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.10.3",
+    "panzoom": "9.1.0"
   },
   "devDependencies": {
     "@angular-builders/jest": "^10.0.0",

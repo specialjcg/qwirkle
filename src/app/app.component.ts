@@ -1,6 +1,11 @@
-import { Component } from '@angular/core';
-import { toImageName } from '../domain/Tile';
-import { toWebTiles } from '../infra/httpRequest/restGame';
+
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
+import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {fromBoard, RestTilesPlay, Result} from '../infra/httpRequest/restGame';
+import panzoom from 'panzoom';
+
 
 @Component({
   selector: 'app-root',
@@ -8,69 +13,109 @@ import { toWebTiles } from '../infra/httpRequest/restGame';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
-  title = 'qwirkle';
-  result = [
-    {
-      id: 5,
-      pseudo: null,
-      gameId: 5,
-      gamePosition: 1,
-      points: 0,
-      rack: {
-        tiles: [
-          {
-            rackPosition: 5,
-            id: 99,
-            color: 6,
-            form: 1
-          },
-          {
-            rackPosition: 4,
-            id: 74,
-            color: 1,
-            form: 2
-          },
-          {
-            rackPosition: 3,
-            id: 5,
-            color: 3,
-            form: 5
-          },
-          {
-            rackPosition: 2,
-            id: 52,
-            color: 2,
-            form: 4
-          },
-          {
-            rackPosition: 1,
-            id: 21,
-            color: 4,
-            form: 6
-          },
-          {
-            rackPosition: 0,
-            id: 102,
-            color: 5,
-            form: 3
-          }
-        ]
-      },
-      isTurn: true
+
+export class AppComponent implements AfterViewInit, OnInit {
+  @ViewChild('scene', {static: false}) scene: ElementRef;
+  title = 'qwircle';
+  result: Tile[] = [];
+  board: Tile[] = [];
+  plate: Tile[][] = [[]];
+  playTile: RestTilesPlay[] = [];
+  panZoomController;
+  score: Result = {code: 0,
+    tilesPlayed: [],
+    newRack: [],
+    points: 0};
+
+  constructor(private serviceQwirkle: HttpTileRepositoryService) {
+
+  }
+  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.panZoomController = panzoom(this.scene.nativeElement, {minZoom: 0.5, zoomDoubleClickSpeed: 1});
+
+  }
+
+  autoZoom(): void {
+
+    const topLeft = {x: 0, y: 0};
+    this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
+    const shelveDesign = document.getElementById('scene');
+    const shelveDisplay = document.querySelector('.container');
+    const MARGELEFT = 50;
+    if (shelveDisplay.clientWidth - MARGELEFT < shelveDesign.offsetWidth) {
+
+      this.panZoomController.zoomAbs(0, 0, shelveDisplay.clientWidth / (shelveDesign.offsetWidth + MARGELEFT));
+
+    } else {
+
+      this.panZoomController.zoomAbs(0, 0, 1);
+
     }
-  ];
 
-  getRackTileImage(index: number): string {
-    return '../../assets/img/' + toImageName(toWebTiles(this.result)[index]);
+
   }
 
-  getRackTileStyle(index: number): string {
-    return 'left: ' + (40 + index * 4.5) + '%;-webkit-transform:rotateX(-45deg) rotateY(85deg); -moz-transform:rotateX(-45deg) rotateY(85deg); -ms-transform:rotateX(-45deg) rotateY(85deg); transform:rotateX(-45deg) rotateY(85deg);';
+  getRackTileImage(tile: Tile): string {
+
+    return '../../assets/img/' + toNameImage(tile);
+  }
+
+  getLineStyle(i: number): string {
+    return 'top:' + i * 10 + 'vh';
+
+  }
+
+  getRackTileStyle(): string {
+    return '-webkit-transform:rotateX(-32deg) rotateY(78deg); -moz-transform:rotateX(-32deg) rotateY(78deg); -ms-transform:rotateX(-32deg) rotateY(78deg); transform:rotateX(-32deg) rotateY(78deg);';
+  }
+
+  drop(event: CdkDragDrop<Tile[]>, index: number): void {
+    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
+      this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
+
+    if (event.previousContainer === event.container) {
+
+
+    } else {
+      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+
+
+    }
+    this.plate = toPlate(this.board);
+
+
+  }
+
+  async game(): Promise<void> {
+    this.result = await this.serviceQwirkle.get();
+    this.board = await this.serviceQwirkle.getGames();
+    this.plate = toPlate(this.board);
+
+
+  }
+
+  valid(): void {
+    this.playTile = fromBoard(this.board.filter(tile => tile.disabled));
+    this.serviceQwirkle.playTile(this.playTile).then((resp) => {
+      this.score = resp;
+      this.game().then(); }
+    );
+
   }
 
 
-  game(): void {
+  dropResult(event: CdkDragDrop<Tile[], any>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      this.board = this.board.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+      this.plate = toPlate(this.board);
+    }
 
   }
 }
