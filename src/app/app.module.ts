@@ -4,20 +4,18 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyButtonComponent } from './my-button/my-button.component';
-import {MatButtonModule} from '@angular/material/button';
-import {HttpClientModule} from '@angular/common/http';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
     AppComponent,
     MyButtonComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatButtonModule, HttpClientModule, DragDropModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatButtonModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

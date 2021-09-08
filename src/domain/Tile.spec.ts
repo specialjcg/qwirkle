@@ -129,7 +129,7 @@ describe('create tiles list', () => {
     const rowTile: Tile[] = setPosition( [tileOne], tileTwo);
     const overrowTile: Tile[] = setPosition( rowTile, tiletree);
 
-    const newRowTile: Tile[] = insertPosition( overrowTile, tileinsert, 0,0);
+    const newRowTile: Tile[] = insertPosition( overrowTile, tileinsert, 0, 0);
     expect(newRowTile).toEqual([
       {id: 3, form: Form.EightPointStar, color: Color.Red, x: -2, y: 0, disabled: false},
       {id: 2, form: Form.Circle, color: Color.Red, x: -1, y: 0, disabled: false},

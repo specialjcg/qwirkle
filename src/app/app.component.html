@@ -9,51 +9,10 @@
 </head>
 <body>
 <button (click)="game()">Start</button>
-<button (click)="valid()">Valid</button>
-<button >{{this.score.points}}</button>
-<div cdkDropListGroup>
-  <div  class="position-firstPlayer" >
-    <div class="example-container">
-      <div>
-        <div cdkDropList
-             cdkDropListOrientation="horizontal"
-             [cdkDropListData]="this.result"
-             class="example-list"
-             (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of result " cdkDrag>
-            <app-my-button [image]="getRackTileImage(tile)" [style]="getRackTileStyle()"
-                           class="example-box"></app-my-button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="flex-container">
 
-  <div #scene id="scene" >
-
-    <div  *ngFor="let line of plate;let i=index ">
-      <div  class="position-secondPlayer" [style]="getLineStyle(i+1)" >
-        <div class="plate-container">
-          <div cdkDropList
-               cdkDropListOrientation="horizontal"
-               [cdkDropListData]="line"
-               class="example-list"
-               (cdkDropListDropped)="drop($event,i)"
-               >
-            <div *ngFor="let tile of line " cdkDrag  [cdkDragDisabled]="!tile.disabled" >
-              <app-my-button [image]="getRackTileImage(tile)" [style]="getRackTileStyle()"
-                             class="example-box"></app-my-button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-
-
-
-
+  <div *ngFor="let i of [0,1,2,3,4,5]" class="flex-items"><app-my-button [image]="getRackTileImage(i)" [style]="getRackTileStyle(i)"></app-my-button></div>
+</div>
 
 </body>
 </html>

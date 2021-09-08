@@ -1,7 +1,9 @@
 
 {
   "files": [],
-
+  "types": [
+    "jest"
+  ],
 
   "references": [
     {
@@ -17,7 +19,6 @@
       "@App/*": ["src/*"],
       "lib/*": ["common/*"]
     },
-
     "allowSyntheticDefaultImports": true,
     "sourceMap": false,
     "experimentalDecorators": true,

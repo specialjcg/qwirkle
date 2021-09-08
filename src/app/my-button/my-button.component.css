@@ -7,14 +7,11 @@
   transform-style: preserve-3d;
 }
 .scene {
-  /*width: 80em;*/
-  /*height: 80em;*/
+  width: 80em;
+  height: 80em;
+  top: 50%;
 
-
-  margin: 0 0 0 4em;
-}
-.tridiv{
-  width: 90px;
+  margin: -40em 0 0 -40em;
 }
 .shape {
   top: 50%;

@@ -1,3 +1,4 @@
+
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
@@ -11,6 +12,7 @@ import panzoom from 'panzoom';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 
 export class AppComponent implements AfterViewInit, OnInit {
   @ViewChild('scene', {static: false}) scene: ElementRef;
@@ -48,9 +50,10 @@ export class AppComponent implements AfterViewInit, OnInit {
     } else {
 
       this.panZoomController.zoomAbs(0, 0, 1);
-    }
 
+    }
   }
+
 
   getRackTileImage(tile: Tile): string {
 
@@ -59,6 +62,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   getLineStyle(i: number): string {
     return 'top:' + i * 10 + 'vh';
+
   }
 
   getRackTileStyle(): string {
