@@ -12,7 +12,7 @@ export type Tile = {
 
 
 export const toNameImage = (tile: Tile) => tile.form === 0 ? '' : Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
-  Object.keys(Form)[Object.values(Form).indexOf(tile.form)] + '.png';
+  Object.keys(Form)[Object.values(Form).indexOf(tile.form)] + '.svg';
 
 export type PlayerTile = {
   playerId: number,

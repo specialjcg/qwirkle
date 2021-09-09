@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {TileRepository} from './tileRepository';
-import {Tile} from '../../domain/Tile';
-import {RestBoard, RestGame, RestTilesPlay, Result, toBoard, toWebTiles} from './restGame';
+import {PlayerTile, Tile} from '../../domain/Tile';
+import {RestBoard, RestGame, Result, TilesOnBoard, toBoard, toWebTiles} from './restGame';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 const headers = new HttpHeaders()
+  .set('Content-Type', 'application/json')
   .set('Access-Control-Allow-Origin', '*');
 
 
@@ -12,7 +12,7 @@ const headers = new HttpHeaders()
   providedIn: 'root'
 })
 
-export default class HttpTileRepositoryService implements TileRepository {
+export default class HttpTileRepositoryService {
   constructor(private http: HttpClient) {
   }
 
@@ -25,8 +25,7 @@ export default class HttpTileRepositoryService implements TileRepository {
     return this.http.post<RestBoard>('http://localhost:5000/Games/get', [10])
       .toPromise().then(response => toBoard(response));
   }
-
-  playTile(playtile: RestTilesPlay[]): Promise<Result> {
+  playTile(playtile: PlayerTile[]): Promise<Result> {
     return this.http.post<RestBoard>('http://localhost:5000/Games/PlayTiles/', playtile)
       .toPromise().then();
   }

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HttpTileRepositoryService } from './http-tile-repository.service';
+import HttpTileRepositoryService from './http-tile-repository.service';
 
 describe('HttpTileRepositoryService', () => {
   let service: HttpTileRepositoryService;
