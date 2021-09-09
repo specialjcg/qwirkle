@@ -4,7 +4,6 @@ import {RestBoard, RestGame, Result, TilesOnBoard, toBoard, toWebTiles} from './
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 const headers = new HttpHeaders()
-  .set('Content-Type', 'application/json')
   .set('Access-Control-Allow-Origin', '*');
 
 
@@ -17,12 +16,12 @@ export default class HttpTileRepositoryService {
   }
 
   get(): Promise<Tile[]> {
-    return this.http.get<RestGame>('http://localhost:5000/Games/Players/10')
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/10', {headers})
       .toPromise().then(response => toWebTiles(response));
   }
 
   getGames(): Promise<Tile[]> {
-    return this.http.post<RestBoard>('http://localhost:5000/Games/get', [10])
+    return this.http.post<RestBoard>('http://localhost:5000/Games/get', [10], {headers})
       .toPromise().then(response => toBoard(response));
   }
   playTile(playtile: PlayerTile[]): Promise<Result> {
