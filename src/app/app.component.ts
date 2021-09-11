@@ -5,6 +5,8 @@ import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBoard, RestTilesPlay, Result} from '../infra/httpRequest/restGame';
 import panzoom from 'panzoom';
+import {Form} from '../domain/Form';
+import {Color} from '../domain/Color';
 
 
 @Component({
@@ -26,11 +28,16 @@ export class AppComponent implements AfterViewInit, OnInit {
     tilesPlayed: [],
     newRack: [],
     points: 0};
+  voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
+  totalScore = 0;
 
   constructor(private serviceQwirkle: HttpTileRepositoryService) {
 
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+
+  }
   ngAfterViewInit(): void {
     this.panZoomController = panzoom(this.scene.nativeElement, {minZoom: 0.5, zoomDoubleClickSpeed: 1});
 
@@ -85,10 +92,27 @@ export class AppComponent implements AfterViewInit, OnInit {
 
 
   }
+  dropempty(event: CdkDragDrop<Tile[]>, index: number): void {
+    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
+      0, 0);
+    if (event.previousContainer === event.container) {
 
+
+    } else {
+      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+
+
+    }
+
+    this.plate = toPlate(this.board);
+
+
+  }
   async game(): Promise<void> {
     this.result = await this.serviceQwirkle.get();
-    this.board = await this.serviceQwirkle.getGames();
+    const playerId = await this.serviceQwirkle.getPlayerId();
+    this.board = await this.serviceQwirkle.getGames(playerId);
+    this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint();
     this.plate = toPlate(this.board);
 
 
@@ -117,4 +141,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
   }
+
+
 }

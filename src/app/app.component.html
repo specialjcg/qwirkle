@@ -10,7 +10,9 @@
 <body>
 <button (click)="game()">Start</button>
 <button (click)="valid()">Valid</button>
-<button >{{this.score.points}}</button>
+<app-result-score [score]="this.score.points"></app-result-score>
+<app-total-score [totalScore]="this.totalScore"></app-total-score>
+
 <div cdkDropListGroup>
   <div  class="position-firstPlayer" >
     <div class="example-container">
@@ -29,7 +31,7 @@
     </div>
   </div>
 
-  <div #scene id="scene" >
+  <div *ngIf="this.plate.length!==0" #scene id="scene" >
 
     <div  *ngFor="let line of plate;let i=index ">
       <div  class="position-secondPlayer" [style]="getLineStyle(i+1)" >
@@ -49,6 +51,21 @@
       </div>
     </div>
   </div>
+  <div *ngIf="this.plate.length===0"  >
+
+
+    <div cdkDropList
+         cdkDropListOrientation="horizontal"
+         [cdkDropListData]="voidTile"
+         class="scenevide"
+         (cdkDropListDropped)="dropempty($event,0)"
+    >
+      <div cdkDrag  >
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 

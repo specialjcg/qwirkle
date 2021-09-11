@@ -13,4 +13,5 @@ export class MyButtonComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  isImg = () => this.image !== '../../assets/img/';
 }

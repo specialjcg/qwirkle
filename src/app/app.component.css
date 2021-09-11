@@ -39,7 +39,19 @@ left :25vw
 
 
 }
-
+.scenevide {
+  position: absolute;
+  width:10em;
+  height:10em;
+  left : 50%;
+  max-width: 100%;
+  border: solid 1px #ccc;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #69ffa5;
+}
 .example-list {
   width:auto;
   max-width: 100%;
@@ -53,7 +65,7 @@ left :25vw
 }
 
 .example-box {
-  padding: 50px 10px;
+  padding: 40px 40px;
   border-right: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
@@ -66,7 +78,6 @@ left :25vw
   font-size: 14px;
   flex-grow: 1;
   flex-basis: 0;
-  margin: 0 -20px 0 0;
 }
 
 

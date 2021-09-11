@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {PlayerTile, Tile} from '../../domain/Tile';
-import {RestBoard, RestGame, Result, TilesOnBoard, toBoard, toWebTiles} from './restGame';
+import {RestBoard, RestGame, Result, TilesOnBoard, toBoard, toWebPlayer, toWebTiles, toWebTotalPoint} from './restGame';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 const headers = new HttpHeaders()
@@ -16,17 +16,25 @@ export default class HttpTileRepositoryService {
   }
 
   get(): Promise<Tile[]> {
-    return this.http.get<RestGame>('http://localhost:5000/Games/Players/10', {headers})
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
       .toPromise().then(response => toWebTiles(response));
   }
-
-  getGames(): Promise<Tile[]> {
-    return this.http.post<RestBoard>('http://localhost:5000/Games/get', [10], {headers})
+  getPlayerId(): Promise<number> {
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
+  .toPromise().then(response => toWebPlayer(response));
+  }
+  getPlayerTotalPoint(): Promise<number> {
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
+      .toPromise().then(response => toWebTotalPoint(response));
+  }
+  getGames(GameId: number): Promise<Tile[]> {
+    return this.http.post<RestBoard>('http://localhost:5000/Games/get', [GameId], {headers})
       .toPromise().then(response => toBoard(response));
   }
   playTile(playtile: PlayerTile[]): Promise<Result> {
     return this.http.post<RestBoard>('http://localhost:5000/Games/PlayTiles/', playtile)
       .toPromise().then();
   }
+
 
 }

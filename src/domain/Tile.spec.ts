@@ -163,6 +163,10 @@ describe('create tiles list', () => {
 
     ]);
   });
+  it('should return plate emtpy when board is empty', () => {
+    const tileOne: Tile[] = [];
+    expect(toPlate(tileOne)).toEqual([]);
+  });
   it('should transform board from API to plate for Droplist', () => {
     const tileOne: Tile = {id: 1, form: Form.Circle, color: Color.Purple, x: 0, y: 0, disabled: false};
     const tileTwo: Tile = {id: 2, form: Form.Circle, color: Color.Red, x: -1, y: 0, disabled: false};

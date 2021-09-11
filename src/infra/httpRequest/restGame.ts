@@ -11,7 +11,12 @@ export interface RestGame {
   rack: { tiles: Tile[] };
   isTurn: boolean;
 }
-
+export const toWebPlayer = (result: RestGame): number => {
+  return result.id;
+};
+export const toWebTotalPoint = (result: RestGame): number => {
+  return result.points;
+};
 export const toWebTiles = (result: RestGame): Tile[] => {
   return result.rack.tiles.map(tile => ({
     id: tile.id,
@@ -49,13 +54,14 @@ export interface RestTilesPlay {
 }
 
 export const toBoard = (result: RestBoard): Tile[] => {
+
   return result.board.tiles.map(tile1 => ({
     x: tile1.coordinates.x, y: tile1.coordinates.y,
     id: tile1.id, form: tile1.form, color: tile1.color, disabled: false
   }));
 };
 export const fromBoard = (result: Tile[]): RestTilesPlay[] => {
-  return result.map<RestTilesPlay>(tile1 => ({playerId: 10, tileId: tile1.id, x: tile1.x, y: tile1.y}));
+  return result.map<RestTilesPlay>(tile1 => ({playerId: 5, tileId: tile1.id, x: tile1.x, y: tile1.y}));
 };
 
 export interface Result {
