@@ -44,7 +44,7 @@ export const insertPosition = (rowTile: Tile[], tileInsert: Tile, xposition: num
     const before = rowTile.filter(tile => tile.x < xposition && tile.y === newTile.y);
     const after = rowTile.filter(tile => tile.x >= xposition && tile.y === newTile.y);
 
-    if (after[0].disabled){
+    if (before.length > 0 && after[0].disabled ){
       rowTile = rowTile.map(tile => {if (tile.x >= xposition && tile.y === newTile.y ){
         return {id: tile.id, form: tile.form,
           color: tile.color, x: tile.x + 1,
@@ -52,7 +52,7 @@ export const insertPosition = (rowTile: Tile[], tileInsert: Tile, xposition: num
       else { return tile; }});
 
 
-    }else if (before[before.length - 1].disabled){
+    }else if (before[0] !== undefined && before[before.length - 1].disabled){
       rowTile = rowTile.map(tile => {if (tile.x >= xposition && tile.y === newTile.y){
         return {id: tile.id, form: tile.form,
           color: tile.color, x: tile.x - 1,

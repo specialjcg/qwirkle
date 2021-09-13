@@ -2,14 +2,19 @@
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
-.scene, .shape, .face, .face-wrapper, .cr {
+.scenePaw, .shape, .face, .face-wrapper, .cr {
   position: absolute;
   transform-style: preserve-3d;
+
 }
-.scene {
-  width: 40em;
-  height: 40em;
-  margin: -20em 0 0 -20em;
+.scenePaw {
+  background: rgba(106, 183, 222, 1.0);
+  background: -webkit-linear-gradient(top left, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+  background: -moz-linear-gradient(top left, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+  background: linear-gradient(to bottom right, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+  /*width: 40em;*/
+  /*height: 40em;*/
+  /*margin: -20em 0 0 -20em;*/
 }
 .shape {
   top: 50%;

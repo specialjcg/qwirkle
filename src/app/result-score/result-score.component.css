@@ -1,6 +1,7 @@
 button {
   position: absolute;
-  top: 15vh;
+  top: 22vh;
+  left: 2vw;
   background: #3D94F6;
   background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
   background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);

@@ -8,8 +8,9 @@
   <title>Document</title>
 </head>
 <body>
-<button (click)="game()">Start</button>
-<button (click)="valid()">Valid</button>
+<app-new-game  class="positionGame" [(game)]="this.gamedId"
+               (gameChange)="countChange($event)"></app-new-game>
+<button class="positionValid" (click)="valid()">Valid</button>
 <app-result-score [score]="this.score.points"></app-result-score>
 <app-total-score [totalScore]="this.totalScore"></app-total-score>
 
@@ -30,13 +31,13 @@
       </div>
     </div>
   </div>
+  <mat-card class="container">
+  <div *ngIf="this.plate.length!==0" #scene id="scene"  >
+    <div  *ngFor="let line of plate;let i=index " >
+      <div  class="position-secondPlayer"  [style]="getLineStyle(i)" >
 
-  <div *ngIf="this.plate.length!==0" #scene id="scene" >
-
-    <div  *ngFor="let line of plate;let i=index ">
-      <div  class="position-secondPlayer" [style]="getLineStyle(i+1)" >
-        <div class="plate-container">
           <div cdkDropList
+
                cdkDropListOrientation="horizontal"
                [cdkDropListData]="line"
                class="example-list"
@@ -48,7 +49,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
   <div *ngIf="this.plate.length===0"  >
@@ -65,7 +65,7 @@
       </div>
     </div>
   </div>
-
+</mat-card>
 </div>
 
 

@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     points: 0};
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
+  gamedId = 1;
 
   constructor(private serviceQwirkle: HttpTileRepositoryService) {
 
@@ -68,7 +69,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   getLineStyle(i: number): string {
-    return 'top:' + i * 10 + 'vh';
+    return 'top:' + i * 8 + 'vh';
 
   }
 
@@ -109,10 +110,10 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   }
   async game(): Promise<void> {
-    this.result = await this.serviceQwirkle.get();
-    const playerId = await this.serviceQwirkle.getPlayerId();
+    this.result = await this.serviceQwirkle.get(this.gamedId);
+    const playerId = await this.serviceQwirkle.getPlayerId(this.gamedId);
     this.board = await this.serviceQwirkle.getGames(playerId);
-    this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint();
+    this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint(this.gamedId);
     this.plate = toPlate(this.board);
 
 
@@ -143,4 +144,8 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
 
+  countChange(event: number): void {
+    this.gamedId = event;
+    this.game().then();
+  }
 }

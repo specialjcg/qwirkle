@@ -15,16 +15,16 @@ export default class HttpTileRepositoryService {
   constructor(private http: HttpClient) {
   }
 
-  get(): Promise<Tile[]> {
-    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
+  get(gameId: number): Promise<Tile[]> {
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/' + gameId, {headers})
       .toPromise().then(response => toWebTiles(response));
   }
-  getPlayerId(): Promise<number> {
-    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
+  getPlayerId(gameId: number): Promise<number> {
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/' + gameId, {headers})
   .toPromise().then(response => toWebPlayer(response));
   }
-  getPlayerTotalPoint(): Promise<number> {
-    return this.http.get<RestGame>('http://localhost:5000/Games/Players/5', {headers})
+  getPlayerTotalPoint(gameId: number): Promise<number> {
+    return this.http.get<RestGame>('http://localhost:5000/Games/Players/' + gameId, {headers})
       .toPromise().then(response => toWebTotalPoint(response));
   }
   getGames(GameId: number): Promise<Tile[]> {
