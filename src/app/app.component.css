@@ -1,11 +1,10 @@
 .example-container {
 
-  width: 700px;
+  width: auto;
   max-width: 100%;
   margin: 0 25px 25px 0;
   display: inline-block;
   vertical-align: top;
-
 }
 
 
@@ -21,18 +20,18 @@
 /*}*/
 .position-firstPlayer{
   position: relative;
-  top:80vh;
-left :25vw;
+  top:70vh;
+  left :25vw;
   z-index: 0;
 }
 
 .container {
-
+  top:0;
   position: absolute;
   z-index: 1;
-  min-width: 150px;
+  max-width: 1500px;
   padding: 15px;
-  width: 77%;
+  width: 100%;
   left:25vh;
   height: 65vh;
   border: solid 1px #ccc;
@@ -70,12 +69,11 @@ left :25vw;
   /*transform: rotate3d(2, -1, -1, -0.2turn);*/
   left :25vw;
 
-
 }
 #scene{
   position: absolute;
-  top:0vh;
-  left:0vw;
+  top:0;
+  left:0;
 
 }
 .position-thirdPlayer{
@@ -100,35 +98,37 @@ left :25vw;
   background-color: #69ffa5;
 }
 .example-list {
-  width:auto;
-  max-width: 100%;
-  /*border: solid 1px #ccc;*/
+  width:110%;
+  max-width: 120%;
   display: flex;
   flex-direction: row;
   border-radius: 4px;
   overflow: hidden;
   background-color:transparent!important;
+
 }
 
 .example-box {
-  padding: 40px 40px;
-  /*border-right: solid 1px #ccc;*/
+
+
+
+
+
   color: rgba(0, 0, 0, 0.87);
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  box-sizing: border-box;
-  cursor: move;
-  font-size: 14px;
-  flex-grow: 1;
-  flex-basis: 0;
 
+  justify-content: space-around;
+
+  padding-left:70px;
+  padding-right: 85px;
+  padding-top:25px;
+ padding-bottom:135px;
 }
 
 
 
 .cdk-drag-preview {
+
   box-sizing: border-box;
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),

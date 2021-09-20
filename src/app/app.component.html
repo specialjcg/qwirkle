@@ -23,8 +23,8 @@
              [cdkDropListData]="this.result"
              class="example-list"
              (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of result " cdkDrag>
-            <app-my-button [image]="getRackTileImage(tile)" [style]="getRackTileStyle()"
+          <div *ngFor="let tile of result;let i=index " cdkDrag>
+            <app-my-button [image]="getRackTileImage(tile)"
                            class="example-box"></app-my-button>
           </div>
         </div>
@@ -34,7 +34,7 @@
   <mat-card class="container">
   <div *ngIf="this.plate.length!==0" #scene id="scene"  >
     <div  *ngFor="let line of plate;let i=index " >
-      <div  class="position-secondPlayer"  [style]="getLineStyle(i)" >
+      <div  class="position-secondPlayer"  [style]="getLineStyle(line,i)" >
 
           <div cdkDropList
 
@@ -43,8 +43,9 @@
                class="example-list"
                (cdkDropListDropped)="drop($event,i)"
           >
-            <div *ngFor="let tile of line " cdkDrag  [cdkDragDisabled]="!tile.disabled" >
-              <app-my-button [image]="getRackTileImage(tile)" [style]="getRackTileStyle()"
+
+            <div *ngFor="let tile of line" cdkDrag  [cdkDragDisabled]="!tile.disabled" >
+              <app-my-button [image]="getRackTileImage(tile)"
                              class="example-box"></app-my-button>
             </div>
           </div>

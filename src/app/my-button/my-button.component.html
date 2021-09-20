@@ -1,25 +1,39 @@
 
+<!--<div  class="tridiv">-->
+<!--  <div *ngIf="isImg()" class="scenePaw" [style]="this.style" >-->
+<!--    <div class="shape cuboid-1 cub-1">-->
+<!--      <div class="face ft">-->
+<!--        <div class="photon-shader" ></div>-->
+<!--      </div>-->
+<!--      <div class="face bk">-->
+<!--        <div class="photon-shader" ></div>-->
+<!--      </div>-->
+<!--      <div class="face rt">-->
+<!--        <div class="photon-shader" ></div>-->
+<!--      </div>-->
+<!--      <div class="face lt">-->
+<!--        <div class="photon-shader" ></div>-->
+<!--      </div>-->
+<!--      <div class="face bm">-->
+<!--        <div class="photon-shader" ></div>-->
+<!--      </div>-->
+<!--      <div class="face tp">-->
+<!--        <div class="photon-shader" ><img [src]="this.image" alt=""/></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 <div  class="tridiv">
-  <div *ngIf="isImg()" class="scenePaw" [style]="this.style" >
-    <div class="shape cuboid-1 cub-1">
-      <div class="face ft">
-        <div class="photon-shader" ></div>
-      </div>
-      <div class="face bk">
-        <div class="photon-shader" ></div>
-      </div>
-      <div class="face rt">
-        <div class="photon-shader" ></div>
-      </div>
-      <div class="face lt">
-        <div class="photon-shader" ></div>
-      </div>
-      <div class="face bm">
-        <div class="photon-shader" ></div>
-      </div>
-      <div class="face tp">
-        <div class="photon-shader" ><img [src]="this.image" alt=""/></div>
-      </div>
-    </div>
-  </div>
+<div *ngIf="isImg()">
+  <div class="shape cub-1 btn" >
+
+            <div class="photon-shader " ><img [src]="this.image" alt="" [style]="this.style"/></div>
+
 </div>
+</div>
+</div>
+<!--<div *ngIf="isImg()" class="box" [style]="this.style" >-->
+<!--  <div class="btn">-->
+<!--           <img [src]="this.image" alt=""/>-->
+<!--</div>-->
+<!--</div>-->

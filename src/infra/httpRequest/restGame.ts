@@ -60,8 +60,8 @@ export const toBoard = (result: RestBoard): Tile[] => {
     id: tile1.id, form: tile1.form, color: tile1.color, disabled: false
   }));
 };
-export const fromBoard = (result: Tile[]): RestTilesPlay[] => {
-  return result.map<RestTilesPlay>(tile1 => ({playerId: 5, tileId: tile1.id, x: tile1.x, y: tile1.y}));
+export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {
+  return result.map<RestTilesPlay>(tile1 => ({playerId, tileId: tile1.id, x: tile1.x, y: tile1.y}));
 };
 
 export interface Result {
