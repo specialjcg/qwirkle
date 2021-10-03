@@ -1,5 +1,5 @@
 
-import {RestGame, toWebTiles} from './restGame';
+import {Player, toWebTiles} from './player';
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
 import {Tile} from '../../domain/Tile';
@@ -9,7 +9,7 @@ import {HttpClient} from '@angular/common/http';
 
 describe('Get response from qwirkle api', () => {
   it('should create first Tile from qwirkle Game API ', () => {
-    const result: RestGame[] = [
+    const result: Player[] = [
       {
         id: 5,
         pseudo: null,

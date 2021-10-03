@@ -60,15 +60,19 @@
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
+.positionNewGame{
+  position: absolute;
+  top:50vh;
+  left:2vw;
 
+}
 
 
 
 .position-secondPlayer{
   position: absolute;
-  /*transform: rotate3d(2, -1, -1, -0.2turn);*/
-  left :25vw;
-
+  left:45vw;
+  top:-50vh;
 }
 #scene{
   position: absolute;
@@ -106,25 +110,75 @@
   overflow: hidden;
   background-color:transparent!important;
 
-}
 
+
+}
+.example-list2d {
+  width:135%;
+  max-width: 150%;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color:transparent!important;
+
+
+
+}
 .example-box {
 
 
 
-
+  flex-wrap: nowrap;
 
   color: rgba(0, 0, 0, 0.87);
   display: flex;
 
-  justify-content: space-around;
 
-  padding-left:70px;
-  padding-right: 85px;
-  padding-top:25px;
- padding-bottom:135px;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-left:65px;
+  padding-right: 60px;
+ /* padding-top:0px;*/
+ /*padding-bottom:0px;*/
+ /*padding-left:25px;*/
+ /* padding-right: 20px;*/
+ /* padding-top:20px;*/
+ /*padding-bottom:25px;*/
+
+  cursor: move;
+
+
+
 }
+.example-box2d {
 
+
+
+  flex-wrap: nowrap;
+
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+
+
+  align-items: center;
+  justify-content: space-between;
+
+  /*padding-left:65px;*/
+  /*padding-right: 60px;*/
+  /* padding-top:0px;*/
+  /*padding-bottom:0px;*/
+  /*padding-left:25px;*/
+  /* padding-right: 20px;*/
+  /* padding-top:20px;*/
+  /*padding-bottom:25px;*/
+width:100px;
+  cursor: move;
+
+
+
+}
 
 
 .cdk-drag-preview {
@@ -146,11 +200,15 @@
   position: absolute;
   left: 2vw;
 }
-
+.positionPlayer{
+  position: absolute;
+  left: 2vw;
+  top: 10vh;
+}
 button {
   position: absolute;
   left: 2vw;
-  top: 15vh;
+  top: 20vh;
   background: #3D94F6;
   background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
   background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);
@@ -187,3 +245,4 @@ button:hover {
   border-radius: 10px;
   text-decoration: none;
 }
+

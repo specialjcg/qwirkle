@@ -9,11 +9,13 @@
 </head>
 <body>
 <app-new-game  class="positionGame" [(game)]="this.gamedId"
-               (gameChange)="countChange($event)"></app-new-game>
+               (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
+<app-chose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player"
+               (playerChange)="playerChange($event)"></app-chose-player>
 <button class="positionValid" (click)="valid()">Valid</button>
 <app-result-score [score]="this.score.points"></app-result-score>
 <app-total-score [totalScore]="this.totalScore"></app-total-score>
-
+<button class="positionNewGame" (click)="NewGame()">New Game</button>
 <div cdkDropListGroup>
   <div  class="position-firstPlayer" >
     <div class="example-container">
@@ -21,11 +23,11 @@
         <div cdkDropList
              cdkDropListOrientation="horizontal"
              [cdkDropListData]="this.result"
-             class="example-list"
+             class="example-list2d"
              (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of result;let i=index " cdkDrag>
-            <app-my-button [image]="getRackTileImage(tile)"
-                           class="example-box"></app-my-button>
+          <div *ngFor="let tile of result;let i=index"   >
+            <app-my-button [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)"
+                           class="example-box2d" cdkDrag ></app-my-button>
           </div>
         </div>
       </div>
@@ -33,20 +35,21 @@
   </div>
   <mat-card class="container">
   <div *ngIf="this.plate.length!==0" #scene id="scene"  >
-    <div  *ngFor="let line of plate;let i=index " >
-      <div  class="position-secondPlayer"  [style]="getLineStyle(line,i)" >
+    <div  *ngFor="let line of plate;let i=index "  [style.transform]="getLineStyle(line,i)" >
+      <div  class="position-secondPlayer"  >
 
           <div cdkDropList
 
                cdkDropListOrientation="horizontal"
                [cdkDropListData]="line"
-               class="example-list"
+               class="example-list2d"
                (cdkDropListDropped)="drop($event,i)"
           >
 
-            <div *ngFor="let tile of line" cdkDrag  [cdkDragDisabled]="!tile.disabled" >
-              <app-my-button [image]="getRackTileImage(tile)"
-                             class="example-box"></app-my-button>
+            <div *ngFor="let tile of line;let j=index"  class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled"
+                 [style.transform]="getboardStyle(j)" >
+              <app-my-button  [image]="getRackTileImage(tile)"
+                              ></app-my-button>
             </div>
           </div>
         </div>

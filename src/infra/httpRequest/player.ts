@@ -2,7 +2,7 @@ import {Tile} from '../../domain/Tile';
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
 
-export interface RestGame {
+export interface Player {
   id: number;
   pseudo: string;
   gameId: number;
@@ -11,13 +11,13 @@ export interface RestGame {
   rack: { tiles: Tile[] };
   isTurn: boolean;
 }
-export const toWebPlayer = (result: RestGame): number => {
+export const toWebPlayer = (result: Player): number => {
   return result.id;
 };
-export const toWebTotalPoint = (result: RestGame): number => {
+export const toWebTotalPoint = (result: Player): number => {
   return result.points;
 };
-export const toWebTiles = (result: RestGame): Tile[] => {
+export const toWebTiles = (result: Player): Tile[] => {
   return result.rack.tiles.map(tile => ({
     id: tile.id,
     color: tile.color,
@@ -43,7 +43,7 @@ export interface TilesOnBoard {
 export interface RestBoard {
 
   board: { tiles: TilesOnBoard[] };
-
+  players: Player[];
 }
 
 export interface RestTilesPlay {
@@ -60,6 +60,10 @@ export const toBoard = (result: RestBoard): Tile[] => {
     id: tile1.id, form: tile1.form, color: tile1.color, disabled: false
   }));
 };
+export const toPlayers = (result: RestBoard): Player[] => {
+
+  return result.players;
+};
 export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {
   return result.map<RestTilesPlay>(tile1 => ({playerId, tileId: tile1.id, x: tile1.x, y: tile1.y}));
 };
@@ -69,4 +73,12 @@ export interface Result {
   tilesPlayed: [];
   newRack: [];
   points: number;
+}
+export interface ListGamedId {
+
+  listGameId: number[];
+}
+export interface ListNamePlayer {
+
+  listNamePlayer: string[];
 }

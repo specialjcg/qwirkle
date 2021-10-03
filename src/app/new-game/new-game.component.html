@@ -2,7 +2,7 @@
 <mat-form-field appearance="fill">
   <mat-label>GameId</mat-label>
   <mat-select [(value)]="this.game" >
-    <mat-option *ngFor="let game1 of games"  [value]=game1 (click)="newGame()">
+    <mat-option *ngFor="let game1 of games.listGameId"  [value]=game1 (click)="newGame()">
       {{game1}}
     </mat-option>
   </mat-select>
