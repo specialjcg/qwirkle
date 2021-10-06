@@ -14,7 +14,8 @@ import { NewGameComponent } from './new-game/new-game.component';
 import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {MatCardModule} from "@angular/material/card";
-import { ChosePlayerComponent } from './chose-player/chose-player.component';
+import { ChoosePlayerComponent } from './choose-player/choose-player.component';
+import { PlayerTurnComponent } from './player-turn/player-turn.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ChosePlayerComponent } from './chose-player/chose-player.component';
     TotalScoreComponent,
     ResultScoreComponent,
     NewGameComponent,
-    ChosePlayerComponent
+    ChoosePlayerComponent,
+    PlayerTurnComponent
   ],
   imports: [
     BrowserModule,
