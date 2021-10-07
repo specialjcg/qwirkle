@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
@@ -15,7 +15,7 @@ import panzoom from 'panzoom';
 
 export class AppComponent implements AfterViewInit, OnInit {
   @ViewChild('scene', {static: false}) scene: ElementRef;
-  title = 'qwircle';
+  title = 'qwirkle';
   result: Tile[] = [];
   board: Tile[] = [];
   plate: Tile[][] = [[]];
@@ -39,6 +39,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     rack: {tiles: []},
     isTurn: true
   };
+  playerIdToPlay: number;
 
   constructor(private serviceQwirkle: HttpTileRepositoryService) {
 
@@ -125,6 +126,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   async game(): Promise<void> {
+    this.player = (await this.serviceQwirkle.getPlayers(this.gamedId)).filter(player => player.id === this.player.id)[0];
     this.result = this.player.rack.tiles;
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
 
@@ -136,8 +138,8 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   async valid(): Promise<void> {
-    const playerId = this.serviceQwirkle.getPlayerId(this.gamedId);
-    this.playTile = fromBoard(this.board.filter(tile => tile.disabled), await playerId);
+       
+    this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
 
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
         this.score = resp;
@@ -165,7 +167,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   countChange(event: number): void {
     this.gamedId = event;
-
+    this.getPlayerIdToPlay();
   }
 
   playerChange(event: Player): void {
@@ -185,4 +187,9 @@ export class AppComponent implements AfterViewInit, OnInit {
     const players = this.serviceQwirkle.newGame([10, 11]).then();
     console.log(players);
   }
+
+   async getPlayerIdToPlay(): Promise<void> {
+       this.playerIdToPlay = await this.serviceQwirkle.getPlayerIdToPlay(this.gamedId);
+       console.log(this.playerIdToPlay);
+   }
 }

@@ -10,8 +10,10 @@
 <body>
 <app-new-game  class="positionGame" [(game)]="this.gamedId"
                (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
-<app-chose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player"
-               (playerChange)="playerChange($event)"></app-chose-player>
+<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player"
+               (playerChange)="playerChange($event)"></app-choose-player>
+
+<app-player-turn [playerName]="this.playerNameToPlay"></app-player-turn>
 <button class="positionValid" (click)="valid()">Valid</button>
 <app-result-score [score]="this.score.points"></app-result-score>
 <app-total-score [totalScore]="this.totalScore"></app-total-score>

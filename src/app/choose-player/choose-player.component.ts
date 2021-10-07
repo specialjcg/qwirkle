@@ -3,16 +3,17 @@ import {ListNamePlayer, Player} from '../../infra/httpRequest/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
 @Component({
-  selector: 'app-chose-player',
-  templateUrl: './chose-player.component.html',
-  styleUrls: ['./chose-player.component.css']
+  selector: 'app-choose-player',
+  templateUrl: './choose-player.component.html',
+  styleUrls: ['./choose-player.component.css']
 })
-export class ChosePlayerComponent implements OnInit {
+export class ChoosePlayerComponent implements OnInit {
   @Input() player: Player;
   @Input() gameId: number;
   @Output() playerChange = new EventEmitter<Player>();
   players: Player[] = [];
   names: ListNamePlayer = {listNamePlayer: []};
+  name: string = "";
 
   constructor(public service: HttpTileRepositoryService) {
 
@@ -23,7 +24,9 @@ export class ChosePlayerComponent implements OnInit {
     this.names = await this.service.getPlayerName(this.gameId);
   }
 
-  newPlayer(): void {
+  newPlayer(i : number): void {
+    this.name = this.names.listNamePlayer[i]
+    this.player = this.players[i];
     this.playerChange.emit(this.player);
   }
 

@@ -68,6 +68,12 @@
 }
 
 
+.positionValid{
+  position: absolute;
+  top:25vh;
+  left:2vw;
+
+}
 
 .position-secondPlayer{
   position: absolute;

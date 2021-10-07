@@ -21,6 +21,8 @@
     "@angular/platform-browser": "~10.0.5",
     "@angular/platform-browser-dynamic": "~10.0.5",
     "@angular/router": "~10.0.5",
+    "dns": "^0.2.2",
+    "panzoom": "^9.4.2",
     "rxjs": "~6.5.5",
     "ts-jest": "^26.1.4",
     "tslib": "^2.0.0",

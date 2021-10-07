@@ -12,6 +12,7 @@ import {
   toPlayers, ListNamePlayer
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { PlayerTurnComponent } from 'src/app/player-turn/player-turn.component';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*');
@@ -25,11 +26,17 @@ function toListNamePlayer(response: string[]): ListNamePlayer {
   return {listNamePlayer: response};
 }
 
+export const toPlayerId = (result: number): number => {
+  console.log(result);
+  return result;
+};
+
 @Injectable({
   providedIn: 'root'
 })
 
 export default class HttpTileRepositoryService {
+  
   constructor(private http: HttpClient) {
   }
 
@@ -73,5 +80,9 @@ export default class HttpTileRepositoryService {
   newGame(players: number[]): Promise<number[]> {
     return this.http.post<Player>('http://localhost:5000/Games/', players).toPromise().then();
   }
-
+   getPlayerIdToPlay(gameId: number) : Promise<number>{
+     return this.http.get<Player>('http://localhost:5000/Games/PlayerIdToPlay/' + gameId, {headers})
+       .toPromise().then(response => toPlayerId(response));
+   }
 }
+
