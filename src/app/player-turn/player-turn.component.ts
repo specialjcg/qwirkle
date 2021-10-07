@@ -7,7 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class PlayerTurnComponent implements OnInit {
 
-  @Input() playerIdToPlay: number;
+  @Input() playerName: string;
 
   constructor() { }
 

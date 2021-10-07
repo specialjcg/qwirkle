@@ -2,20 +2,22 @@ import {Injectable} from '@angular/core';
 import {PlayerTile, Tile} from '../../domain/Tile';
 import {
   ListGamedId,
-  RestBoard,
+  ListNamePlayer,
   Player,
+  RestBoard,
   Result,
   toBoard,
+  toPlayers,
   toWebPlayer,
   toWebTiles,
-  toWebTotalPoint,
-  toPlayers, ListNamePlayer
+  toWebTotalPoint
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { PlayerTurnComponent } from 'src/app/player-turn/player-turn.component';
+import {Observable, Subscription} from 'rxjs';
 
 const headers = new HttpHeaders()
-  .set('Access-Control-Allow-Origin', '*');
+  .set('Access-Control-Allow-Origin', '*')
+  .set('Content-Type', 'application/json; charset=utf-8');
 
 
 const toListGamedId = (response: number[]): ListGamedId => {
@@ -26,9 +28,10 @@ function toListNamePlayer(response: string[]): ListNamePlayer {
   return {listNamePlayer: response};
 }
 
-export const toPlayerId = (result: number): number => {
-  console.log(result);
-  return result;
+// tslint:disable-next-line:ban-types
+export const toPlayerId = (result: Object): string => {
+
+  return result as string;
 };
 
 @Injectable({
@@ -36,7 +39,7 @@ export const toPlayerId = (result: number): number => {
 })
 
 export default class HttpTileRepositoryService {
-  
+
   constructor(private http: HttpClient) {
   }
 
@@ -80,9 +83,10 @@ export default class HttpTileRepositoryService {
   newGame(players: number[]): Promise<number[]> {
     return this.http.post<Player>('http://localhost:5000/Games/', players).toPromise().then();
   }
-   getPlayerIdToPlay(gameId: number) : Promise<number>{
-     return this.http.get<Player>('http://localhost:5000/Games/PlayerIdToPlay/' + gameId, {headers})
-       .toPromise().then(response => toPlayerId(response));
+   getPlayerIdToPlay(gameId: number): Observable<string>{
+     return this.http.get<string>('http://localhost:5000/Games/GetPlayerNameTurn/' + gameId,
+       {responseType: 'text' as 'json'});
+
    }
 }
 

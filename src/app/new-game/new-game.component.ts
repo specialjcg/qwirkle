@@ -12,7 +12,7 @@ import {ListGamedId} from '../../infra/httpRequest/player';
 export class NewGameComponent implements OnInit {
   @Input() game: number;
   @Output() gameChange = new EventEmitter<number>();
-  games: ListGamedId;
+  games: ListGamedId = {listGameId: []};
   constructor(public service: HttpTileRepositoryService) {
 
   }
