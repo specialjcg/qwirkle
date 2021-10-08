@@ -81,7 +81,7 @@ export default class HttpTileRepositoryService {
     return this.http.post<Player>('http://localhost:5000/Games/', players).toPromise().then();
   }
    getPlayerIdToPlay(gameId: number) : Promise<number>{
-     return this.http.get<Player>('http://localhost:5000/Games/PlayerIdToPlay/' + gameId, {headers})
+     return this.http.get<number>('http://localhost:5000/Games/PlayerIdToPlay/' + gameId, {headers})
        .toPromise().then(response => toPlayerId(response));
    }
 }
