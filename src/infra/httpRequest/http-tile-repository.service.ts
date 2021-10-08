@@ -88,5 +88,6 @@ export default class HttpTileRepositoryService {
        {responseType: 'text' as 'json'});
 
    }
+
 }
 

@@ -4,8 +4,11 @@ import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBoard, Player, RestTilesPlay, Result} from '../infra/httpRequest/player';
 import panzoom from 'panzoom';
-
-
+import { HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
+import {HttpHeaders} from '@angular/common/http';
+const headers = new HttpHeaders()
+  .set('Access-Control-Allow-Origin', '*')
+  .set('Content-Type', 'application/json; charset=utf-8');
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -40,13 +43,24 @@ export class AppComponent implements AfterViewInit, OnInit {
     isTurn: true
   };
   playerNameToPlay: string;
-
+  public hubConnection: HubConnection;
+  public messages: string[] = [];
+  public message: string;
   constructor(private serviceQwirkle: HttpTileRepositoryService) {
 
   }
 
   ngOnInit(): void {
-
+    const builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl('http://localhost:5000/hubGame', {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }}).build();  // see startup.cs
+    // this.hubConnection.on('notifyUser', (message) => {
+    //   this.messages.push(message);
+    //   console.log(message);
+    // });
+    this.hubConnection.start().then(r => {});
 
   }
 
