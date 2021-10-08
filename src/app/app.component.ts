@@ -189,7 +189,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
    async getPlayerIdToPlay(): Promise<void> {
-       this.serviceQwirkle.getPlayerIdToPlay(this.gamedId).subscribe((res) => {
+       this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe((res) => {
          this.playerNameToPlay = res ;
 
        });

@@ -83,7 +83,7 @@ export default class HttpTileRepositoryService {
   newGame(players: number[]): Promise<number[]> {
     return this.http.post<Player>('http://localhost:5000/Games/', players).toPromise().then();
   }
-   getPlayerIdToPlay(gameId: number): Observable<string>{
+   getPlayerNameToPlay(gameId: number): Observable<string>{
      return this.http.get<string>('http://localhost:5000/Games/GetPlayerNameTurn/' + gameId,
        {responseType: 'text' as 'json'});
 
