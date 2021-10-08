@@ -13,7 +13,7 @@
 <app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player"
                (playerChange)="playerChange($event)"></app-choose-player>
 
-<app-player-turn [playerIdToPlay]="this.playerIdToPlay"></app-player-turn>
+<app-player-turn [playerName]="this.playerNameToPlay"></app-player-turn>
 <button class="positionValid" (click)="valid()">Valid</button>
 <app-result-score [score]="this.score.points"></app-result-score>
 <app-total-score [totalScore]="this.totalScore"></app-total-score>
