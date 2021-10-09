@@ -2,6 +2,7 @@ import {Form} from './Form';
 import {Color} from './Color';
 import {setPositionTile} from './SetPositionTile';
 import {positionIsNotFree} from './PositionIsFree';
+import {Tiles} from '../infra/httpRequest/tiles';
 
 export type Tile = {
   disabled: boolean;
@@ -95,13 +96,12 @@ export const insertPosition = (nexTiles: Tile[], tileInsert: Tile, xposition: nu
   }
   return setPositionTile([...rowTilenotInsert, ...rowTile].filter(tile => tile.id !== newTile.id), newTile);
 };
-export const changePosition = (rowTile: Tile[], tileInsert: Tile, xposition: number, yposition: number): Tile[] => {
-  tileInsert = {
-    id: tileInsert.id, form: tileInsert.form, color: tileInsert.color, x: tileInsert.x,
+export const changePosition = (rowTile: Tile[], tileInsert: Tiles, xposition: number, yposition: number): Tile[] => {
+  const insertTile: Tile = {
+    id: tileInsert.id, form: tileInsert.form, color: tileInsert.color, x: xposition,
     y: yposition, disabled: true
   };
-
-  return insertPosition(rowTile, tileInsert, xposition);
+  return insertPosition(rowTile, insertTile, xposition);
 };
 
 
@@ -119,6 +119,7 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
     coordy = [...coordy, k];
   }
   const result: Tile[][] = Array(coordy.length).fill(null).map((_, indexY) =>
+
     Array(coordx.length).fill(null).map((_, indexX) =>
       ({
         id: 0, form: 0, color: 0, x: coordx[indexX],

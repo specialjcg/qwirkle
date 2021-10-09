@@ -8,6 +8,7 @@ import {fromBoard, Player, RestTilesPlay, Result} from '../infra/httpRequest/pla
 import panzoom from 'panzoom';
 import { HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
 import {HttpHeaders} from '@angular/common/http';
+import {Tiles} from '../infra/httpRequest/tiles';
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
@@ -58,6 +59,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
 
 
+
   ngAfterViewInit(): void {
     this.panZoomController = panzoom(this.scene.nativeElement, {minZoom: 0.5, zoomDoubleClickSpeed: 1});
 
@@ -67,19 +69,15 @@ export class AppComponent implements AfterViewInit, OnInit {
     //
     const topLeft = {x: 0, y: 0};
     this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
-    this.panZoomController.moveTo(200, 200);
-    const shelveDesign = document.getElementById('scene');
     const shelveDisplay = document.querySelector('.container');
-    const MARGELEFT = 50;
-    if (shelveDisplay.clientWidth - MARGELEFT < shelveDesign.offsetWidth) {
+    const Xmax = shelveDisplay.clientWidth / this.plate.length;
+    const Ymax = this.plate.length * 100 / shelveDisplay.clientHeight;
 
-      this.panZoomController.zoomAbs(0, 0, shelveDisplay.clientWidth / (shelveDesign.offsetWidth + MARGELEFT));
 
-    } else {
+    this.panZoomController.zoomAbs(0, 0, 1 - 1 / Ymax);
+    this.panZoomController.moveTo( 0,shelveDisplay.clientHeight/2+100*(1 - 1 / Ymax));
 
-      this.panZoomController.zoomAbs(0, 0, 0.5);
 
-    }
 
   }
 
@@ -89,18 +87,22 @@ export class AppComponent implements AfterViewInit, OnInit {
     return '../../assets/img/' + toNameImage(tile);
   }
 
-  getLineStyle(line: Tile[], i: number): string {
-    if (line[i] !== undefined) {
+  getLineStyle(line: Tile[]): string {
+    if (line[0] !== undefined) {
       // return 'transform:translateX(' + -line[i].y * 100 + 'px);';
-      return 'translate(' + 0 + 'px,' + line[i].y * 100 + 'px)';
+      return 'translate(' + 0 + 'px,' + line[0].y * 100 + 'px)';
     }
     // // if (line[i] !== undefined) { return 'transform:translate(' + 1400 + 'px,' + 500 + 'px);'; }
-    return '';
+    // console.log(i);
+    // else {
+    //   console.log(line, i);
+    //   return 'translate(' + 0 + 'px,' + 5 * 100 + 'px)'; }
 
   }
 
 
-  drop(event: CdkDragDrop<Tile[]>, index: number): void {
+  drop(event: CdkDragDrop<Tile[], any>, index: number): void {
+
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
       this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
 
@@ -114,10 +116,9 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
     this.plate = toPlate(this.board);
 
-
   }
 
-  dropempty(event: CdkDragDrop<Tile[]>, index: number): void {
+  dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
     if (event.previousContainer === event.container) {
 
@@ -153,6 +154,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
         this.score = resp;
         this.game().then();
+        this.getPlayerIdToPlay().then();
       }
     );
 
@@ -193,8 +195,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   NewGame(): void {
-    const players = this.serviceQwirkle.newGame([10, 11]).then();
-    console.log(players);
+    this.serviceQwirkle.newGame([10, 11]).then();
   }
 
    async getPlayerIdToPlay(): Promise<void> {

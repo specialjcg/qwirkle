@@ -14,6 +14,7 @@ import {
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
+import {HubConnectionBuilder} from "@microsoft/signalr";
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
