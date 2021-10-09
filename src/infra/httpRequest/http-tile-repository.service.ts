@@ -13,8 +13,7 @@ import {
   toWebTotalPoint
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable, Subscription} from 'rxjs';
-import {HubConnectionBuilder} from "@microsoft/signalr";
+import {Observable} from 'rxjs';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
@@ -25,15 +24,9 @@ const toListGamedId = (response: number[]): ListGamedId => {
   return {listGameId: response};
 };
 
-function toListNamePlayer(response: string[]): ListNamePlayer {
-  return {listNamePlayer: response};
-}
+const toListNamePlayer = (response: string[]): ListNamePlayer => ({listNamePlayer: response});
 
-// tslint:disable-next-line:ban-types
-export const toPlayerId = (result: Object): string => {
 
-  return result as string;
-};
 
 @Injectable({
   providedIn: 'root'
@@ -64,12 +57,14 @@ export default class HttpTileRepositoryService {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
       .toPromise().then(response => toBoard(response));
   }
+
   getPlayers(GameId: number): Promise<Player[]> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
       .toPromise().then(response => toPlayers(response));
   }
+
   playTile(playtile: PlayerTile[]): Promise<Result> {
-    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', playtile)
+    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', playtile, {headers})
       .toPromise().then();
   }
 
@@ -77,18 +72,21 @@ export default class HttpTileRepositoryService {
     return this.https.get<number[]>('https://localhost:5001/Games/ListGameId/', {headers})
       .toPromise().then(response => toListGamedId(response));
   }
+
   getPlayerName(GameId: number): Promise<ListNamePlayer> {
     return this.https.post<string[]>('https://localhost:5001/Games/ListNamePlayer/' + GameId, {headers})
       .toPromise().then(response => toListNamePlayer(response));
   }
+
   newGame(players: number[]): Promise<number[]> {
     return this.https.post<Player>('https://localhost:5001/Games/', players).toPromise().then();
   }
-   getPlayerNameToPlay(gameId: number): Observable<string>{
-     return this.https.get<string>('https://localhost:5001/Games/GetPlayerNameTurn/' + gameId,
-       {responseType: 'text' as 'json'});
 
-   }
+  getPlayerNameToPlay(gameId: number): Observable<string> {
+    return this.https.get<string>('https://localhost:5001/Games/GetPlayerNameTurn/' + gameId,
+      {responseType: 'text' as 'json'});
+
+  }
 
 }
 

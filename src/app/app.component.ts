@@ -1,17 +1,17 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import { SignalRService } from './services/signal-r.service';
-import { HttpClient } from '@angular/common/http';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBoard, Player, RestTilesPlay, Result} from '../infra/httpRequest/player';
 import panzoom from 'panzoom';
-import { HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
-import {HttpHeaders} from '@angular/common/http';
-import {Tiles} from '../infra/httpRequest/tiles';
+
+
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -46,18 +46,16 @@ export class AppComponent implements AfterViewInit, OnInit {
     isTurn: true
   };
   playerNameToPlay: string;
-  public hubConnection: HubConnection;
-  public messages: string[] = [];
-  public message: string;
+
+
+
   constructor(public signalRService: SignalRService, private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
 
   }
 
   ngOnInit(): void {
     this.signalRService.startConnection();
-    }
-
-
+  }
 
 
   ngAfterViewInit(): void {
@@ -71,12 +69,11 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
     const shelveDisplay = document.querySelector('.container');
     const Xmax = shelveDisplay.clientWidth / this.plate.length;
-    const Ymax = this.plate.length * 100 / shelveDisplay.clientHeight;
+    const Ymax = shelveDisplay.clientHeight / this.plate.length;
 
 
-    this.panZoomController.zoomAbs(0, 0, 1 - 1 / Ymax);
-    this.panZoomController.moveTo( 0,shelveDisplay.clientHeight/2+100*(1 - 1 / Ymax));
-
+    this.panZoomController.zoomAbs(0, 0, Ymax/100);
+    this.panZoomController.moveTo(0, shelveDisplay.clientHeight / 2 + 100 * (1 - 1 / Ymax));
 
 
   }
@@ -198,12 +195,12 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.serviceQwirkle.newGame([10, 11]).then();
   }
 
-   async getPlayerIdToPlay(): Promise<void> {
-       this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe((res) => {
-         this.playerNameToPlay = res ;
+  async getPlayerIdToPlay(): Promise<void> {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe((res) => {
+      this.playerNameToPlay = res;
 
-       });
-   }
+    });
+  }
 }
 
 
