@@ -37,7 +37,7 @@
   </div>
   <mat-card class="container">
   <div *ngIf="this.plate.length!==0" #scene id="scene"  >
-    <div  *ngFor="let line of plate;let i=index "  [style.transform]="getLineStyle(line,i)" >
+    <div  *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line)" >
       <div  class="position-secondPlayer"  >
 
           <div cdkDropList
@@ -48,8 +48,8 @@
                (cdkDropListDropped)="drop($event,i)"
           >
 
-            <div *ngFor="let tile of line;let j=index"  class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled"
-                 [style.transform]="getboardStyle(j)" >
+            <div *ngFor="let tile of line;let j=index"   class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled"
+                 >
               <app-my-button  [image]="getRackTileImage(tile)"
                               ></app-my-button>
             </div>

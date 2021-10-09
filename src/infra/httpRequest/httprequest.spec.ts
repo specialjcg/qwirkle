@@ -1,10 +1,6 @@
-
 import {Player, toWebTiles} from './player';
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
-import {Tile} from '../../domain/Tile';
-import {HttpClient} from '@angular/common/http';
-
 
 
 describe('Get response from qwirkle api', () => {
@@ -19,42 +15,47 @@ describe('Get response from qwirkle api', () => {
         rack: {
           tiles: [
             {
-disabled: true,
+              disabled: true,
               id: 99,
               color: 6,
               form: 6,
               x: 0,
               y: 0
             },
-            {disabled: true,
+            {
+              disabled: true,
               x: 0,
               y: 0,
               id: 74,
               color: 1,
               form: 6
             },
-            {disabled: true,
+            {
+              disabled: true,
               x: 0,
               y: 0,
               id: 5,
               color: 1,
               form: 4
             },
-            {disabled: true,
+            {
+              disabled: true,
               x: 0,
               y: 0,
               id: 52,
               color: 2,
               form: 4
             },
-            {disabled: true,
+            {
+              disabled: true,
               x: 0,
               y: 0,
               id: 21,
               color: 4,
               form: 6
             },
-            {disabled: true,
+            {
+              disabled: true,
               x: 0,
               y: 0,
               id: 102,
@@ -66,8 +67,8 @@ disabled: true,
         isTurn: true
       }
     ];
-    expect(toWebTiles(result[0])[0]).toEqual({ id: 99, color: Color.Yellow, form: Form.EightPointStar});
-    expect(toWebTiles(result[0])[1]).toEqual({ id: 74, color: Color.Green, form: Form.EightPointStar});
+    expect(toWebTiles(result[0])[0]).toEqual({id: 99, color: Color.Yellow, form: Form.EightPointStar});
+    expect(toWebTiles(result[0])[1]).toEqual({id: 74, color: Color.Green, form: Form.EightPointStar});
 
   });
 

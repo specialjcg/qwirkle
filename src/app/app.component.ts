@@ -6,6 +6,7 @@ import {fromBoard, Player, RestTilesPlay, Result} from '../infra/httpRequest/pla
 import panzoom from 'panzoom';
 import { HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
 import {HttpHeaders} from '@angular/common/http';
+import {Tiles} from '../infra/httpRequest/tiles';
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
@@ -51,16 +52,11 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    const builder = new HubConnectionBuilder();
-    this.hubConnection = builder.withUrl('http://localhost:5000/hubGame', {
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      }}).build();  // see startup.cs
-    // this.hubConnection.on('notifyUser', (message) => {
-    //   this.messages.push(message);
-    //   console.log(message);
-    // });
-    this.hubConnection.start().then(r => {});
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl('http://localhost:5000/hubGame')
+      .build();
+    this.hubConnection.start().catch(err => { throw err.toString(); });
+
 
   }
 
@@ -95,18 +91,22 @@ export class AppComponent implements AfterViewInit, OnInit {
     return '../../assets/img/' + toNameImage(tile);
   }
 
-  getLineStyle(line: Tile[], i: number): string {
-    if (line[i] !== undefined) {
+  getLineStyle(line: Tile[]): string {
+    if (line[0] !== undefined) {
       // return 'transform:translateX(' + -line[i].y * 100 + 'px);';
-      return 'translate(' + 0 + 'px,' + line[i].y * 100 + 'px)';
+      return 'translate(' + 0 + 'px,' + line[0].y * 100 + 'px)';
     }
     // // if (line[i] !== undefined) { return 'transform:translate(' + 1400 + 'px,' + 500 + 'px);'; }
-    return '';
+    // console.log(i);
+    // else {
+    //   console.log(line, i);
+    //   return 'translate(' + 0 + 'px,' + 5 * 100 + 'px)'; }
 
   }
 
 
-  drop(event: CdkDragDrop<Tile[]>, index: number): void {
+  drop(event: CdkDragDrop<Tile[], any>, index: number): void {
+
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
       this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
 
@@ -120,10 +120,9 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
     this.plate = toPlate(this.board);
 
-
   }
 
-  dropempty(event: CdkDragDrop<Tile[]>, index: number): void {
+  dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
     if (event.previousContainer === event.container) {
 
@@ -158,6 +157,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
         this.score = resp;
         this.game().then();
+        this.getPlayerIdToPlay().then();
       }
     );
 
@@ -198,8 +198,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   NewGame(): void {
-    const players = this.serviceQwirkle.newGame([10, 11]).then();
-    console.log(players);
+    this.serviceQwirkle.newGame([10, 11]).then();
   }
 
    async getPlayerIdToPlay(): Promise<void> {
