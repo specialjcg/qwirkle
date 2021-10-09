@@ -1,4 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { SignalRService } from './services/signal-r.service';
+import { HttpClient } from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
@@ -47,18 +49,16 @@ export class AppComponent implements AfterViewInit, OnInit {
   public hubConnection: HubConnection;
   public messages: string[] = [];
   public message: string;
-  constructor(private serviceQwirkle: HttpTileRepositoryService) {
+  constructor(public signalRService: SignalRService, private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
 
   }
 
   ngOnInit(): void {
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl('http://localhost:5000/hubGame')
-      .build();
-    this.hubConnection.start().catch(err => { throw err.toString(); });
+    this.signalRService.startConnection();
+    }
 
 
-  }
+
 
   ngAfterViewInit(): void {
     this.panZoomController = panzoom(this.scene.nativeElement, {minZoom: 0.5, zoomDoubleClickSpeed: 1});
@@ -139,6 +139,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.result = this.player.rack.tiles;
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
 
+    this.signalRService.sendPlayerInGame(this.player.gameId, this.player.id);
 
     this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint(this.player.id);
     this.plate = toPlate(this.board);
@@ -204,3 +205,5 @@ export class AppComponent implements AfterViewInit, OnInit {
        });
    }
 }
+
+
