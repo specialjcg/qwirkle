@@ -119,6 +119,7 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
     coordy = [...coordy, k];
   }
   const result: Tile[][] = Array(coordy.length).fill(null).map((_, indexY) =>
+
     Array(coordx.length).fill(null).map((_, indexX) =>
       ({
         id: 0, form: 0, color: 0, x: coordx[indexX],

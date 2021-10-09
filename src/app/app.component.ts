@@ -69,19 +69,15 @@ export class AppComponent implements AfterViewInit, OnInit {
     //
     const topLeft = {x: 0, y: 0};
     this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
-    this.panZoomController.moveTo(200, 200);
-    const shelveDesign = document.getElementById('scene');
     const shelveDisplay = document.querySelector('.container');
-    const MARGELEFT = 50;
-    if (shelveDisplay.clientWidth - MARGELEFT < shelveDesign.offsetWidth) {
+    const Xmax = shelveDisplay.clientWidth / this.plate.length;
+    const Ymax = this.plate.length * 100 / shelveDisplay.clientHeight;
 
-      this.panZoomController.zoomAbs(0, 0, shelveDisplay.clientWidth / (shelveDesign.offsetWidth + MARGELEFT));
 
-    } else {
+    this.panZoomController.zoomAbs(0, 0, 1 - 1 / Ymax);
+    this.panZoomController.moveTo( 0,shelveDisplay.clientHeight/2+100*(1 - 1 / Ymax));
 
-      this.panZoomController.zoomAbs(0, 0, 0.5);
 
-    }
 
   }
 
