@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBoard, Player, RestTilesPlay, Result} from '../infra/httpRequest/player';
+import {fromBoard, fromBag, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
 import panzoom from 'panzoom';
 
 
@@ -24,8 +24,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   title = 'qwirkle';
   result: Tile[] = [];
   board: Tile[] = [];
+  bag: Tile[] = [];
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
+  swapTile: RestTilesSwap[] = [];
   panZoomController;
   score: Result = {
     code: 0,
@@ -145,9 +147,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   async valid(): Promise<void> {
-
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
-
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
         this.score = resp;
         this.game().then();
@@ -155,6 +155,23 @@ export class AppComponent implements AfterViewInit, OnInit {
       }
     );
 
+  }
+
+  async swapTiles(): Promise<void> {
+    this.swapTile = fromBag(this.bag.filter(tile => tile.disabled), this.player.id);
+    this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
+        this.game().then();
+        this.getPlayerIdToPlay().then();
+      }
+    );
+  }
+
+  async skipTurn(): Promise<void> {
+    this.serviceQwirkle.skipTurn(this.player.id).then((resp) => {
+        this.game().then();
+        this.getPlayerIdToPlay().then();
+      }
+    );
   }
 
 
