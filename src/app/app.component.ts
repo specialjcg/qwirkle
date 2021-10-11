@@ -48,6 +48,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     isTurn: true
   };
   playerNameToPlay: string;
+  nameToTurn: string;
 
 
 
@@ -57,6 +58,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.signalRService.startConnection();
+
   }
 
 
@@ -74,7 +76,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     const Ymax = shelveDisplay.clientHeight / this.plate.length;
 
 
-    this.panZoomController.zoomAbs(0, 0, Ymax/100);
+    this.panZoomController.zoomAbs(0, 0, Ymax / 100);
     this.panZoomController.moveTo(0, shelveDisplay.clientHeight / 2 + 100 * (1 - 1 / Ymax));
 
 
@@ -146,22 +148,25 @@ export class AppComponent implements AfterViewInit, OnInit {
 
 
   async game(): Promise<void> {
-    this.player = (await this.serviceQwirkle.getPlayers(this.gamedId)).filter(player => player.id === this.player.id)[0];
-    this.signalRService.sendPlayerInGame(this.player.gameId, this.player.id);
+    this.serviceQwirkle.getPlayerNameToPlay( this.gamedId ).subscribe(res => {
+      this.nameToTurn = res;
+
+    });
+    this.player = (await this.serviceQwirkle.getPlayers(this.gamedId)).filter(player => player.isTurn === true)[0];
+    this.signalRService.sendPlayerInGame(this.gamedId, this.player.id);
     this.result = this.player.rack.tiles;
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
-    this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint(this.player.id);
     this.plate = toPlate(this.board);
     this.autoZoom();
-
   }
 
   async valid(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
         this.score = resp;
-        this.game().then();
+
         this.getPlayerIdToPlay().then();
+        this.game().then();
       }
     );
 
@@ -203,12 +208,11 @@ export class AppComponent implements AfterViewInit, OnInit {
   countChange(event: number): void {
     this.gamedId = event;
     this.getPlayerIdToPlay().then();
-  }
 
-  playerChange(event: Player): void {
-    this.player = event;
     this.game().then();
   }
+
+
 
   getPawStyle(i: number): string {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';

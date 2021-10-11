@@ -76,7 +76,7 @@ export default class HttpTileRepositoryService {
   }
 
   skipTurn(playerId: number): Promise<Result> {
-    const player = {id: playerId}
+    const player = {id: playerId};
     return this.https.post<RestSkipTurn>('https://localhost:5001/Games/SkipTurn/', player, {headers})
       .toPromise().then();
   }
