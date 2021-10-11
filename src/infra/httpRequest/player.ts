@@ -57,6 +57,10 @@ export interface RestBag {
   players: Player[];
 }
 
+export interface RestSkipTurn {
+  playerId: number;
+}
+
 export interface RestTilesPlay {
   playerId: number;
   tileId: number;
@@ -70,14 +74,12 @@ export interface RestTilesSwap {
 }
 
 export const toBoard = (result: RestBoard): Tile[] => {
-
   return result.board.tiles.map(tile1 => ({
     x: tile1.coordinates.x, y: tile1.coordinates.y,
     id: tile1.id, form: tile1.form, color: tile1.color, disabled: false
   }));
 };
 export const toPlayers = (result: RestBoard): Player[] => {
-
   return result.players;
 };
 export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {

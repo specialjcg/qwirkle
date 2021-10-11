@@ -39,7 +39,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
@@ -67,7 +67,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "mentoringhexa:build:production"
+              "browserTarget": "mentoringhexa:build:production",
+              "optimization": true,
+              "sourceMap": true,
+              "vendorChunk": false
             }
           }
         },
