@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Qwirkle</title>
 </head>
 <body>
-<app-new-game  class="positionGame" [(game)]="this.gamedId"
-               (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
-<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player"
-               (playerChange)="playerChange($event)"></app-choose-player>
-
+<app-new-game  class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
+<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [(player)]="this.player" (playerChange)="playerChange($event)"></app-choose-player>
 <app-player-turn [playerName]="this.playerNameToPlay"></app-player-turn>
 <button class="positionValid" (click)="valid()">Valid</button>
 <button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
@@ -24,14 +20,9 @@
   <div  class="position-firstPlayer" >
     <div class="example-container">
       <div>
-        <div cdkDropList
-             cdkDropListOrientation="horizontal"
-             [cdkDropListData]="this.result"
-             class="example-list2d"
-             (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of result;let i=index"   >
-            <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)"
-                           class="example-box2d" cdkDrag ></app-tile-pawn>
+        <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.result" class="example-list2d" (cdkDropListDropped)="dropResult($event)">
+          <div *ngFor="let tile of result;let i=index">
+            <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d" cdkDrag ></app-tile-pawn>
           </div>
         </div>
       </div>
@@ -39,46 +30,22 @@
   </div>
   <mat-card class="container">
   <div *ngIf="this.plate.length!==0" #scene id="scene"  >
-    <div  *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line)" >
-      <div  class="position-secondPlayer"  >
-
-          <div cdkDropList
-
-               cdkDropListOrientation="horizontal"
-               [cdkDropListData]="line"
-               class="example-list2d"
-               (cdkDropListDropped)="drop($event,i)"
-          >
-
-            <div *ngFor="let tile of line;let j=index"   class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled"
-                 >
-              <app-tile-pawn  [image]="getRackTileImage(tile)"
-                              ></app-tile-pawn>
+    <div *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line)" >
+      <div class="position-secondPlayer">
+          <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d" (cdkDropListDropped)="drop($event,i)">
+            <div *ngFor="let tile of line;let j=index" class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled">
+              <app-tile-pawn  [image]="getRackTileImage(tile)"></app-tile-pawn>
             </div>
           </div>
         </div>
     </div>
   </div>
   <div *ngIf="this.plate.length===0"  >
-
-
-    <div cdkDropList
-         cdkDropListOrientation="horizontal"
-         [cdkDropListData]="voidTile"
-         class="scenevide"
-         (cdkDropListDropped)="dropempty($event,0)"
-    >
-      <div cdkDrag  >
-
-      </div>
+    <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="voidTile" class="scenevide" (cdkDropListDropped)="dropempty($event,0)">
+      <div cdkDrag ></div>
     </div>
   </div>
 </mat-card>
 </div>
-
-
-
-
-
 </body>
 </html>
