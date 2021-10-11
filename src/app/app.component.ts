@@ -133,13 +133,23 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   }
 
+  dropInBag(event: CdkDragDrop<Tile[], any>, index: number): void {
+    this.board = changePosition(this.bag, event.previousContainer.data[event.previousIndex], 0, 0);
+    if (event.previousContainer !== event.container) {
+      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+    // attention : le previous peut potentiellement être le board. à gérer dans ce cas et faire filter sur board et non sur result
+
+    }
+
+    this.plate = toPlate(this.board); // j'ai pas bien compris ce que ça fait. a adapter...
+  }
+
+
   async game(): Promise<void> {
     this.player = (await this.serviceQwirkle.getPlayers(this.gamedId)).filter(player => player.id === this.player.id)[0];
+    this.signalRService.sendPlayerInGame(this.player.gameId, this.player.id);
     this.result = this.player.rack.tiles;
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
-
-    this.signalRService.sendPlayerInGame(this.player.gameId, this.player.id);
-
     this.totalScore = await this.serviceQwirkle.getPlayerTotalPoint(this.player.id);
     this.plate = toPlate(this.board);
     this.autoZoom();
