@@ -15,6 +15,8 @@
 
 <app-player-turn [playerName]="this.playerNameToPlay"></app-player-turn>
 <button class="positionValid" (click)="valid()">Valid</button>
+<button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
+<button class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
 <app-result-score [score]="this.score.points"></app-result-score>
 <app-total-score [totalScore]="this.totalScore"></app-total-score>
 <button class="positionNewGame" (click)="NewGame()">New Game</button>
