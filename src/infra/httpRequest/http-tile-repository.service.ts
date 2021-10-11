@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {PlayerTile, Tile} from '../../domain/Tile';
+import {PlayerTile, PlayerTileToSwap, Tile} from '../../domain/Tile';
 import {
   ListGamedId,
   ListNamePlayer,
   Player,
+  RestBag,
   RestBoard,
   Result,
   toBoard,
@@ -63,8 +64,18 @@ export default class HttpTileRepositoryService {
       .toPromise().then(response => toPlayers(response));
   }
 
-  playTile(playtile: PlayerTile[]): Promise<Result> {
-    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', playtile, {headers})
+  playTile(tiles: PlayerTile[]): Promise<Result> {
+    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', tiles, {headers})
+      .toPromise().then();
+  }
+
+  swapTile(tiles: PlayerTileToSwap[]): Promise<Result> {
+    return this.https.post<RestBag>('https://localhost:5001/Games/SwapTiles/', tiles, {headers})
+      .toPromise().then();
+  }
+
+  skipTurn(playerId: number): Promise<Result> {
+    return this.https.post<RestBoard>('https://localhost:5001/Games/SkipTurn/', playerId, {headers})
       .toPromise().then();
   }
 

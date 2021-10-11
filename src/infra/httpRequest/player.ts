@@ -39,10 +39,21 @@ export interface TilesOnBoard {
   color: Color;
   form: Form;
 }
+export interface TilesOnBag {
+  id: number;
+  color: Color;
+  form: Form;
+}
 
 export interface RestBoard {
 
   board: { tiles: TilesOnBoard[] };
+  players: Player[];
+}
+
+export interface RestBag {
+
+  bag: { tiles: TilesOnBag[] };
   players: Player[];
 }
 
@@ -51,6 +62,11 @@ export interface RestTilesPlay {
   tileId: number;
   x: number;
   y: number;
+}
+
+export interface RestTilesSwap {
+  playerId: number;
+  tileId: number;
 }
 
 export const toBoard = (result: RestBoard): Tile[] => {
@@ -65,7 +81,10 @@ export const toPlayers = (result: RestBoard): Player[] => {
   return result.players;
 };
 export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {
-  return result.map<RestTilesPlay>(tile1 => ({playerId, tileId: tile1.id, x: tile1.x, y: tile1.y}));
+  return result.map<RestTilesPlay>(tile => ({playerId, tileId: tile.id, x: tile.x, y: tile.y}));
+};
+export const fromBag = (result: Tile[], playerId: number): RestTilesSwap[] => {
+  return result.map<RestTilesSwap>(tile => ({playerId, tileId: tile.id}));
 };
 
 export interface Result {

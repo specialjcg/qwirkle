@@ -22,7 +22,11 @@ export type PlayerTile = {
   tileId: number,
   x: number,
   y: number
+};
 
+export type PlayerTileToSwap = {
+  playerId: number,
+  tileId: number,
 };
 
 
