@@ -57,6 +57,10 @@ export interface RestBag {
   players: Player[];
 }
 
+export interface RestSkipTurn {
+  playerId: number;
+}
+
 export interface RestTilesPlay {
   playerId: number;
   tileId: number;
