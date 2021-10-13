@@ -27,6 +27,7 @@ constructor(private serviceHttp: HttpTileRepositoryService) {
     this.hubConnection.on('ReceiveTilesPlayed', (playerId: number, tilesPlayed: any[]) => { receiveTilesPlayed(playerId, tilesPlayed); });
     this.hubConnection.on('ReceiveTilesSwapped', (playerId: number) => { receiveTilesSwapped(playerId); });
     this.hubConnection.on('ReceivePlayerIdTurn', (playerId: number) => { receivePlayerIdTurn(playerId); });
+    this.hubConnection.on('ReceiveGameOver', (winnersPlayersIds: number[]) => { receiveGameOver(winnersPlayersIds); });
   }
 
   public sendPlayerInGame = (gameId: number, playerId: number) => {
@@ -51,11 +52,16 @@ const receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
   });
 };
 
-function receiveTilesSwapped(playerId: number): void {
+const receiveTilesSwapped = (playerId: number) => {
   console.log('player ' + playerId + 'has swapped some tiles');
-}
+};
 
 const receivePlayerIdTurn = (playerId: number) => {
   console.log('it\'s playerId ' + playerId + ' turn');
+};
+
+const receiveGameOver = (winnerPlayersIds: number[]) => {
+  winnerPlayersIds.forEach(playerId => { console.log('playerId ' + playerId + ' has win the game');
+  });
 };
 
