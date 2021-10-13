@@ -8,12 +8,13 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
   styleUrls: ['./choose-player.component.css']
 })
 export class ChoosePlayerComponent implements OnInit {
-  @Input() player: Player;
   @Input() gameId: number;
+  @Input() nameToTurn: string;
+  @Input() score: number;
   @Output() playerChange = new EventEmitter<Player>();
   players: Player[] = [];
   names: ListNamePlayer = {listNamePlayer: []};
-  name: string = "";
+
 
   constructor(public service: HttpTileRepositoryService) {
 
@@ -22,12 +23,13 @@ export class ChoosePlayerComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.players = await this.service.getPlayers(this.gameId);
     this.names = await this.service.getPlayerName(this.gameId);
+
   }
 
-  newPlayer(i : number): void {
-    this.name = this.names.listNamePlayer[i]
-    this.player = this.players[i];
-    this.playerChange.emit(this.player);
+
+  playertoturnClass(name: string): string {
+
+      return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
   }
 
 }

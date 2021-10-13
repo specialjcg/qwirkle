@@ -20,13 +20,13 @@
 /*}*/
 .position-firstPlayer{
   position: relative;
-  top:70vh;
+  top:85vh;
   left :25vw;
   z-index: 0;
 }
 
 .container {
-  top:0;
+  top:15vh;
   position: absolute;
   z-index: 1;
   max-width: 1500px;
@@ -223,8 +223,8 @@ width:100px;
 }
 .positionPlayer{
   position: absolute;
-  left: 2vw;
-  top: 10vh;
+  top: 2vh;
+left: 20vw;
 }
 button {
   position: absolute;

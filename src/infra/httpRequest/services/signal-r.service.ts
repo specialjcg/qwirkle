@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
+import {toPlate} from '../../../domain/Tile';
+import HttpTileRepositoryService from '../http-tile-repository.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -7,7 +9,10 @@ import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
 export class SignalRService {
 
 private hubConnection: HubConnection;
-
+private serviceHttpHub: HttpTileRepositoryService;
+constructor(private serviceHttp: HttpTileRepositoryService) {
+  this.serviceHttpHub = serviceHttp;
+}
   public startConnection = () => {
     const builder = new HubConnectionBuilder();
     this.hubConnection = builder
@@ -35,9 +40,14 @@ const receivePlayersInGame = (players: any[]) => {
   });
 };
 
-const receiveTilesPlayed = (playerId: number, tilesPlayed: any[]) => {
+const receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
+  this.board = await this.serviceHttpHub.getGames(23);
+  this.plate = toPlate(this.board);
+  this.autoZoom();
   console.log(playerId + ' has played:');
-  tilesPlayed.forEach(tilePlayed => { console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: ' + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
+  tilesPlayed.forEach(tilePlayed => {
+    console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
+      + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
   });
 };
 
