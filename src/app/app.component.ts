@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBoard, fromBag, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
+import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
 import panzoom from 'panzoom';
 
 
@@ -29,12 +29,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
   panZoomController;
-  score: Result = {
-    code: 0,
-    tilesPlayed: [],
-    newRack: [],
-    points: 0
-  };
+  score: Result ;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gamedId = 0;
@@ -51,9 +46,13 @@ export class AppComponent implements AfterViewInit, OnInit {
   nameToTurn: string;
 
 
-
   constructor(public signalRService: SignalRService, private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
-
+    this.score = {
+      code: 0,
+      tilesPlayed: [],
+      newRack: [],
+      points: 0
+    };
   }
 
   ngOnInit(): void {
@@ -72,14 +71,31 @@ export class AppComponent implements AfterViewInit, OnInit {
     const topLeft = {x: 0, y: 0};
     this.panZoomController = panzoom(this.scene.nativeElement, {transformOrigin: topLeft, zoomDoubleClickSpeed: 1});
     const shelveDisplay = document.querySelector('.container');
-    const Xmax = shelveDisplay.clientWidth / this.plate.length;
-    const Ymax = shelveDisplay.clientHeight / this.plate.length;
-
-
-    this.panZoomController.zoomAbs(0, 0, Ymax / 100);
-    this.panZoomController.moveTo(0, shelveDisplay.clientHeight / 2 + 100 * (1 - 1 / Ymax));
-
-
+    const xmin: number = Math.min(...this.board.map(tile => tile.x));
+    const xmax = Math.max(...this.board.map(tile => tile.x));
+    const ymin = Math.min(...this.board.map(tile => tile.y));
+    const ymax = Math.max(...this.board.map(tile => tile.y));
+    const Xmax = shelveDisplay.clientWidth / (xmax - xmin);
+    const Ymax = shelveDisplay.clientHeight / ((ymax - ymin));
+    let coef = 0;
+    let width = 0;
+    let height = 0;
+    if ((ymax - ymin) > (xmax - xmin)) {
+      coef = Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin))) / shelveDisplay.clientHeight;
+      width = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
+      height = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
+    } else {
+      coef = Math.abs((shelveDisplay.clientWidth - (80 * (ymax - ymin)))) / shelveDisplay.clientWidth;
+      width = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
+      height = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
+    }
+    if ((ymax - ymin) === 0) {
+      this.panZoomController.moveTo(shelveDisplay.clientWidth / 10, shelveDisplay.clientHeight);
+      this.panZoomController.zoomAbs(0, 0, coef); }
+else{
+    this.panZoomController.moveTo(width / 2, height);
+    this.panZoomController.zoomAbs(0, 0, coef);
+  }
   }
 
 
@@ -90,8 +106,9 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   getLineStyle(line: Tile[]): string {
     if (line[0] !== undefined) {
-      // return 'transform:translateX(' + -line[i].y * 100 + 'px);';
+      // return 'transform:translateX(' + -line[0].y * 100 + 'px);';
       return 'translate(' + 0 + 'px,' + line[0].y * 100 + 'px)';
+      // return '';
     }
     // // if (line[i] !== undefined) { return 'transform:translate(' + 1400 + 'px,' + 500 + 'px);'; }
     // console.log(i);
@@ -139,7 +156,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.board = changePosition(this.bag, event.previousContainer.data[event.previousIndex], 0, 0);
     if (event.previousContainer !== event.container) {
       this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-    // attention : le previous peut potentiellement être le board. à gérer dans ce cas et faire filter sur board et non sur result
+      // attention : le previous peut potentiellement être le board. à gérer dans ce cas et faire filter sur board et non sur result
 
     }
 
@@ -148,7 +165,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
 
   async game(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay( this.gamedId ).subscribe(res => {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe(res => {
       this.nameToTurn = res;
 
     });
@@ -163,10 +180,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   async valid(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
-        this.score = resp;
+      this.score = resp;
 
-        this.getPlayerIdToPlay().then();
-        this.game().then();
+      this.getPlayerIdToPlay().then();
+      this.game().then();
       }
     );
 
@@ -211,7 +228,6 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     this.game().then();
   }
-
 
 
   getPawStyle(i: number): string {

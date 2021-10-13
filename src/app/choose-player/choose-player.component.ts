@@ -10,6 +10,7 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
 export class ChoosePlayerComponent implements OnInit {
   @Input() gameId: number;
   @Input() nameToTurn: string;
+  @Input() score: number;
   @Output() playerChange = new EventEmitter<Player>();
   players: Player[] = [];
   names: ListNamePlayer = {listNamePlayer: []};

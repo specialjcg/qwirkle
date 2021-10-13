@@ -8,12 +8,11 @@
 </head>
 <body>
 <app-new-game  class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
-<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" ></app-choose-player>
+<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
 <button class="positionValid" (click)="valid()">Valid</button>
 <button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
 <button class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
-<app-result-score [score]="this.score.points"></app-result-score>
 
 <button class="positionNewGame" (click)="NewGame()">New Game</button>
 <div cdkDropListGroup>
@@ -28,16 +27,14 @@
       </div>
     </div>
   </div>
-  <mat-card class="container">
-  <div *ngIf="this.plate.length!==0" #scene id="scene"  >
-    <div *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line)" >
-      <div class="position-secondPlayer">
+  <mat-card class="container" >
+  <div  #scene id="scene"  *ngIf="this.plate.length!==0">
+    <div class="position-secondPlayer" *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line)" >
           <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d" (cdkDropListDropped)="drop($event,i)">
             <div *ngFor="let tile of line;let j=index" class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled">
-              <app-tile-pawn  [image]="getRackTileImage(tile)"></app-tile-pawn>
+              <app-tile-pawn  [image]="getRackTileImage(tile)" ></app-tile-pawn>
             </div>
           </div>
-        </div>
     </div>
   </div>
   <div *ngIf="this.plate.length===0"  >
