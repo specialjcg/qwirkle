@@ -14,7 +14,6 @@ import {MatOptionModule} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {ChoosePlayerComponent} from './choose-player/choose-player.component';
-import {PlayerTurnComponent} from './player-turn/player-turn.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
 
 @NgModule({
@@ -25,7 +24,6 @@ import {TilePawnComponent} from './TilePawn/tile-pawn.component';
     ResultScoreComponent,
     NewGameComponent,
     ChoosePlayerComponent,
-    PlayerTurnComponent
   ],
   imports: [
     BrowserModule,

@@ -31,15 +31,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gamedId = 0;
-  player: Player = {
-    id: 0,
-    pseudo: '',
-    gameId: 0,
-    gamePosition: 0,
-    points: 0,
-    rack: {tiles: []},
-    isTurn: true
-  };
+  player: Player ;
   playerNameToPlay: string;
   nameToTurn: string;
 
@@ -51,11 +43,35 @@ export class AppComponent implements AfterViewInit, OnInit {
       newRack: [],
       points: 0
     };
+    this.player = {
+      id: 0,
+      pseudo: '',
+      gameId: 0,
+      gamePosition: 0,
+      points: 0,
+      rack: {tiles: []},
+      isTurn: true
+    };
   }
 
   ngOnInit(): void {
     this.signalRService.startConnection();
 
+    this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
+      this.receivePlayersInGame(playersIds);
+    });
+    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, tilesPlayed: any[]) => {
+      this.receiveTilesPlayed(playerId, tilesPlayed).then();
+    });
+    this.signalRService.hubConnection.on('ReceiveTilesSwapped', (playerId: number) => {
+      this.receiveTilesSwapped(playerId);
+    });
+    this.signalRService.hubConnection.on('ReceivePlayerIdTurn', (playerId: number) => {
+      this.receivePlayerIdTurn(playerId);
+    });
+    this.signalRService.hubConnection.on('ReceiveGameOver', (winnersPlayersIds: number[]) => {
+      this.receiveGameOver(winnersPlayersIds);
+    });
   }
 
 
@@ -63,6 +79,34 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   }
 
+   receivePlayersInGame = (players: any[]) => {
+    players.forEach(player => {
+      console.log('playerId ' + player.playerId + ' is in the game');
+    });
+  }
+
+   receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
+
+    console.log(playerId + ' has played:');
+    tilesPlayed.forEach(tilePlayed => {
+      console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
+        + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
+    });
+  }
+
+   receiveTilesSwapped = (playerId: number) => {
+    console.log('player ' + playerId + 'has swapped some tiles');
+  }
+
+   receivePlayerIdTurn = (playerId: number) => {
+    console.log('it\'s playerId ' + playerId + ' turn');
+  }
+
+   receiveGameOver = (winnerPlayersIds: number[]) => {
+    winnerPlayersIds.forEach(playerId => {
+      console.log('playerId ' + playerId + ' has win the game');
+    });
+  }
   autoZoom(): void {
     //
     const topLeft = {x: 0, y: 0};
@@ -152,9 +196,7 @@ export class AppComponent implements AfterViewInit, OnInit {
       this.nameToTurn = res;
 
     });
-    this.player = (await this.serviceQwirkle.getPlayers(this.gamedId)).filter(player => player.isTurn === true)[0];
-    this.signalRService.sendPlayerInGame(this.gamedId, this.player.id);
-    this.result = this.player.rack.tiles;
+
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
     this.plate = toPlate(this.board);
     this.autoZoom();
@@ -203,7 +245,11 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
   }
-
+  playerChange(event: Player): void  {
+    this.signalRService.sendPlayerInGame(this.gamedId, event.id);
+    this.player =  event;
+    this.result = this.player.rack.tiles;
+  }
 
   countChange(event: number): void {
     this.gamedId = event;
@@ -231,6 +277,8 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     });
   }
+
+
 }
 
 

@@ -8,7 +8,7 @@
 </head>
 <body>
 <app-new-game  class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
-<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
+<app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
 <button class="positionValid" (click)="valid()">Valid</button>
 <button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
