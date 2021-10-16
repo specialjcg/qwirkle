@@ -99,7 +99,10 @@
   position: absolute;
   top:0;
   left:0;
-
+  max-width: 1500px;
+  padding: 15px;
+  width: 100%;
+  height: 65vh;
 }
 .position-thirdPlayer{
   position: absolute;

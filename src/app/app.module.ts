@@ -15,6 +15,11 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {ChoosePlayerComponent} from './choose-player/choose-player.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
+import { NgxPanZoomModule } from 'ngx-panzoom';
+
+
+
+export class MyAppModule { }
 
 @NgModule({
   declarations: [
@@ -26,7 +31,7 @@ import {TilePawnComponent} from './TilePawn/tile-pawn.component';
     ChoosePlayerComponent,
   ],
   imports: [
-    BrowserModule,
+    BrowserModule, NgxPanZoomModule,
     BrowserAnimationsModule,
     MatButtonModule, HttpClientModule, DragDropModule, MatIconModule, MatOptionModule, MatSelectModule, MatCardModule
   ],

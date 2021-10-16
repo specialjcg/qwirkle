@@ -22,11 +22,14 @@
     "@angular/platform-browser-dynamic": "~12.2.10",
     "@angular/router": "~12.2.10",
     "@microsoft/signalr": "^5.0.10",
+    "deepcopy": "^2.1.0",
     "dns": "^0.2.2",
     "ngx-panzoom": "^12.0.0",
     "rxjs": "~6.5.5",
     "ts-jest": "27.0.6",
     "tslib": "^2.0.0",
+    "util": "^0.12.4",
+    "utils": "^0.3.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

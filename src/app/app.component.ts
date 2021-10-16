@@ -1,16 +1,25 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
-
-
+import { PanZoomConfig, PanZoomAPI, PanZoomModel, PanZoomConfigOptions } from 'ngx-panzoom';
+import {Subscription} from 'rxjs';
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
-
+interface Point {
+  x: number;
+  y: number;
+}
+interface Rect {
+  x: number; // the x0 (top left) coordinate
+  y: number; // the y0 (top left) coordinate
+  width: number; // the x1 (bottom right) coordinate
+  height: number; // the y1 (bottom right) coordinate
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,7 +27,7 @@ const headers = new HttpHeaders()
 })
 
 
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwirkle';
   result: Tile[] = [];
@@ -34,9 +43,24 @@ export class AppComponent implements AfterViewInit, OnInit {
   player: Player ;
   playerNameToPlay: string;
   nameToTurn: string;
-
-
-  constructor(public signalRService: SignalRService, private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
+  private panZoomConfigOptions: PanZoomConfigOptions = {
+    zoomLevels: 10,
+    scalePerZoomLevel: 2.0,
+    zoomStepDuration: 0.2,
+    freeMouseWheelFactor: 0.01,
+    zoomToFitZoomLevelFactor: 0.9,
+    dragMouseButton: 'left'
+  };
+  panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
+  panzoomModel: PanZoomModel;
+  private modelChangedSubscription: Subscription;
+  private panZoomAPI: PanZoomAPI;
+  private apiSubscription: Subscription;
+  scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
+  private pointPast: Point;
+  constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
+              private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
+    this.pointPast = { x: 0, y: 0 };
     this.score = {
       code: 0,
       tilesPlayed: [],
@@ -72,13 +96,53 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.signalRService.hubConnection.on('ReceiveGameOver', (winnersPlayersIds: number[]) => {
       this.receiveGameOver(winnersPlayersIds);
     });
+    this.modelChangedSubscription = this.panzoomConfig.modelChanged.subscribe( (model: PanZoomModel) => this.onModelChanged(model) );
+    this.apiSubscription = this.panzoomConfig.api.subscribe( (api: PanZoomAPI) => this.panZoomAPI = api );
   }
 
-
+  onModelChanged(model: PanZoomModel): void {
+    this.panzoomModel = model;
+    this.scale = this.getCssScale(this.panzoomModel.zoomLevel);
+    this.changeDetector.markForCheck();
+    this.changeDetector.detectChanges();
+  }
+  private getCssScale(zoomLevel: any): number {
+    return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
+  }
   ngAfterViewInit(): void {
+    this.resetZoomToFit();
+    this.changeDetector.detectChanges();
+  }
+  resetZoomToFit(): void {
+    const height = this.scene.nativeElement.clientHeight;
+    const width = this.scene.nativeElement.clientWidth;
+
+    this.panzoomConfig.initialZoomToFit = {
+      x: 0,
+      y: 0,
+      width,
+      height
+    };
+
+    // const xmin: number = Math.min(...this.board.map(tile => tile.x));
+    // const xmax = Math.max(...this.board.map(tile => tile.x));
+    // const ymin = Math.min(...this.board.map(tile => tile.y));
+    // const ymax = Math.max(...this.board.map(tile => tile.y));
+    // // let coef = 0;
+    // let widthTiles = 0;
+    // let heightTiles = 0;
+    // if ((ymax - ymin) > (xmax - xmin)) {
+    //   // coef = Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin))) / shelveDisplay.clientHeight;
+    //   widthTiles = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
+    //   heightTiles = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
+    // } else {
+    //   // coef = Math.abs((shelveDisplay.clientWidth - (80 * (ymax - ymin)))) / shelveDisplay.clientWidth;
+    //   widthTiles = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
+    //   heightTiles = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
+    // }
+
 
   }
-
    receivePlayersInGame = (players: any[]) => {
     players.forEach(player => {
       console.log('playerId ' + player.playerId + ' is in the game');
@@ -108,27 +172,18 @@ export class AppComponent implements AfterViewInit, OnInit {
     });
   }
   autoZoom(): void {
-    //
-    const topLeft = {x: 0, y: 0};
-    const shelveDisplay = document.querySelector('.container');
+    const Gx: number = this.board.reduce((acc, tile) => acc + tile.x, 0);
+    const Gy: number = this.board.reduce((acc, tile) => acc + tile.y, 0);
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
     const xmax = Math.max(...this.board.map(tile => tile.x));
     const ymin = Math.min(...this.board.map(tile => tile.y));
     const ymax = Math.max(...this.board.map(tile => tile.y));
-    const Xmax = shelveDisplay.clientWidth / (xmax - xmin);
-    const Ymax = shelveDisplay.clientHeight / ((ymax - ymin));
-    let coef = 0;
-    let width = 0;
-    let height = 0;
-    if ((ymax - ymin) > (xmax - xmin)) {
-      coef = Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin))) / shelveDisplay.clientHeight;
-      width = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
-      height = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
-    } else {
-      coef = Math.abs((shelveDisplay.clientWidth - (80 * (ymax - ymin)))) / shelveDisplay.clientWidth;
-      width = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
-      height = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
-    }
+    const shelveDisplay = document.querySelector('.container');
+    const pointDist: Point = { x: Gx * 10 + Math.abs(xmax - xmin) * 100, y: Gy * 10 - Math.abs(ymax - ymin) * 100};
+    const pointDist2: Point = { x: shelveDisplay.clientWidth - xmin * 100 + Math.abs(xmax - xmin) * 100, y: -(ymax - ymin) * 50 };
+
+    this.panZoomAPI.panToPoint( pointDist2 );
+    this.changeDetector.detectChanges();
 
   }
 
@@ -138,9 +193,9 @@ export class AppComponent implements AfterViewInit, OnInit {
     return '../../assets/img/' + toNameImage(tile);
   }
 
-  getLineStyle(line: Tile[]): string {
+  getLineStyle(line: Tile[], i: number): string {
     if (line[0] !== undefined) {
-      return 'translate(' + 0 + 'px,' + line[0].y * 100 + 'px)';
+      return 'translate(' + 0 + 'px,' + i * 100 + 'px)';
     }
 
   }
@@ -199,7 +254,6 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
     this.plate = toPlate(this.board);
-    this.autoZoom();
   }
 
   async valid(): Promise<void> {
@@ -249,13 +303,17 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.signalRService.sendPlayerInGame(this.gamedId, event.id);
     this.player =  event;
     this.result = this.player.rack.tiles;
+
   }
 
   countChange(event: number): void {
     this.gamedId = event;
     this.getPlayerIdToPlay().then();
 
-    this.game().then();
+
+    this.game().then(() =>
+      this.autoZoom());
+
   }
 
 
@@ -277,7 +335,10 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     });
   }
-
+  ngOnDestroy(): void {
+    this.modelChangedSubscription.unsubscribe();
+    this.apiSubscription.unsubscribe();
+  }
 
 }
 
