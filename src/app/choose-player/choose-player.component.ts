@@ -11,7 +11,7 @@ export class ChoosePlayerComponent implements OnInit {
   @Input() gameId: number;
   @Input() nameToTurn: string;
   @Input() score: number;
-  @Output() playerChange = new EventEmitter<Player>();
+  @Output() playerSelectChange = new EventEmitter<Player>();
   players: Player[] = [];
   names: ListNamePlayer = {listNamePlayer: []};
 
@@ -32,4 +32,7 @@ export class ChoosePlayerComponent implements OnInit {
       return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
   }
 
+  playerChoice(player: Player): void {
+    this.playerSelectChange.emit(player);
+  }
 }

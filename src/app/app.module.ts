@@ -14,8 +14,12 @@ import {MatOptionModule} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {ChoosePlayerComponent} from './choose-player/choose-player.component';
-import {PlayerTurnComponent} from './player-turn/player-turn.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
+import { NgxPanZoomModule } from 'ngx-panzoom';
+
+
+
+export class MyAppModule { }
 
 @NgModule({
   declarations: [
@@ -25,10 +29,9 @@ import {TilePawnComponent} from './TilePawn/tile-pawn.component';
     ResultScoreComponent,
     NewGameComponent,
     ChoosePlayerComponent,
-    PlayerTurnComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule, NgxPanZoomModule,
     BrowserAnimationsModule,
     MatButtonModule, HttpClientModule, DragDropModule, MatIconModule, MatOptionModule, MatSelectModule, MatCardModule
   ],
