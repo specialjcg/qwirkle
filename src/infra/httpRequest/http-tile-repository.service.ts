@@ -68,6 +68,11 @@ export default class HttpTileRepositoryService {
       .toPromise().then();
   }
 
+  playTileSimulation(tiles: PlayerTile[]): Promise<Result> {
+    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTilesSimulation/', tiles, {headers})
+      .toPromise().then();
+  }
+
   swapTile(tiles: PlayerTileToSwap[]): Promise<Result> {
     return this.https.post<RestBag>('https://localhost:5001/Games/SwapTiles/', tiles, {headers})
       .toPromise().then();
