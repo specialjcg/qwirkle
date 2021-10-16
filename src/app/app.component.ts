@@ -110,7 +110,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     } else {
       this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-
+      this.validSimulation();
 
     }
     this.plate = toPlate(this.board);
@@ -164,7 +164,17 @@ export class AppComponent implements AfterViewInit, OnInit {
         this.getPlayerIdToPlay().then();
       }
     );
+  }
 
+  async validSimulation(): Promise<void> {
+    this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
+    if (this.playTile.length > 0) {
+      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => { this.score = resp; console.log(this.score.points); /*TODO remove log*/} );
+    }
+    else {
+      this.score.points = 0;
+      console.log(this.score.points); //TODO remove log
+    }
   }
 
   async swapTiles(): Promise<void> {
@@ -195,6 +205,7 @@ export class AppComponent implements AfterViewInit, OnInit {
         event.previousIndex,
         event.currentIndex);
       this.plate = toPlate(this.board);
+      this.validSimulation();
     }
 
   }
