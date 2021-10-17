@@ -12,7 +12,6 @@ import {
   toPlayers,
   toWebPlayer,
   toWebTiles,
-  toWebTotalPoint
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -45,12 +44,6 @@ export default class HttpTileRepositoryService {
   getPlayerId(gameId: number): Promise<number> {
     return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
       .toPromise().then(response => toWebPlayer(response));
-  }
-
-
-  getPlayerTotalPoint(gameId: number): Promise<number> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebTotalPoint(response));
   }
 
   getGames(GameId: number): Promise<Tile[]> {

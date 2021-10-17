@@ -8,15 +8,14 @@ export interface Player {
   gameId: number;
   gamePosition: number;
   points: number;
+  lastTurnPoints : number;
   rack: { tiles: Tile[] };
   isTurn: boolean;
 }
 export const toWebPlayer = (result: Player): number => {
   return result.id;
 };
-export const toWebTotalPoint = (result: Player): number => {
-  return result.points;
-};
+
 export const toWebTiles = (result: Player): Tile[] => {
   return result.rack.tiles.map(tile => ({
     id: tile.id,

@@ -6,7 +6,7 @@
   </mat-card-title-group>
   <mat-card-content >
     <app-total-score [totalScore]="this.players[i].points"></app-total-score>&nbsp;
-    <app-result-score  [score]="this.score"></app-result-score>
+    <app-result-score  [score]="this.players[i].lastTurnPoints"></app-result-score>
   </mat-card-content>
 </mat-card>
 </div>

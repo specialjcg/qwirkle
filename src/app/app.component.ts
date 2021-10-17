@@ -73,6 +73,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       gameId: 0,
       gamePosition: 0,
       points: 0,
+      lastTurnPoints : 0,
       rack: {tiles: []},
       isTurn: true
     };
@@ -145,30 +146,29 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
    receivePlayersInGame = (players: any[]) => {
     players.forEach(player => {
-      console.log('playerId ' + player.playerId + ' is in the game');
+      console.log('playerId ' + player.playerId + ' is in the game'); //TODO replace log
     });
   }
 
    receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
-
-    console.log(playerId + ' has played:');
+    console.log(playerId + ' has played:'); //TODO replace log
     tilesPlayed.forEach(tilePlayed => {
       console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
-        + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
+        + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y); //TODO replace log
     });
   }
 
    receiveTilesSwapped = (playerId: number) => {
-    console.log('player ' + playerId + 'has swapped some tiles');
+    console.log('player ' + playerId + 'has swapped some tiles'); //TODO replace log
   }
 
    receivePlayerIdTurn = (playerId: number) => {
-    console.log('it\'s playerId ' + playerId + ' turn');
+    console.log('it\'s playerId ' + playerId + ' turn'); //TODO replace log
   }
 
    receiveGameOver = (winnerPlayersIds: number[]) => {
     winnerPlayersIds.forEach(playerId => {
-      console.log('playerId ' + playerId + ' has win the game');
+      console.log('playerId ' + playerId + ' has win the game'); //TODO replace log
     });
   }
   autoZoom(): void {
