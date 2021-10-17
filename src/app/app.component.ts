@@ -57,10 +57,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
   scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
-  private pointPast: Point;
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
-    this.pointPast = { x: 0, y: 0 };
     this.score = {
       code: 0,
       tilesPlayed: [],
@@ -124,22 +122,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       height
     };
 
-    // const xmin: number = Math.min(...this.board.map(tile => tile.x));
-    // const xmax = Math.max(...this.board.map(tile => tile.x));
-    // const ymin = Math.min(...this.board.map(tile => tile.y));
-    // const ymax = Math.max(...this.board.map(tile => tile.y));
-    // // let coef = 0;
-    // let widthTiles = 0;
-    // let heightTiles = 0;
-    // if ((ymax - ymin) > (xmax - xmin)) {
-    //   // coef = Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin))) / shelveDisplay.clientHeight;
-    //   widthTiles = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
-    //   heightTiles = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
-    // } else {
-    //   // coef = Math.abs((shelveDisplay.clientWidth - (80 * (ymax - ymin)))) / shelveDisplay.clientWidth;
-    //   widthTiles = shelveDisplay.clientWidth - Math.abs((shelveDisplay.clientWidth - (80 * (xmax - xmin))));
-    //   heightTiles = shelveDisplay.clientHeight - Math.abs(shelveDisplay.clientHeight - (80 * (ymax - ymin)));
-    // }
+
 
 
   }
@@ -172,16 +155,28 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
   autoZoom(): void {
-    const Gx: number = this.board.reduce((acc, tile) => acc + tile.x, 0);
-    const Gy: number = this.board.reduce((acc, tile) => acc + tile.y, 0);
+    this.resetZoomToFit();
+    this.changeDetector.detectChanges();
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
     const xmax = Math.max(...this.board.map(tile => tile.x));
     const ymin = Math.min(...this.board.map(tile => tile.y));
     const ymax = Math.max(...this.board.map(tile => tile.y));
     const shelveDisplay = document.querySelector('.container');
-    const pointDist: Point = { x: Gx * 10 + Math.abs(xmax - xmin) * 100, y: Gy * 10 - Math.abs(ymax - ymin) * 100};
-    const pointDist2: Point = { x: shelveDisplay.clientWidth - xmin * 100 + Math.abs(xmax - xmin) * 100, y: -(ymax - ymin) * 50 };
+    let pointDist2: Point;
+    if (ymin >= 0){
+      if (xmin <= 0){
+        pointDist2 = { x: 1000 ,
+          y: -300 };
 
+
+      }else{
+     pointDist2 = { x: 1200,
+      y: -200 };
+    }
+  }else{
+      pointDist2 = { x: 1500,
+        y: 100 };
+    }
     this.panZoomAPI.panToPoint( pointDist2 );
     this.changeDetector.detectChanges();
 
