@@ -85,8 +85,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
       this.receivePlayersInGame(playersIds);
     });
-    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, tilesPlayed: any[]) => {
-      this.receiveTilesPlayed(playerId, tilesPlayed).then();
+    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+      this.receiveTilesPlayed(playerId, scoredPoints, tilesPlayed).then();
     });
     this.signalRService.hubConnection.on('ReceiveTilesSwapped', (playerId: number) => {
       this.receiveTilesSwapped(playerId);
@@ -150,8 +150,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-   receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
-    console.log(playerId + ' has played:'); //TODO replace log
+   receiveTilesPlayed = async (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+    console.log(playerId + ' played for ' + scoredPoints + ' points with :'); //TODO replace log
     tilesPlayed.forEach(tilePlayed => {
       console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
         + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y); //TODO replace log
