@@ -38,7 +38,6 @@ export class ChoosePlayerComponent implements OnInit {
   }
 
   isNameTurn(): boolean {
-    console.log(this.nameToTurn);
     return this.nameToTurn !== '' && this.nameToTurn !== null;
   }
 }

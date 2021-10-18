@@ -54,7 +54,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     zoomStepDuration: 0.2,
     freeMouseWheelFactor: 0.01,
     zoomToFitZoomLevelFactor: 0.9,
-    dragMouseButton: 'left'
+    dragMouseButton: 'right'
   };
   panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
   scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
@@ -217,12 +217,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     return   Math.max(...this.board.map(tile => tile.x));
   }
 
-  private zoomOut(): void {
-    if ((this.getYmax() - this.getYmin()) > 7){
-      this.panZoomAPI.zoomOut();
-   }
-    this.changeDetector.detectChanges();
-  }
+
 
   getRackTileImage(tile: Tile): string {
 
