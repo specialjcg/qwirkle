@@ -4,6 +4,11 @@
   height: 80px;
   gap: 10px;
 }
+.player{
+  position: absolute;
+  top: 8vh;
+  left:-18vw;
+}
 .card-group {
 
 
@@ -42,4 +47,23 @@
   font-weight: 400;
   letter-spacing: 2px;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+.playerToTurn{
+  position: absolute;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 80px;
+  text-align: center;
+  height: 80px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  top: 0;
+  width:150px;
+  border-radius: 25px;
+  left:50vw;
+  box-shadow: rgb(38, 57, 77) 0 20px 30px -10px;
+  background: #A1FFCE;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FAFFD1, #A1FFCE);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FAFFD1, #A1FFCE); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }

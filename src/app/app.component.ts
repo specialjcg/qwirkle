@@ -5,21 +5,25 @@ import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
-import { PanZoomConfig, PanZoomAPI, PanZoomModel, PanZoomConfigOptions } from 'ngx-panzoom';
+import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
+
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
+
 interface Point {
   x: number;
   y: number;
 }
+
 interface Rect {
   x: number; // the x0 (top left) coordinate
   y: number; // the y0 (top left) coordinate
   width: number; // the x1 (bottom right) coordinate
   height: number; // the y1 (bottom right) coordinate
 }
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -36,13 +40,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Result ;
+  score: Result;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gamedId = 0;
-  player: Player ;
+  player: Player;
   playerNameToPlay: string;
   nameToTurn: string;
+  panzoomModel: PanZoomModel;
   private panZoomConfigOptions: PanZoomConfigOptions = {
     zoomLevels: 10,
     scalePerZoomLevel: 2.0,
@@ -52,11 +57,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     dragMouseButton: 'left'
   };
   panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
-  panzoomModel: PanZoomModel;
+  scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
-  scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
+
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
     this.score = {
@@ -65,6 +70,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       newRack: [],
       points: 0
     };
+    this.nameToTurn = '';
     this.player = {
       id: 0,
       pseudo: '',
@@ -94,8 +100,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.signalRService.hubConnection.on('ReceiveGameOver', (winnersPlayersIds: number[]) => {
       this.receiveGameOver(winnersPlayersIds);
     });
-    this.modelChangedSubscription = this.panzoomConfig.modelChanged.subscribe( (model: PanZoomModel) => this.onModelChanged(model) );
-    this.apiSubscription = this.panzoomConfig.api.subscribe( (api: PanZoomAPI) => this.panZoomAPI = api );
+    this.modelChangedSubscription = this.panzoomConfig.modelChanged.subscribe((model: PanZoomModel) => this.onModelChanged(model));
+    this.apiSubscription = this.panzoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
   }
 
   onModelChanged(model: PanZoomModel): void {
@@ -104,13 +110,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.changeDetector.markForCheck();
     this.changeDetector.detectChanges();
   }
-  private getCssScale(zoomLevel: any): number {
-    return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
-  }
+
   ngAfterViewInit(): void {
     this.resetZoomToFit();
     this.changeDetector.detectChanges();
   }
+
   resetZoomToFit(): void {
     const height = this.scene.nativeElement.clientHeight;
     const width = this.scene.nativeElement.clientWidth;
@@ -123,16 +128,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     };
 
 
-
-
   }
-   receivePlayersInGame = (players: any[]) => {
+
+  receivePlayersInGame = (players: any[]) => {
     players.forEach(player => {
       console.log('playerId ' + player.playerId + ' is in the game');
     });
   }
 
-   receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
+  receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
 
     console.log(playerId + ' has played:');
     tilesPlayed.forEach(tilePlayed => {
@@ -141,47 +145,84 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-   receiveTilesSwapped = (playerId: number) => {
+  receiveTilesSwapped = (playerId: number) => {
     console.log('player ' + playerId + 'has swapped some tiles');
   }
 
-   receivePlayerIdTurn = (playerId: number) => {
+  receivePlayerIdTurn = (playerId: number) => {
     console.log('it\'s playerId ' + playerId + ' turn');
   }
 
-   receiveGameOver = (winnerPlayersIds: number[]) => {
+  receiveGameOver = (winnerPlayersIds: number[]) => {
     winnerPlayersIds.forEach(playerId => {
       console.log('playerId ' + playerId + ' has win the game');
     });
   }
-  autoZoom(): void {
+
+  async autoZoom(): Promise<void> {
     this.resetZoomToFit();
     this.changeDetector.detectChanges();
+    const height = this.scene.nativeElement.clientHeight;
+    const width = this.scene.nativeElement.clientWidth;
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
-    const xmax = Math.max(...this.board.map(tile => tile.x));
-    const ymin = Math.min(...this.board.map(tile => tile.y));
-    const ymax = Math.max(...this.board.map(tile => tile.y));
+    const xmax = this.xmax();
+    const ymin = this.getYmin();
+    const ymax = this.getYmax();
     const shelveDisplay = document.querySelector('.container');
-    let pointDist2: Point;
-    if (ymin >= 0){
-      if (xmin <= 0){
-        pointDist2 = { x: 1000 ,
-          y: -300 };
+    if (ymin >= 0) {
+      if (xmin <= 0) {
 
 
-      }else{
-     pointDist2 = { x: 1200,
-      y: -200 };
+        this.panZoomAPI.zoomToFit({
+          x: 300,
+          y: -600,
+          width,
+          height
+        });
+
+      } else {
+
+        this.panZoomAPI.zoomToFit({
+          x: 600,
+          y: -400,
+          width,
+          height
+        });
+      }
+    } else {
+
+      this.panZoomAPI.zoomToFit({
+        x: 400,
+        y: -500,
+        width,
+        height: height * 2
+      });
     }
-  }else{
-      pointDist2 = { x: 1500,
-        y: 100 };
-    }
-    this.panZoomAPI.panToPoint( pointDist2 );
+
+
     this.changeDetector.detectChanges();
+
 
   }
 
+  private getYmin(): number {
+    return Math.min(...this.board.map(tile => tile.y));
+  }
+
+  private getYmax(): number {
+    return Math.max(...this.board.map(tile => tile.y));
+  }
+
+  private xmax(): number {
+    return   Math.max(...this.board.map(tile => tile.x));
+  }
+
+  private zoomOut(): void {
+    if ((this.getYmax() - this.getYmin()) > 7){
+      this.panZoomAPI.zoomOut();
+   }
+    this.changeDetector.detectChanges();
+  }
 
   getRackTileImage(tile: Tile): string {
 
@@ -194,7 +235,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
   }
-
 
   drop(event: CdkDragDrop<Tile[], any>, index: number): void {
 
@@ -240,7 +280,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.plate = toPlate(this.board); // j'ai pas bien compris ce que ça fait. a adapter...
   }
 
-
   async game(): Promise<void> {
     this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe(res => {
       this.nameToTurn = res;
@@ -254,10 +293,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   async valid(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
     this.serviceQwirkle.playTile(this.playTile).then((resp) => {
-      this.score = resp;
+        this.score = resp;
 
-      this.getPlayerIdToPlay().then();
-      this.game().then();
+        this.getPlayerIdToPlay().then();
+        this.game().then();
       }
     );
 
@@ -280,7 +319,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     );
   }
 
-
   dropResult(event: CdkDragDrop<Tile[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -294,23 +332,23 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
   }
-  playerChange(event: Player): void  {
+
+  playerChange(event: Player): void {
     this.signalRService.sendPlayerInGame(this.gamedId, event.id);
-    this.player =  event;
+    this.player = event;
     this.result = this.player.rack.tiles;
 
   }
 
-  countChange(event: number): void {
+   countChange(event: number): void {
     this.gamedId = event;
     this.getPlayerIdToPlay().then();
+    this.nameToTurn = '';
 
-
-    this.game().then(() =>
-      this.autoZoom());
+    this.game().then( () =>
+       this.autoZoom().then());
 
   }
-
 
   getPawStyle(i: number): string {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';
@@ -330,9 +368,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     });
   }
+
   ngOnDestroy(): void {
     this.modelChangedSubscription.unsubscribe();
     this.apiSubscription.unsubscribe();
+  }
+
+  private getCssScale(zoomLevel: any): number {
+    return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
   }
 
 }
