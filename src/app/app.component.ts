@@ -137,8 +137,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
-this.game().then();
+  receiveTilesPlayed = async (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+    this.game().then();
     // console.log(playerId + ' has played:');
     // tilesPlayed.forEach(tilePlayed => {
     //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
