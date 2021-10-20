@@ -34,7 +34,7 @@ interface Rect {
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwirkle';
-  result: Tile[] = [];
+  rack: Tile[] = [];
   board: Tile[] = [];
   bag: Tile[] = [];
   plate: Tile[][] = [[]];
@@ -137,12 +137,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesPlayed = async (playerId: number, tilesPlayed: any[]) => {
-
-    console.log(playerId + ' has played:');
-    tilesPlayed.forEach(tilePlayed => {
-      console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
-        + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
-    });
+this.game().then();
+    // console.log(playerId + ' has played:');
+    // tilesPlayed.forEach(tilePlayed => {
+    //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
+    //     + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
+    // });
   }
 
   receiveTilesSwapped = (playerId: number) => {
@@ -240,7 +240,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
     } else {
-      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+      this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
 
     }
@@ -254,7 +254,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
     } else {
-      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+      this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
 
     }
@@ -267,7 +267,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   dropInBag(event: CdkDragDrop<Tile[], any>, index: number): void {
     this.board = changePosition(this.bag, event.previousContainer.data[event.previousIndex], 0, 0);
     if (event.previousContainer !== event.container) {
-      this.result = this.result.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
+      this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
       // attention : le previous peut potentiellement être le board. à gérer dans ce cas et faire filter sur board et non sur result
 
     }
@@ -283,15 +283,20 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.board = await this.serviceQwirkle.getGames(this.gamedId);
     this.plate = toPlate(this.board);
+
   }
 
   async valid(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
-    this.serviceQwirkle.playTile(this.playTile).then((resp) => {
+    this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
         this.score = resp;
 
         this.getPlayerIdToPlay().then();
         this.game().then();
+        await this.serviceQwirkle.getPlayers(this.gamedId).then((result) => {
+          this.player = result.filter(player => player.id === this.player.id)[0];
+          this.rack = this.player.rack.tiles;
+        });
       }
     );
 
@@ -331,7 +336,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   playerChange(event: Player): void {
     this.signalRService.sendPlayerInGame(this.gamedId, event.id);
     this.player = event;
-    this.result = this.player.rack.tiles;
+    this.rack = this.player.rack.tiles;
 
   }
 
