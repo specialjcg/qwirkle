@@ -7,7 +7,7 @@
   <title>Qwirkle</title>
 </head>
 <body>
-<app-new-game  class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
+<app-new-game    class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
 <app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
 <button class="positionValid" (click)="valid()">Valid</button>
@@ -19,8 +19,8 @@
   <div  class="position-firstPlayer" >
     <div class="example-container">
       <div>
-        <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.result" class="example-list2d" (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of result;let i=index">
+        <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.rack" class="example-list2d" (cdkDropListDropped)="dropResult($event)">
+          <div *ngFor="let tile of rack;let i=index">
             <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d" cdkDrag ></app-tile-pawn>
           </div>
         </div>
@@ -32,21 +32,22 @@
 
     <div  #scene id="scene" *ngIf="this.plate.length!==0">
     <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
-    <pan-zoom [config]="panzoomConfig">
-    <div class="position-secondPlayer" *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line,i)" >
-          <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d" (cdkDropListDropped)="drop($event,i)">
-            <div *ngFor="let tile of line;let j=index" class="example-box2d" cdkDrag [cdkDragDisabled]="!tile.disabled">
-              <app-tile-pawn  [image]="getRackTileImage(tile)" ></app-tile-pawn>
+      <pan-zoom [config]="panzoomConfig">
+      <div class="position-secondPlayer" *ngFor="let line of plate;let i=index" [style.transform]="getLineStyle(line,i)" >
+         <div cdkDropList cdkDropListOrientation="horizontal"  [cdkDropListData]="line" class="example-list2d" (cdkDropListDropped)="drop($event,i)">
+             <div *ngFor="let tile of line;let j=index" cdkDrag class="example-box2d" [cdkDragDisabled]="!tile.disabled">
+                <app-tile-pawn  [image]="getRackTileImage(tile)"  ></app-tile-pawn>
+              </div>
             </div>
-          </div>
-    </div> </pan-zoom></div>
-
-
+      </div>
+      </pan-zoom>
+    </div>
+</div>
   <div *ngIf="this.plate.length===0"  >
     <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="voidTile" class="scenevide" (cdkDropListDropped)="dropempty($event,0)">
       <div cdkDrag ></div>
     </div>
-  </div></div>
+  </div>
 </mat-card>
 </div>
 </body>

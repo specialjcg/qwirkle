@@ -14,6 +14,7 @@ export class ChoosePlayerComponent implements OnInit {
   @Output() playerSelectChange = new EventEmitter<Player>();
   players: Player[] = [];
   names: ListNamePlayer = {listNamePlayer: []};
+  nameToPlay = '';
 
 
   constructor(public service: HttpTileRepositoryService) {
@@ -27,12 +28,16 @@ export class ChoosePlayerComponent implements OnInit {
   }
 
 
-  playertoturnClass(name: string): string {
-
+  playerToTurnClass(name: string): string {
       return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
   }
 
-  playerChoice(player: Player): void {
+  playerChoice(player: Player, name: string): void {
+    this.nameToPlay = name;
     this.playerSelectChange.emit(player);
+  }
+
+  isNameTurn(): boolean {
+    return this.nameToTurn !== '' && this.nameToTurn !== null;
   }
 }

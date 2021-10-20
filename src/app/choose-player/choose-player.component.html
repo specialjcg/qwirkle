@@ -1,5 +1,5 @@
 <div class="box" >
-<mat-card (click)="playerChoice(this.players[i])"  [ngClass]="playertoturnClass(name)" *ngFor="let name of this.names.listNamePlayer;let i=index"  >
+<mat-card [ngClass]="playerToTurnClass(name)" *ngFor="let name of this.names.listNamePlayer;let i=index"  >
   <mat-card-title-group class="card"   >
     <mat-card-title class="name">  {{name}} </mat-card-title>
 
@@ -9,4 +9,21 @@
     <app-result-score  [score]="this.players[i].lastTurnPoints"></app-result-score>
   </mat-card-content>
 </mat-card>
+
+<div class="player">
+<h4>Choose Player</h4>
+<h4 *ngIf="this.nameToPlay!==''">{{this.nameToPlay}} you are connected</h4>
+<mat-form-field appearance="fill">
+  <mat-label>PlayerName</mat-label>
+  <mat-select [(value)]="this.nameToPlay" >
+    <mat-option *ngFor="let player of this.players;let i=index"  [value]=player (click)="playerChoice(this.players[i],this.names.listNamePlayer[i])">
+      {{this.names.listNamePlayer[i]}}
+    </mat-option>
+  </mat-select>
+</mat-form-field></div>
+
+</div>
+<div *ngIf="isNameTurn()" class="playerToTurn">
+  Is {{this.nameToTurn}} to Play
+
 </div>
