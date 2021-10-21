@@ -12,18 +12,6 @@ const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface Rect {
-  x: number; // the x0 (top left) coordinate
-  y: number; // the y0 (top left) coordinate
-  width: number; // the x1 (bottom right) coordinate
-  height: number; // the y1 (bottom right) coordinate
-}
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -61,6 +49,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
+  players: Player[] = [];
 
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
@@ -89,7 +78,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
       this.receivePlayersInGame(playersIds);
     });
-    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
       this.receiveTilesPlayed(playerId, scoredPoints, tilesPlayed).then();
     });
     this.signalRService.hubConnection.on('ReceiveTilesSwapped', (playerId: number) => {
@@ -133,11 +122,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receivePlayersInGame = (players: any[]) => {
     players.forEach(player => {
-      console.log('playerId ' + player.playerId + ' is in the game'); //TODO replace log
+      console.log('playerId ' + player.playerId + ' is in the game'); // TODO replace log
     });
   }
 
-  receiveTilesPlayed = async (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+  receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
     // console.log(playerId + ' has played:');
     // tilesPlayed.forEach(tilePlayed => {
@@ -147,16 +136,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesSwapped = (playerId: number) => {
-    console.log('player ' + playerId + 'has swapped some tiles'); //TODO replace log
+    console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
   }
 
   receivePlayerIdTurn = (playerId: number) => {
-    console.log('it\'s playerId ' + playerId + ' turn'); //TODO replace log
+    console.log('it\'s playerId ' + playerId + ' turn'); // TODO replace log
   }
 
   receiveGameOver = (winnerPlayersIds: number[]) => {
     winnerPlayersIds.forEach(playerId => {
-      console.log('playerId ' + playerId + ' has win the game'); //TODO replace log
+      console.log('playerId ' + playerId + ' has win the game'); // TODO replace log
     });
   }
 
@@ -242,7 +231,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     } else {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-      this.validSimulation();
+      this.validSimulation().then();
 
     }
     this.plate = toPlate(this.board);
@@ -309,7 +298,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     else {
       this.score.points = 0;
-      console.log(this.score.points); //TODO remove log
+      console.log(this.score.points); // TODO remove log
     }
   }
 
@@ -352,15 +341,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   }
 
-   countChange(event: number): void {
-    this.gamedId = event;
-    this.getPlayerIdToPlay().then();
-    this.nameToTurn = '';
+   async countChange(event: number): Promise<void> {
+     this.gamedId = event;
+     this.players = await this.serviceQwirkle.getPlayers(this.gamedId);
+     this.getPlayerIdToPlay().then();
+     this.nameToTurn = '';
 
-    this.game().then( () =>
+     this.game().then(() =>
        this.autoZoom().then());
 
-  }
+   }
 
   getPawStyle(i: number): string {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';

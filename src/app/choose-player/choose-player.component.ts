@@ -12,7 +12,7 @@ export class ChoosePlayerComponent implements OnInit {
   @Input() nameToTurn: string;
   @Input() score: number;
   @Output() playerSelectChange = new EventEmitter<Player>();
-  players: Player[] = [];
+  @Input() players: Player[];
   names: ListNamePlayer = {listNamePlayer: []};
   nameToPlay = '';
 
@@ -22,7 +22,7 @@ export class ChoosePlayerComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.players = await this.service.getPlayers(this.gameId);
+    // this.players = await this.service.getPlayers(this.gameId);
     this.names = await this.service.getPlayerName(this.gameId);
 
   }
