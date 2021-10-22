@@ -44,16 +44,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     zoomToFitZoomLevelFactor: 0.9,
     dragMouseButton: 'right'
   };
-  private panZoomConfigOptions2: PanZoomConfigOptions = {
-    zoomLevels: 10,
-    scalePerZoomLevel: 2.0,
-    zoomStepDuration: 0.2,
-    freeMouseWheelFactor: 0.01,
-    zoomToFitZoomLevelFactor: 0.9,
-    dragMouseButton: 'left'
-  };
   panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
-  panzoomConfig2: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions2);
   scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
@@ -139,6 +130,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
+    this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
     // console.log(playerId + ' has played:');
     // tilesPlayed.forEach(tilePlayed => {
     //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
@@ -304,11 +296,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           this.player = result.filter(player => player.id === this.player.id)[0];
           this.rack = this.player.rack.tiles;
         });
+        this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
       }
     );
-    this.panZoomConfigOptions.dragMouseButton = 'left';
-    this.panzoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
-    this.panzoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
+
   }
 
   async validSimulation(): Promise<void> {
@@ -366,10 +357,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
    async countChange(event: number): Promise<void> {
      this.gamedId = event;
-     this.players = await this.serviceQwirkle.getPlayers(this.gamedId);
+     this.players =  await this.serviceQwirkle.getPlayers(this.gamedId).then();
      this.getPlayerIdToPlay().then();
      this.nameToTurn = '';
-
      this.game().then();
      this.rack = [];
    }
