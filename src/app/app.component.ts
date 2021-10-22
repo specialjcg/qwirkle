@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
+import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
 
@@ -28,7 +28,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Result;
+  score: Rack;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gamedId = 0;
@@ -44,7 +44,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     zoomToFitZoomLevelFactor: 0.9,
     dragMouseButton: 'right'
   };
+  private panZoomConfigOptions2: PanZoomConfigOptions = {
+    zoomLevels: 10,
+    scalePerZoomLevel: 2.0,
+    zoomStepDuration: 0.2,
+    freeMouseWheelFactor: 0.01,
+    zoomToFitZoomLevelFactor: 0.9,
+    dragMouseButton: 'left'
+  };
   panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
+  panzoomConfig2: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions2);
   scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
@@ -92,6 +101,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
     this.modelChangedSubscription = this.panzoomConfig.modelChanged.subscribe((model: PanZoomModel) => this.onModelChanged(model));
     this.apiSubscription = this.panzoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
+
   }
 
   onModelChanged(model: PanZoomModel): void {
@@ -107,8 +117,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   resetZoomToFit(): void {
-    const height = this.scene.nativeElement.clientHeight;
-    const width = this.scene.nativeElement.clientWidth;
+    const shelveDisplay = document.querySelector('.container');
+    const height = shelveDisplay.clientHeight;
+    const width = shelveDisplay.clientWidth;
 
     this.panzoomConfig.initialZoomToFit = {
       x: 0,
@@ -165,27 +176,27 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.panZoomAPI.zoomToFit({
           x: 300,
-          y: -600,
+          y: -450,
           width,
-          height
+          height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
 
       } else {
 
         this.panZoomAPI.zoomToFit({
-          x: 600,
-          y: -400,
+          x: 550,
+          y: -500,
           width,
-          height
+          height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
       }
     } else {
 
       this.panZoomAPI.zoomToFit({
-        x: 400,
-        y: -500,
+        x: 650,
+        y: -450,
         width,
-        height: height * 2
+        height: height * (Math.abs(ymax - ymin) * 100) / 600
       });
     }
 
@@ -236,6 +247,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.plate = toPlate(this.board);
 
+
   }
 
   dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
@@ -262,7 +274,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     }
 
-    this.plate = toPlate(this.board); // j'ai pas bien compris ce que ça fait. a adapter...
+    this.plate = toPlate(this.board);
   }
 
   async game(): Promise<void> {
@@ -271,8 +283,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     });
 
-    this.board = await this.serviceQwirkle.getGames(this.gamedId);
-    this.plate = toPlate(this.board);
+    this.serviceQwirkle.getGames(this.gamedId).then(board => {
+       this.board = board;
+       this.plate = toPlate(this.board);
+       this.autoZoom();
+
+    });
+
 
   }
 
@@ -289,16 +306,19 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         });
       }
     );
+    this.panZoomConfigOptions.dragMouseButton = 'left';
+    this.panzoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
+    this.panzoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
   }
 
   async validSimulation(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
     if (this.playTile.length > 0) {
-      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => { this.score = resp; console.log(this.score.points); /*TODO remove log*/} );
+      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => {
+        this.score = resp; } );
     }
     else {
       this.score.points = 0;
-      console.log(this.score.points); // TODO remove log
     }
   }
 
@@ -329,9 +349,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         event.previousIndex,
         event.currentIndex);
       this.plate = toPlate(this.board);
-      this.validSimulation();
-    }
+      this.validSimulation().then();
 
+    }
+    this.serviceQwirkle.rackChangeOrder(this.rack).then((rack => {
+      this.rack = rack.tilesPlayed;
+    }));
   }
 
   playerChange(event: Player): void {
@@ -347,9 +370,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
      this.getPlayerIdToPlay().then();
      this.nameToTurn = '';
 
-     this.game().then(() =>
-       this.autoZoom().then());
-
+     this.game().then();
+     this.rack = [];
    }
 
   getPawStyle(i: number): string {
