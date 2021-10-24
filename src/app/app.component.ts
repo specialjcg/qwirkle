@@ -7,6 +7,8 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
+import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
+import {toRarrange} from '../domain/SetPositionTile';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
@@ -22,7 +24,7 @@ const headers = new HttpHeaders()
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwirkle';
-  rack: Tile[] = [];
+  rack: Tiles[] = [];
   board: Tile[] = [];
   bag: Tile[] = [];
   plate: Tile[][] = [[]];
@@ -294,7 +296,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         this.game().then();
         await this.serviceQwirkle.getPlayers(this.gamedId).then((result) => {
           this.player = result.filter(player => player.id === this.player.id)[0];
-          this.rack = this.player.rack.tiles;
+          this.rack = toRarrange(this.player.rack.tiles);
         });
         this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
       }
@@ -343,15 +345,18 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.validSimulation().then();
 
     }
-    this.serviceQwirkle.rackChangeOrder(this.rack).then((rack => {
-      this.rack = rack.tilesPlayed;
+    this.rack = toRarrange(this.rack);
+    this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.rack, this.player)).then((async rack => {
+      this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
+      this.player = this.players.filter(player => player.id === this.player.id)[0];
+      this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
     }));
   }
 
   playerChange(event: Player): void {
     this.signalRService.sendPlayerInGame(this.gamedId, event.id);
     this.player = event;
-    this.rack = this.player.rack.tiles;
+    this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
 
   }
 

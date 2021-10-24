@@ -1,29 +1,22 @@
-
 {
   "files": [],
-  "types": [
-    "jest"
-  ],
-
   "references": [
     {
       "path": "./tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "./src/tsconfig.spec.json"
     }
+
   ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@App/*": ["src/*"],
-      "lib/*": ["common/*"]
-    },
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": false,
+    "target": "ES5",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "allowJs": true
+    "allowJs": true,
+    "types": ["jest","node"],
+
+    "lib": [ "dom","es2015","es2017" ]
   }
+
 }

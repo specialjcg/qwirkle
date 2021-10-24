@@ -15,6 +15,7 @@ import {
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {Tiles, TileViewModel} from "./tiles";
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
@@ -36,10 +37,6 @@ export default class HttpTileRepositoryService {
   constructor(private https: HttpClient) {
   }
 
-  get(gameId: number): Promise<Tile[]> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebTiles(response));
-  }
 
   getPlayerId(gameId: number): Promise<number> {
     return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
@@ -60,7 +57,8 @@ export default class HttpTileRepositoryService {
     return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', tiles, {headers})
       .toPromise().then();
   }
-  rackChangeOrder(rack: Tile[]): Promise<Rack> {
+
+  rackChangeOrder(rack: TileViewModel[]): Promise<Rack> {
     return this.https.post<RestRack>('https://localhost:5001/Games/ArrangeRack/', rack, {headers})
       .toPromise().then(response => toChangeRack(response));
   }

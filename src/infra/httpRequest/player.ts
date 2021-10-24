@@ -1,6 +1,7 @@
 import {Tile} from '../../domain/Tile';
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
+import {Tiles} from './tiles';
 
 export interface Player {
   id: number;
@@ -9,7 +10,7 @@ export interface Player {
   gamePosition: number;
   points: number;
   lastTurnPoints: number;
-  rack: { tiles: Tile[] };
+  rack: { tiles: Tiles[] };
   isTurn: boolean;
 }
 export const toWebPlayer = (result: Player): number => {
@@ -21,8 +22,8 @@ export const toWebTiles = (result: Player): Tile[] => {
     id: tile.id,
     color: tile.color,
     form: tile.form,
-    x: tile.x,
-    y: tile.y,
+    x: 0,
+    y: 0,
     disabled: false
   }));
 };
