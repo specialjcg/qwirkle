@@ -170,7 +170,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.panZoomAPI.zoomToFit({
           x: 300,
-          y: -450,
+          y: -400,
           width,
           height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
@@ -179,7 +179,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.panZoomAPI.zoomToFit({
           x: 550,
-          y: -500,
+          y: -400,
           width,
           height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
@@ -188,7 +188,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
       this.panZoomAPI.zoomToFit({
         x: 650,
-        y: -450,
+        y: -400,
         width,
         height: height * (Math.abs(ymax - ymin) * 100) / 600
       });
@@ -240,8 +240,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     }
     this.plate = toPlate(this.board);
-
-
+    this.autoZoom().then();
   }
 
   dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
