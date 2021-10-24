@@ -113,17 +113,19 @@
 }
 
 .scenevide {
+  top:30vh;
+
   position: absolute;
   width:10em;
   height:10em;
-  left : 50%;
+  left : 30vw;
   max-width: 100%;
   border: solid 1px #ccc;
   display: flex;
   flex-direction: row;
   border-radius: 4px;
   overflow: hidden;
-  background-color: #69ffa5;
+  background-color: whitesmoke;
 }
 .example-list {
   width:110%;

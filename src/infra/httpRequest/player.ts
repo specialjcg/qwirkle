@@ -1,6 +1,7 @@
 import {Tile} from '../../domain/Tile';
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
+import {Tiles} from './tiles';
 
 export interface Player {
   id: number;
@@ -8,22 +9,21 @@ export interface Player {
   gameId: number;
   gamePosition: number;
   points: number;
-  rack: { tiles: Tile[] };
+  lastTurnPoints: number;
+  rack: { tiles: Tiles[] };
   isTurn: boolean;
 }
 export const toWebPlayer = (result: Player): number => {
   return result.id;
 };
-export const toWebTotalPoint = (result: Player): number => {
-  return result.points;
-};
+
 export const toWebTiles = (result: Player): Tile[] => {
   return result.rack.tiles.map(tile => ({
     id: tile.id,
     color: tile.color,
     form: tile.form,
-    x: tile.x,
-    y: tile.y,
+    x: 0,
+    y: 0,
     disabled: false
   }));
 };
@@ -50,7 +50,14 @@ export interface RestBoard {
   board: { tiles: TilesOnBoard[] };
   players: Player[];
 }
+export interface RestRack {
 
+  code: number;
+  tilesPlayed: [];
+  newRack: [];
+  points: number;
+
+}
 export interface RestBag {
 
   bag: { tiles: TilesOnBag[] };
@@ -82,6 +89,9 @@ export const toBoard = (result: RestBoard): Tile[] => {
 export const toPlayers = (result: RestBoard): Player[] => {
   return result.players;
 };
+export const toChangeRack = (rack: RestRack): Rack => {
+  return {code: rack.code, tilesPlayed: rack.tilesPlayed, newRack: rack.newRack, points: rack.points};
+};
 export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {
   return result.map<RestTilesPlay>(tile => ({playerId, tileId: tile.id, x: tile.x, y: tile.y}));
 };
@@ -89,7 +99,7 @@ export const fromBag = (result: Tile[], playerId: number): RestTilesSwap[] => {
   return result.map<RestTilesSwap>(tile => ({playerId, tileId: tile.id}));
 };
 
-export interface Result {
+export interface Rack {
   code: number;
   tilesPlayed: [];
   newRack: [];

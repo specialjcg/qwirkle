@@ -7,15 +7,15 @@ import {
   RestBag,
   RestBoard,
   RestSkipTurn,
-  Result,
+  Rack,
   toBoard,
   toPlayers,
   toWebPlayer,
-  toWebTiles,
-  toWebTotalPoint
+  toWebTiles, RestRack, toChangeRack,
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {Tiles, TileViewModel} from "./tiles";
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
@@ -37,20 +37,10 @@ export default class HttpTileRepositoryService {
   constructor(private https: HttpClient) {
   }
 
-  get(gameId: number): Promise<Tile[]> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebTiles(response));
-  }
 
   getPlayerId(gameId: number): Promise<number> {
     return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
       .toPromise().then(response => toWebPlayer(response));
-  }
-
-
-  getPlayerTotalPoint(gameId: number): Promise<number> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebTotalPoint(response));
   }
 
   getGames(GameId: number): Promise<Tile[]> {
@@ -63,17 +53,26 @@ export default class HttpTileRepositoryService {
       .toPromise().then(response => toPlayers(response));
   }
 
-  playTile(tiles: PlayerTile[]): Promise<Result> {
+  playTile(tiles: PlayerTile[]): Promise<Rack> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTiles/', tiles, {headers})
       .toPromise().then();
   }
 
-  swapTile(tiles: PlayerTileToSwap[]): Promise<Result> {
+  rackChangeOrder(rack: TileViewModel[]): Promise<Rack> {
+    return this.https.post<RestRack>('https://localhost:5001/Games/ArrangeRack/', rack, {headers})
+      .toPromise().then(response => toChangeRack(response));
+  }
+  playTileSimulation(tiles: PlayerTile[]): Promise<Rack> {
+    return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTilesSimulation/', tiles, {headers})
+      .toPromise().then();
+  }
+
+  swapTile(tiles: PlayerTileToSwap[]): Promise<Rack> {
     return this.https.post<RestBag>('https://localhost:5001/Games/SwapTiles/', tiles, {headers})
       .toPromise().then();
   }
 
-  skipTurn(playerId: number): Promise<Result> {
+  skipTurn(playerId: number): Promise<Rack> {
     const player = {id: playerId};
     return this.https.post<RestSkipTurn>('https://localhost:5001/Games/SkipTurn/', player, {headers})
       .toPromise().then();

@@ -11,53 +11,45 @@ describe('Get response from qwirkle api', () => {
         pseudo: null,
         gameId: 5,
         gamePosition: 1,
+        lastTurnPoints: 0,
         points: 0,
         rack: {
           tiles: [
             {
-              disabled: true,
+              rackPosition: 1,
               id: 99,
               color: 6,
               form: 6,
-              x: 0,
-              y: 0
+
             },
             {
-              disabled: true,
-              x: 0,
-              y: 0,
+              rackPosition: 1,
+
+
               id: 74,
               color: 1,
               form: 6
             },
             {
-              disabled: true,
-              x: 0,
-              y: 0,
+              rackPosition: 1,
               id: 5,
               color: 1,
               form: 4
             },
             {
-              disabled: true,
-              x: 0,
-              y: 0,
+              rackPosition: 1,
               id: 52,
               color: 2,
               form: 4
             },
             {
-              disabled: true,
-              x: 0,
-              y: 0,
+              rackPosition: 1,
               id: 21,
               color: 4,
               form: 6
             },
             {
-              disabled: true,
-              x: 0,
-              y: 0,
+              rackPosition: 1,
               id: 102,
               color: 6,
               form: 3
@@ -67,8 +59,9 @@ describe('Get response from qwirkle api', () => {
         isTurn: true
       }
     ];
-    expect(toWebTiles(result[0])[0]).toEqual({id: 99, color: Color.Yellow, form: Form.EightPointStar});
-    expect(toWebTiles(result[0])[1]).toEqual({id: 74, color: Color.Green, form: Form.EightPointStar});
+    console.log(result[0]);
+    expect(toWebTiles(result[0])[0]).toEqual({id: 99, color: Color.Yellow, form: Form.EightPointStar, disabled: false, x: 0, y: 0});
+    expect(toWebTiles(result[0])[1]).toEqual({id: 74, color: Color.Green, form: Form.EightPointStar, disabled: false, x: 0, y: 0});
 
   });
 
