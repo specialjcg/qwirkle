@@ -61,6 +61,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
+  userId: number;
 
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
@@ -360,6 +361,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.game().then( () =>
        this.autoZoom().then());
 
+  }
+
+  countUserChange(event: number): void {
+    this.userId = event;
   }
 
   getPawStyle(i: number): string {

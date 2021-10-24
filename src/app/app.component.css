@@ -231,6 +231,11 @@ width:100px;
   top: 2vh;
 left: 20vw;
 }
+.positionUser{
+  position: absolute;
+  left: 14vw;
+}
+
 button {
   position: absolute;
   left: 2vw;

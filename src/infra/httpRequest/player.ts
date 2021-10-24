@@ -98,6 +98,10 @@ export interface ListGamedId {
 
   listGameId: number[];
 }
+export interface ListUsersId {
+
+  listUsersId: number[];
+}
 export interface ListNamePlayer {
 
   listNamePlayer: string[];

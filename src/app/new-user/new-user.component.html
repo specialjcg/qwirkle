@@ -1,0 +1,9 @@
+<h4>Choose user {{this.user}}</h4>
+<mat-form-field appearance="fill">
+  <mat-label>UserId</mat-label>
+  <mat-select [(value)]="this.user" >
+    <mat-option *ngFor="let user1 of users.listUsersId"  [value]=user1 (click)="newUser()">
+      {{user1}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

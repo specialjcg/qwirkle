@@ -10,6 +10,11 @@
 <app-new-game    class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
 <app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
+<app-new-user class="positionUser" [(user)]="this.userId" (userChange)="countUserChange($event)" (click)="this.userId=0"></app-new-user>
+<!-- TODO -->
+<!-- <app-choose-game *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-game> -->
+
+
 <button class="positionValid" (click)="valid()">Valid</button>
 <button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
 <button class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>

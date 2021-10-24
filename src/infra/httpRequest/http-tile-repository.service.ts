@@ -3,6 +3,7 @@ import {PlayerTile, PlayerTileToSwap, Tile} from '../../domain/Tile';
 import {
   ListGamedId,
   ListNamePlayer,
+  ListUsersId,
   Player,
   RestBag,
   RestBoard,
@@ -23,6 +24,10 @@ const headers = new HttpHeaders()
 
 const toListGamedId = (response: number[]): ListGamedId => {
   return {listGameId: response};
+};
+
+const toListUsersId = (response: number[]): ListUsersId => {
+  return {listUsersId: response};
 };
 
 const toListNamePlayer = (response: string[]): ListNamePlayer => ({listNamePlayer: response});
@@ -80,6 +85,11 @@ export default class HttpTileRepositoryService {
   getListGames(): Promise<ListGamedId> {
     return this.https.get<number[]>('https://localhost:5001/Games/ListGameId/', {headers})
       .toPromise().then(response => toListGamedId(response));
+  }
+
+  getUsers(): Promise<ListUsersId> {
+    return this.https.get<number[]>('https://localhost:5001/Games/ListUsersId/', {headers})
+    .toPromise().then(response => toListUsersId(response));
   }
 
   getPlayerName(gameId: number): Promise<ListNamePlayer> {
