@@ -17,6 +17,7 @@ import {ChoosePlayerComponent} from './choose-player/choose-player.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
 import { NgxPanZoomModule } from 'ngx-panzoom';
 import { NewUserComponent } from './new-user/new-user.component';
+import { ChooseGameComponent } from './choose-game/choose-game.component';
 
 
 
@@ -31,6 +32,7 @@ export class MyAppModule { }
     NewGameComponent,
     ChoosePlayerComponent,
     NewUserComponent,
+    ChooseGameComponent,
   ],
   imports: [
     BrowserModule, NgxPanZoomModule,

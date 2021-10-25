@@ -10,9 +10,9 @@
 <app-new-game    class="positionGame" [(game)]="this.gamedId" (gameChange)="countChange($event)" (click)="this.gamedId=0"></app-new-game>
 <app-choose-player *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
-<app-new-user class="positionUser" [(user)]="this.userId" (userChange)="countUserChange($event)" (click)="this.userId=0"></app-new-user>
-<!-- TODO -->
-<!-- <app-choose-game *ngIf="this.gamedId!==0" class="positionPlayer" (playerSelectChange)="playerChange($event)" [gameId]="gamedId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-game> -->
+<app-new-user class="positionUser" [(userId)]="this.userId" (userChange)="countUserChange($event)" (click)="this.userId=0"></app-new-user>
+
+<app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" (gameSelectChange)="gameChange($event)" [userId]="this.userId"></app-choose-game>
 
 
 <button class="positionValid" (click)="valid()">Valid</button>
@@ -34,7 +34,6 @@
   </div>
 
   <mat-card class="container"  >
-
     <div  #scene id="scene" *ngIf="this.plate.length!==0">
     <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
       <pan-zoom [config]="panzoomConfig">

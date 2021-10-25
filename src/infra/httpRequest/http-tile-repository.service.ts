@@ -92,6 +92,11 @@ export default class HttpTileRepositoryService {
     .toPromise().then(response => toListUsersId(response));
   }
 
+  getGamesByUserId(userId: number): Promise<ListGamedId> {
+    return this.https.post<number[]>('https://localhost:5001/Games/ListGamesByUserId/' + userId, {headers})
+      .toPromise().then(response => toListGamedId(response));
+  }
+
   getPlayerName(gameId: number): Promise<ListNamePlayer> {
     return this.https.post<string[]>('https://localhost:5001/Games/ListNamePlayer/' + gameId, {headers})
       .toPromise().then(response => toListNamePlayer(response));

@@ -8,7 +8,7 @@ import HttpTileRepositoryService from 'src/infra/httpRequest/http-tile-repositor
   styleUrls: ['./new-user.component.css']
 })
 export class NewUserComponent implements OnInit {
-  @Input() user: number;
+  @Input() userId: number;
   @Output() userChange = new EventEmitter<number>();
   users: ListUsersId = {listUsersId: []};
   constructor(public service: HttpTileRepositoryService) {
@@ -16,10 +16,12 @@ export class NewUserComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.users = await this.service.getUsers();
+    console.log(this.userId);
   }
 
-  newGame(): void {
-    this.userChange.emit(this.user);
+
+  userChoice(user: number): void {
+    this.userChange.emit(user);
   }
 
 }

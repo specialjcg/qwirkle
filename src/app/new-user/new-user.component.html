@@ -1,9 +1,9 @@
-<h4>Choose user {{this.user}}</h4>
+<h4>Choose user {{this.userId}}</h4>
 <mat-form-field appearance="fill">
   <mat-label>UserId</mat-label>
-  <mat-select [(value)]="this.user" >
-    <mat-option *ngFor="let user1 of users.listUsersId"  [value]=user1 (click)="newUser()">
-      {{user1}}
+  <mat-select [(value)]="this.userId" >
+    <mat-option *ngFor="let user of users.listUsersId;let i=index"  [value]=user (click)="userChoice(this.users.listUsersId[i])">
+      {{user}}
     </mat-option>
   </mat-select>
 </mat-form-field>

@@ -44,6 +44,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gamedId = 0;
+  userId = 0;
   player: Player;
   playerNameToPlay: string;
   nameToTurn: string;
@@ -61,7 +62,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
-  userId: number;
 
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
@@ -346,9 +346,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   }
 
-  playerChange(event: Player): void {
-    this.signalRService.sendPlayerInGame(this.gamedId, event.id);
-    this.player = event;
+  playerChange(player: Player): void {
+    this.signalRService.sendPlayerInGame(this.gamedId, player.id);
+    this.player = player;
     this.rack = this.player.rack.tiles;
 
   }
