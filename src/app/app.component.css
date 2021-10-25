@@ -26,7 +26,7 @@
 }
 
 .container {
-  top:22vh;
+  top:15vh;
   position: absolute;
   z-index: 1;
   max-width: 1500px;
@@ -233,12 +233,12 @@ left: 20vw;
 }
 .positionUser{
   position: absolute;
-  left: 20vw;
+  left: 2vw;
 }
 .positionSelectGame{
   position: absolute;
   top: 10vh;
-  left: 20vw;
+  left: 2vw;
 }
 
 button {

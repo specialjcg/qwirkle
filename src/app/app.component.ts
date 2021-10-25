@@ -43,7 +43,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   score: Result;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
-  gamedId = 0;
+  gameId = 0;
   userId = 0;
   player: Player;
   playerNameToPlay: string;
@@ -278,12 +278,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async game(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe(res => {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
       this.nameToTurn = res;
-
     });
-
-    this.board = await this.serviceQwirkle.getGames(this.gamedId);
+    this.board = await this.serviceQwirkle.getGames(this.gameId);
     this.plate = toPlate(this.board);
 
   }
@@ -295,7 +293,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.getPlayerIdToPlay().then();
         this.game().then();
-        await this.serviceQwirkle.getPlayers(this.gamedId).then((result) => {
+        await this.serviceQwirkle.getPlayers(this.gameId).then((result) => {
           this.player = result.filter(player => player.id === this.player.id)[0];
           this.rack = this.player.rack.tiles;
         });
@@ -347,14 +345,30 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   playerChange(player: Player): void {
-    this.signalRService.sendPlayerInGame(this.gamedId, player.id);
+    this.signalRService.sendPlayerInGame(this.gameId, player.id);
     this.player = player;
     this.rack = this.player.rack.tiles;
 
   }
 
+  async gameChange(gameId: number): Promise<void> {
+    this.gameId = gameId;
+    await this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+      this.player = result;
+    });
+    console.log('playerId :' + this.player.id);
+    this.getPlayerIdToPlay().then();
+    this.nameToTurn = '';
+
+    this.game().then(() => this.autoZoom().then());
+
+    this.signalRService.sendPlayerInGame(gameId, this.player.id);
+    this.rack = this.player.rack.tiles;
+
+  }
+
    countChange(event: number): void {
-    this.gamedId = event;
+    this.gameId = event;
     this.getPlayerIdToPlay().then();
     this.nameToTurn = '';
 
@@ -380,7 +394,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async getPlayerIdToPlay(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe((res) => {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe((res) => {
       this.playerNameToPlay = res;
 
     });

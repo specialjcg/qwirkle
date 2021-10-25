@@ -32,6 +32,7 @@ const toListUsersId = (response: number[]): ListUsersId => {
 
 const toListNamePlayer = (response: string[]): ListNamePlayer => ({listNamePlayer: response});
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,19 +42,15 @@ export default class HttpTileRepositoryService {
   constructor(private https: HttpClient) {
   }
 
-  get(gameId: number): Promise<Tile[]> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebTiles(response));
-  }
-
-  getPlayerId(gameId: number): Promise<number> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebPlayer(response));
-  }
-
   getGames(GameId: number): Promise<Tile[]> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
       .toPromise().then(response => toBoard(response));
+  }
+
+  getPlayer(gameId: number, userId: number): Promise<Player> {
+    return this.https.get<string>('https://localhost:5001/Games/Players/' + gameId + '/' + userId, {headers})
+    .toPromise().then();
+
   }
 
   getPlayers(GameId: number): Promise<Player[]> {
@@ -118,4 +115,5 @@ export default class HttpTileRepositoryService {
     .toPromise().then();
   }
 }
+
 
