@@ -369,26 +369,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.game().then(() => this.autoZoom().then());
 
     this.signalRService.sendPlayerInGame(gameId, this.player.id);
-    this.rack = this.player.rack.tiles;
+    this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));;
 
   }
 
 
-  playerChange(event: Player): void {
-    this.signalRService.sendPlayerInGame(this.gameId, event.id);
-    this.player = event;
-    this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
 
-  }
 
-   async countChange(event: number): Promise<void> {
-     this.gameId = event;
-     this.players =  await this.serviceQwirkle.getPlayers(this.gameId).then();
-     this.getPlayerIdToPlay().then();
-     this.nameToTurn = '';
-     this.game().then();
-     this.rack = [];
-   }
+
 
 
   countUserChange(event: number): void {

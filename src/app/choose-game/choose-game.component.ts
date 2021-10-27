@@ -11,7 +11,7 @@ export class ChooseGameComponent implements OnInit {
   @Input() userId: number;
   @Output() gameSelectChange = new EventEmitter<number>();
   games: ListGamedId = {listGameId: []};
-  gameId: number;
+  @Input() gameId: number;
   players: Player[];
 
   constructor(public service: HttpTileRepositoryService) {
@@ -23,7 +23,7 @@ export class ChooseGameComponent implements OnInit {
 
 
   async gameChoice(gameId: number): Promise<void> {
-    console.log('game selected : ' + gameId + ' user : ' + this.userId)
+    console.log('game selected : ' + gameId + ' user : ' + this.userId);
     this.gameSelectChange.emit(gameId);
     this.players = await this.service.getPlayers(this.gameId);
   }
