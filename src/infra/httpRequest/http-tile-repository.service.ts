@@ -5,18 +5,19 @@ import {
   ListNamePlayer,
   ListUsersId,
   Player,
+  Rack,
   RestBag,
   RestBoard,
+  RestRack,
   RestSkipTurn,
-  Rack,
   toBoard,
+  toChangeRack,
   toPlayers,
   toWebPlayer,
-  toWebTiles, RestRack, toChangeRack,
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Tiles, TileViewModel} from "./tiles";
+import {TileViewModel} from './tiles';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
@@ -69,6 +70,7 @@ export default class HttpTileRepositoryService {
     return this.https.post<RestRack>('https://localhost:5001/Games/ArrangeRack/', rack, {headers})
       .toPromise().then(response => toChangeRack(response));
   }
+
   playTileSimulation(tiles: PlayerTile[]): Promise<Rack> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/PlayTilesSimulation/', tiles, {headers})
       .toPromise().then();
@@ -118,7 +120,7 @@ export default class HttpTileRepositoryService {
   // TODO
   getWinners(gameId: number): Promise<any> {
     return this.https.post<any>('https://localhost:5001/Games/Winners/' + gameId, {headers})
-    .toPromise().then();
+      .toPromise().then();
   }
 }
 

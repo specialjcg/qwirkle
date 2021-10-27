@@ -30,10 +30,8 @@ export class MyAppModule {
     TilePawnComponent,
     TotalScoreComponent,
     ResultScoreComponent,
-    NewGameComponent,
-    ChoosePlayerComponent,
-
     NewUserComponent,
+    ChoosePlayerComponent,
     ChooseGameComponent,
 
   ],

@@ -133,7 +133,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
-    this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
+    this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
     // console.log(playerId + ' has played:');
     // tilesPlayed.forEach(tilePlayed => {
     //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
@@ -277,7 +277,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
 
 
-    this.serviceQwirkle.getGames(this.gamedId).then(board => {
+    this.serviceQwirkle.getGames(this.gameId).then(board => {
        this.board = board;
        this.plate = toPlate(this.board);
        this.autoZoom();
@@ -299,7 +299,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           this.player = result.filter(player => player.id === this.player.id)[0];
           this.rack = toRarrange(this.player.rack.tiles);
         });
-        this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
+        this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
       }
     );
 
@@ -348,14 +348,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.rack = toRarrange(this.rack);
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.rack, this.player)).then((async rack => {
-      this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
+      this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
       this.player = this.players.filter(player => player.id === this.player.id)[0];
       this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
     }));
   }
 
 
- 
+
 
   async gameChange(gameId: number): Promise<void> {
     this.gameId = gameId;
@@ -375,15 +375,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   playerChange(event: Player): void {
-    this.signalRService.sendPlayerInGame(this.gamedId, event.id);
+    this.signalRService.sendPlayerInGame(this.gameId, event.id);
     this.player = event;
     this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
 
   }
 
    async countChange(event: number): Promise<void> {
-     this.gamedId = event;
-     this.players =  await this.serviceQwirkle.getPlayers(this.gamedId).then();
+     this.gameId = event;
+     this.players =  await this.serviceQwirkle.getPlayers(this.gameId).then();
      this.getPlayerIdToPlay().then();
      this.nameToTurn = '';
      this.game().then();
