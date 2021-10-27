@@ -11,6 +11,7 @@
 
 <app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)" (click)="this.userId=0"></app-new-user>
 <app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId" (gameSelectChange)="gameChange($event)" [userId]="this.userId"></app-choose-game>
+<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer"  [gameId]="gameId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
 
 
 

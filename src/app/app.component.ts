@@ -10,9 +10,7 @@ import {Subscription} from 'rxjs';
 import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
 import {toRarrange} from '../domain/SetPositionTile';
 
-const headers = new HttpHeaders()
-  .set('Access-Control-Allow-Origin', '*')
-  .set('Content-Type', 'application/json; charset=utf-8');
+
 
 @Component({
   selector: 'app-root',
@@ -357,27 +355,21 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
 
-  async gameChange(gameId: number): Promise<void> {
+   gameChange(gameId: number): void {
     this.gameId = gameId;
-    await this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+    this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
       this.player = result;
+
+      console.log('playerId :' + this.player.id);
+      this.getPlayerIdToPlay().then();
+      this.nameToTurn = '';
+
+      this.game().then();
+
+      this.signalRService.sendPlayerInGame(gameId, this.player.id);
+      this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
     });
-    console.log('playerId :' + this.player.id);
-    this.getPlayerIdToPlay().then();
-    this.nameToTurn = '';
-
-    this.game().then(() => this.autoZoom().then());
-
-    this.signalRService.sendPlayerInGame(gameId, this.player.id);
-    this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));;
-
   }
-
-
-
-
-
-
 
   countUserChange(event: number): void {
     this.userId = event;

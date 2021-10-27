@@ -13,7 +13,6 @@ import {
   toBoard,
   toChangeRack,
   toPlayers,
-  toWebPlayer,
 } from './player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -52,7 +51,7 @@ export default class HttpTileRepositoryService {
 
   getPlayer(gameId: number, userId: number): Promise<Player> {
     return this.https.get<string>('https://localhost:5001/Games/Players/' + gameId + '/' + userId, {headers})
-    .toPromise().then();
+      .toPromise().then();
 
   }
 
@@ -94,7 +93,7 @@ export default class HttpTileRepositoryService {
 
   getUsers(): Promise<ListUsersId> {
     return this.https.get<number[]>('https://localhost:5001/Games/ListUsersId/', {headers})
-    .toPromise().then(response => toListUsersId(response));
+      .toPromise().then(response => toListUsersId(response));
   }
 
   getGamesByUserId(userId: number): Promise<ListGamedId> {
