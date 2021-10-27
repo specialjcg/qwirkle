@@ -1,6 +1,6 @@
 import {Component, Input, EventEmitter, OnInit, Output} from '@angular/core';
-import HttpTileRepositoryService from 'src/infra/httpRequest/http-tile-repository.service';
 import {ListGamedId} from '../../infra/httpRequest/player';
+import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
 @Component({
   selector: 'app-new-game',

@@ -4,25 +4,15 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Result} from '../infra/httpRequest/player';
+import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
+import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
+import {toRarrange} from '../domain/SetPositionTile';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
   .set('Content-Type', 'application/json; charset=utf-8');
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface Rect {
-  x: number; // the x0 (top left) coordinate
-  y: number; // the y0 (top left) coordinate
-  width: number; // the x1 (bottom right) coordinate
-  height: number; // the y1 (bottom right) coordinate
-}
 
 @Component({
   selector: 'app-root',
@@ -34,13 +24,13 @@ interface Rect {
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwirkle';
-  rack: Tile[] = [];
+  rack: Tiles[] = [];
   board: Tile[] = [];
   bag: Tile[] = [];
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Result;
+  score: Rack;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gameId = 0;
@@ -62,6 +52,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private modelChangedSubscription: Subscription;
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
+  players: Player[] = [];
 
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
@@ -90,7 +81,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
       this.receivePlayersInGame(playersIds);
     });
-    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+    this.signalRService.hubConnection.on('ReceiveTilesPlayed', (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
       this.receiveTilesPlayed(playerId, scoredPoints, tilesPlayed).then();
     });
     this.signalRService.hubConnection.on('ReceiveTilesSwapped', (playerId: number) => {
@@ -104,6 +95,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
     this.modelChangedSubscription = this.panzoomConfig.modelChanged.subscribe((model: PanZoomModel) => this.onModelChanged(model));
     this.apiSubscription = this.panzoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
+
   }
 
   onModelChanged(model: PanZoomModel): void {
@@ -119,8 +111,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   resetZoomToFit(): void {
-    const height = this.scene.nativeElement.clientHeight;
-    const width = this.scene.nativeElement.clientWidth;
+    const shelveDisplay = document.querySelector('.container');
+    const height = shelveDisplay.clientHeight;
+    const width = shelveDisplay.clientWidth;
 
     this.panzoomConfig.initialZoomToFit = {
       x: 0,
@@ -134,12 +127,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receivePlayersInGame = (players: any[]) => {
     players.forEach(player => {
-      console.log('playerId ' + player.playerId + ' is in the game'); //TODO replace log
+      console.log('playerId ' + player.playerId + ' is in the game'); // TODO replace log
     });
   }
 
-  receiveTilesPlayed = async (playerId: number, scoredPoints:number, tilesPlayed: any[]) => {
+  receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
+    this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
     // console.log(playerId + ' has played:');
     // tilesPlayed.forEach(tilePlayed => {
     //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
@@ -148,16 +142,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesSwapped = (playerId: number) => {
-    console.log('player ' + playerId + 'has swapped some tiles'); //TODO replace log
+    console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
   }
 
   receivePlayerIdTurn = (playerId: number) => {
-    console.log('it\'s playerId ' + playerId + ' turn'); //TODO replace log
+    console.log('it\'s playerId ' + playerId + ' turn'); // TODO replace log
   }
 
   receiveGameOver = (winnerPlayersIds: number[]) => {
     winnerPlayersIds.forEach(playerId => {
-      console.log('playerId ' + playerId + ' has win the game'); //TODO replace log
+      console.log('playerId ' + playerId + ' has win the game'); // TODO replace log
     });
   }
 
@@ -177,27 +171,27 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.panZoomAPI.zoomToFit({
           x: 300,
-          y: -600,
+          y: -400,
           width,
-          height
+          height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
 
       } else {
 
         this.panZoomAPI.zoomToFit({
-          x: 600,
+          x: 550,
           y: -400,
           width,
-          height
+          height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
       }
     } else {
 
       this.panZoomAPI.zoomToFit({
-        x: 400,
-        y: -500,
+        x: 650,
+        y: -400,
         width,
-        height: height * 2
+        height: height * (Math.abs(ymax - ymin) * 100) / 600
       });
     }
 
@@ -243,11 +237,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     } else {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-      this.validSimulation();
+      this.validSimulation().then();
 
     }
     this.plate = toPlate(this.board);
-
+    this.autoZoom().then();
   }
 
   dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
@@ -274,15 +268,23 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     }
 
-    this.plate = toPlate(this.board); // j'ai pas bien compris ce que ça fait. a adapter...
+    this.plate = toPlate(this.board);
   }
 
   async game(): Promise<void> {
     this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
       this.nameToTurn = res;
     });
-    this.board = await this.serviceQwirkle.getGames(this.gameId);
-    this.plate = toPlate(this.board);
+
+
+    this.serviceQwirkle.getGames(this.gamedId).then(board => {
+       this.board = board;
+       this.plate = toPlate(this.board);
+       this.autoZoom();
+
+    });
+
+
 
   }
 
@@ -295,20 +297,22 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         this.game().then();
         await this.serviceQwirkle.getPlayers(this.gameId).then((result) => {
           this.player = result.filter(player => player.id === this.player.id)[0];
-          this.rack = this.player.rack.tiles;
+          this.rack = toRarrange(this.player.rack.tiles);
         });
+        this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
       }
     );
+
   }
 
   async validSimulation(): Promise<void> {
     this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
     if (this.playTile.length > 0) {
-      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => { this.score = resp; console.log(this.score.points); /*TODO remove log*/} );
+      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => {
+        this.score = resp; } );
     }
     else {
       this.score.points = 0;
-      console.log(this.score.points); //TODO remove log
     }
   }
 
@@ -339,17 +343,19 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         event.previousIndex,
         event.currentIndex);
       this.plate = toPlate(this.board);
-      this.validSimulation();
+      this.validSimulation().then();
+
     }
-
+    this.rack = toRarrange(this.rack);
+    this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.rack, this.player)).then((async rack => {
+      this.players = await this.serviceQwirkle.getPlayers(this.gamedId).then();
+      this.player = this.players.filter(player => player.id === this.player.id)[0];
+      this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
+    }));
   }
 
-  playerChange(player: Player): void {
-    this.signalRService.sendPlayerInGame(this.gameId, player.id);
-    this.player = player;
-    this.rack = this.player.rack.tiles;
 
-  }
+ 
 
   async gameChange(gameId: number): Promise<void> {
     this.gameId = gameId;
@@ -367,15 +373,23 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   }
 
-   countChange(event: number): void {
-    this.gameId = event;
-    this.getPlayerIdToPlay().then();
-    this.nameToTurn = '';
 
-    this.game().then( () =>
-       this.autoZoom().then());
+  playerChange(event: Player): void {
+    this.signalRService.sendPlayerInGame(this.gamedId, event.id);
+    this.player = event;
+    this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
 
   }
+
+   async countChange(event: number): Promise<void> {
+     this.gamedId = event;
+     this.players =  await this.serviceQwirkle.getPlayers(this.gamedId).then();
+     this.getPlayerIdToPlay().then();
+     this.nameToTurn = '';
+     this.game().then();
+     this.rack = [];
+   }
+
 
   countUserChange(event: number): void {
     this.userId = event;
