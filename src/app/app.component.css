@@ -231,6 +231,16 @@ width:100px;
   top: 2vh;
 left: 20vw;
 }
+.positionUser{
+  position: absolute;
+  left: 2vw;
+}
+.positionSelectGame{
+  position: absolute;
+  top: 10vh;
+  left: 2vw;
+}
+
 button {
   position: absolute;
   left: 2vw;

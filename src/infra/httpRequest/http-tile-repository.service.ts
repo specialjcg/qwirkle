@@ -3,6 +3,7 @@ import {PlayerTile, PlayerTileToSwap, Tile} from '../../domain/Tile';
 import {
   ListGamedId,
   ListNamePlayer,
+  ListUsersId,
   Player,
   RestBag,
   RestBoard,
@@ -26,7 +27,12 @@ const toListGamedId = (response: number[]): ListGamedId => {
   return {listGameId: response};
 };
 
+const toListUsersId = (response: number[]): ListUsersId => {
+  return {listUsersId: response};
+};
+
 const toListNamePlayer = (response: string[]): ListNamePlayer => ({listNamePlayer: response});
+
 
 @Injectable({
   providedIn: 'root'
@@ -38,14 +44,15 @@ export default class HttpTileRepositoryService {
   }
 
 
-  getPlayerId(gameId: number): Promise<number> {
-    return this.https.get<Player>('https://localhost:5001/Games/Players/' + gameId, {headers})
-      .toPromise().then(response => toWebPlayer(response));
-  }
-
   getGames(GameId: number): Promise<Tile[]> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
       .toPromise().then(response => toBoard(response));
+  }
+
+  getPlayer(gameId: number, userId: number): Promise<Player> {
+    return this.https.get<string>('https://localhost:5001/Games/Players/' + gameId + '/' + userId, {headers})
+    .toPromise().then();
+
   }
 
   getPlayers(GameId: number): Promise<Player[]> {
@@ -83,6 +90,16 @@ export default class HttpTileRepositoryService {
       .toPromise().then(response => toListGamedId(response));
   }
 
+  getUsers(): Promise<ListUsersId> {
+    return this.https.get<number[]>('https://localhost:5001/Games/ListUsersId/', {headers})
+    .toPromise().then(response => toListUsersId(response));
+  }
+
+  getGamesByUserId(userId: number): Promise<ListGamedId> {
+    return this.https.post<number[]>('https://localhost:5001/Games/ListGamesByUserId/' + userId, {headers})
+      .toPromise().then(response => toListGamedId(response));
+  }
+
   getPlayerName(gameId: number): Promise<ListNamePlayer> {
     return this.https.post<string[]>('https://localhost:5001/Games/ListNamePlayer/' + gameId, {headers})
       .toPromise().then(response => toListNamePlayer(response));
@@ -104,4 +121,5 @@ export default class HttpTileRepositoryService {
     .toPromise().then();
   }
 }
+
 

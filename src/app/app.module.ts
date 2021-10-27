@@ -14,8 +14,11 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {ChoosePlayerComponent} from './choose-player/choose-player.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
-import {NgxPanZoomModule} from 'ngx-panzoom';
-import {NewGameComponent} from './new-game/new-game.component';
+
+import { NgxPanZoomModule } from 'ngx-panzoom';
+import { NewUserComponent } from './new-user/new-user.component';
+import { ChooseGameComponent } from './choose-game/choose-game.component';
+
 
 
 export class MyAppModule {
@@ -29,6 +32,9 @@ export class MyAppModule {
     ResultScoreComponent,
     NewGameComponent,
     ChoosePlayerComponent,
+
+    NewUserComponent,
+    ChooseGameComponent,
 
   ],
   imports: [

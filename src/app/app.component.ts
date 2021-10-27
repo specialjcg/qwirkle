@@ -33,7 +33,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   score: Rack;
   voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
-  gamedId = 0;
+  gameId = 0;
+  userId = 0;
   player: Player;
   playerNameToPlay: string;
   nameToTurn: string;
@@ -271,10 +272,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async game(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe(res => {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
       this.nameToTurn = res;
-
     });
+
 
     this.serviceQwirkle.getGames(this.gamedId).then(board => {
        this.board = board;
@@ -282,6 +283,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
        this.autoZoom();
 
     });
+
 
 
   }
@@ -293,7 +295,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.getPlayerIdToPlay().then();
         this.game().then();
-        await this.serviceQwirkle.getPlayers(this.gamedId).then((result) => {
+        await this.serviceQwirkle.getPlayers(this.gameId).then((result) => {
           this.player = result.filter(player => player.id === this.player.id)[0];
           this.rack = toRarrange(this.player.rack.tiles);
         });
@@ -352,6 +354,26 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }));
   }
 
+
+ 
+
+  async gameChange(gameId: number): Promise<void> {
+    this.gameId = gameId;
+    await this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+      this.player = result;
+    });
+    console.log('playerId :' + this.player.id);
+    this.getPlayerIdToPlay().then();
+    this.nameToTurn = '';
+
+    this.game().then(() => this.autoZoom().then());
+
+    this.signalRService.sendPlayerInGame(gameId, this.player.id);
+    this.rack = this.player.rack.tiles;
+
+  }
+
+
   playerChange(event: Player): void {
     this.signalRService.sendPlayerInGame(this.gamedId, event.id);
     this.player = event;
@@ -368,6 +390,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
      this.rack = [];
    }
 
+
+  countUserChange(event: number): void {
+    this.userId = event;
+  }
+
   getPawStyle(i: number): string {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';
   }
@@ -381,7 +408,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async getPlayerIdToPlay(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay(this.gamedId).subscribe((res) => {
+    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe((res) => {
       this.playerNameToPlay = res;
 
     });
