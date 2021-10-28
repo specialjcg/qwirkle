@@ -9,9 +9,9 @@
 <body>
 
 
-<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)" (click)="this.userId=0"></app-new-user>
+<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)"></app-new-user>
 <app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId" (gameSelectChange)="gameChange($event)" [userId]="this.userId"></app-choose-game>
-<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer"  [gameId]="gameId" [nameToTurn]="this.nameToTurn" [score]="this.score.points"></app-choose-player>
+<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer"  [gameId]="gameId" [nameToTurn]="this.nameToTurn" [players]="this.players"></app-choose-player>
 
 
 
@@ -25,7 +25,7 @@
     <div class="example-container">
       <div>
         <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.rack" class="example-list2d" (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of rack;let i=index">
+          <div *ngFor="let tile of this.rack;let i=index">
             <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d" cdkDrag ></app-tile-pawn>
           </div>
         </div>

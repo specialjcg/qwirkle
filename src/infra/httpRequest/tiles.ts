@@ -1,6 +1,6 @@
 import {Color} from '../../domain/Color';
 import {Form} from '../../domain/Form';
-import {Player} from "./player";
+import {Player} from './player';
 
 export interface Tiles {
   rackPosition: number;
@@ -15,5 +15,5 @@ export interface TileViewModel {
   X: number;
   Y: 0;
 }
-export const toTileviewModel = (tiles: Tiles[], player: Player): TileViewModel[] =>  tiles.
-map(tile => ({playerId: player.id, TileId: tile.id, X: tile.rackPosition, Y: 0}));
+export const toTileviewModel = (player: Player): TileViewModel[] =>  player.rack.tiles
+  .map(tile => ({playerId: player.id, TileId: tile.id, X: tile.rackPosition, Y: 0}));

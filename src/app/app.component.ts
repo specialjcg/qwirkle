@@ -8,7 +8,8 @@ import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack} from '..
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
 import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
-import {toRarrange} from '../domain/SetPositionTile';
+import {toRarrange, toTiles} from '../domain/SetPositionTile';
+
 
 
 
@@ -22,7 +23,7 @@ import {toRarrange} from '../domain/SetPositionTile';
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scene', {static: false}) scene: ElementRef;
   title = 'qwirkle';
-  rack: Tiles[] = [];
+  rack: Tile[] = [];
   board: Tile[] = [];
   bag: Tile[] = [];
   plate: Tile[][] = [[]];
@@ -341,11 +342,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         event.previousIndex,
         event.currentIndex);
       this.plate = toPlate(this.board);
+
       this.validSimulation().then();
 
     }
-    this.rack = toRarrange(this.rack);
-    this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.rack, this.player)).then((async rack => {
+    console.log(this.plate);
+    this.player.rack.tiles = toTiles(this.rack);
+    console.log(toTileviewModel(this.player));
+    this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
       this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
       this.player = this.players.filter(player => player.id === this.player.id)[0];
       this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
