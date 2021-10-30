@@ -1,6 +1,6 @@
 import {Player, toWebTiles} from './player';
 import {Color} from '../../domain/Color';
-import {Form} from '../../domain/Form';
+import { Shape } from '../../domain/Shape';
 
 
 describe('Get response from qwirkle api', () => {
@@ -19,7 +19,7 @@ describe('Get response from qwirkle api', () => {
               rackPosition: 1,
               id: 99,
               color: 6,
-              form: 6,
+              shape: 6,
 
             },
             {
@@ -28,31 +28,31 @@ describe('Get response from qwirkle api', () => {
 
               id: 74,
               color: 1,
-              form: 6
+              shape: 6
             },
             {
               rackPosition: 1,
               id: 5,
               color: 1,
-              form: 4
+              shape: 4
             },
             {
               rackPosition: 1,
               id: 52,
               color: 2,
-              form: 4
+              shape: 4
             },
             {
               rackPosition: 1,
               id: 21,
               color: 4,
-              form: 6
+              shape: 6
             },
             {
               rackPosition: 1,
               id: 102,
               color: 6,
-              form: 3
+              shape: 3
             }
           ]
         },
@@ -60,8 +60,8 @@ describe('Get response from qwirkle api', () => {
       }
     ];
     console.log(result[0]);
-    expect(toWebTiles(result[0])[0]).toEqual({id: 99, color: Color.Yellow, form: Form.EightPointStar, disabled: false, x: 0, y: 0});
-    expect(toWebTiles(result[0])[1]).toEqual({id: 74, color: Color.Green, form: Form.EightPointStar, disabled: false, x: 0, y: 0});
+    expect(toWebTiles(result[0])[0]).toEqual({id: 99, color: Color.Yellow, shape: Shape.EightPointStar, disabled: false, x: 0, y: 0});
+    expect(toWebTiles(result[0])[1]).toEqual({id: 74, color: Color.Green, shape: Shape.EightPointStar, disabled: false, x: 0, y: 0});
 
   });
 

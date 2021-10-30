@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, OnInit, Output } from '@angular/core';
-import { ListUsersId } from 'src/infra/httpRequest/player';
-import HttpTileRepositoryService from 'src/infra/httpRequest/http-tile-repository.service';
+import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
+import {ListUsersId} from '../../infra/httpRequest/player';
 
 @Component({
   selector: 'app-new-user',

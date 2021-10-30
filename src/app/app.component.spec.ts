@@ -1,8 +1,6 @@
 import {async, TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
-import {BrowserModule} from '@angular/platform-browser';
 import {NgxPanZoomModule} from 'ngx-panzoom';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {HttpClientModule} from '@angular/common/http';
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -13,6 +11,8 @@ import {MatCardModule} from '@angular/material/card';
 import {toRarrange} from '../domain/SetPositionTile';
 import {Tiles, TileViewModel, toTileviewModel} from '../infra/httpRequest/tiles';
 import {Player} from '../infra/httpRequest/player';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 
@@ -49,76 +49,90 @@ describe('AppComponent', () => {
         rackPosition: 5,
         id: 71,
         color: 2,
-        form: 3
+        shape: 3
       },
       {
         rackPosition: 1,
         id: 5,
         color: 1,
-        form: 4
+        shape: 4
       },
       {
         rackPosition: 0,
         id: 31,
         color: 6,
-        form: 2
+        shape: 2
       },
       {
         rackPosition: 1,
         id: 105,
         color: 5,
-        form: 6
+        shape: 6
       },
       {
         rackPosition: 0,
         id: 87,
         color: 2,
-        form: 6
+        shape: 6
       },
       {
         rackPosition: 2,
         id: 77,
         color: 1,
-        form: 3
+        shape: 3
       }
     ];
     expect(toRarrange(rack)).toEqual([
-      {
-        rackPosition: 0,
-        id: 71,
-        color: 2,
-        form: 3
-      },
-      {
-        rackPosition: 1,
-        id: 5,
-        color: 1,
-        form: 4
-      },
-      {
-        rackPosition: 2,
-        id: 31,
-        color: 6,
-        form: 2
-      },
-      {
-        rackPosition: 3,
-        id: 105,
-        color: 5,
-        form: 6
-      },
-      {
-        rackPosition: 4,
-        id: 87,
-        color: 2,
-        form: 6
-      },
-      {
-        rackPosition: 5,
-        id: 77,
-        color: 1,
-        form: 3
-      }
+
+        {
+          color: 2,
+          disabled: true,
+          id: 71,
+          shape: 3,
+          x: 0,
+          y: 0
+        },
+        {
+          color: 1,
+          disabled: true,
+          id: 5,
+          shape: 4,
+          x: 1,
+          y: 0
+        },
+        {
+          color: 6,
+          disabled: true,
+          id: 31,
+          shape: 2,
+          x: 2,
+          y: 0
+        },
+        {
+          color: 5,
+          disabled: true,
+          id: 105,
+          shape: 6,
+          x: 3,
+          y: 0
+        },
+        {
+          color: 2,
+          disabled: true,
+          id: 87,
+          shape: 6,
+          x: 4,
+          y: 0
+        },
+        {
+          color: 1,
+          disabled: true,
+          id: 77,
+          shape: 3,
+          x: 5,
+          y: 0
+        }
+
     ]);
     const player: Player = {
       id: 3,
@@ -133,79 +147,79 @@ describe('AppComponent', () => {
             rackPosition: 5,
             id: 71,
             color: 2,
-            form: 3
+            shape: 3
           },
           {
             rackPosition: 1,
             id: 5,
             color: 1,
-            form: 4
+            shape: 4
           },
           {
             rackPosition: 0,
             id: 31,
             color: 6,
-            form: 2
+            shape: 2
           },
           {
             rackPosition: 1,
             id: 105,
             color: 5,
-            form: 6
+            shape: 6
           },
           {
             rackPosition: 2,
             id: 77,
             color: 1,
-            form: 3
+            shape: 3
           },
           {
             rackPosition: 0,
             id: 87,
             color: 2,
-            form: 6
+            shape: 6
           }
         ]
       },
 
       isTurn: true
     };
-    expect(toTileviewModel(toRarrange(rack), player)).toEqual([
+    expect(toTileviewModel(player)).toEqual([
       {
         TileId: 71,
-        X: 0,
+        X: 5,
         Y: 0,
-        playerId: 1
+        playerId: 3
       },
       {
         TileId: 5,
         X: 1,
         Y: 0,
-        playerId: 1
+        playerId: 3
       },
       {
         TileId: 31,
-        X: 2,
+        X: 0,
         Y: 0,
-        playerId: 1
+        playerId: 3
       },
       {
         TileId: 105,
-        X: 3,
+        X: 1,
         Y: 0,
-        playerId: 1
-      },
-      {
-        TileId: 87,
-        X: 4,
-        Y: 0,
-        playerId: 1
+        playerId: 3
       },
       {
         TileId: 77,
-        X: 5,
+        X: 2,
         Y: 0,
-        playerId: 1
+        playerId: 3
+      },
+      {
+        TileId: 87,
+        X: 0,
+        Y: 0,
+        playerId: 3
       }
     ]);
   });
