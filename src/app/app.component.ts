@@ -30,7 +30,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
   score: Rack;
-  voidTile: Tile[] = [{disabled: false, id: 0, form: 0, color: 0, y: 0, x: 0}];
+  voidTile: Tile[] = [{disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gameId = 0;
   userId = 0;
