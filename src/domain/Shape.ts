@@ -1,4 +1,4 @@
-export enum Form {
+export enum Shape {
     NoImage = 0,
     Circle = 1,
     Square,

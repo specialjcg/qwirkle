@@ -1,6 +1,6 @@
 import {Tile} from '../../domain/Tile';
 import {Color} from '../../domain/Color';
-import {Form} from '../../domain/Form';
+import {Shape} from '../../domain/Shape';
 import {Tiles} from './tiles';
 
 export interface Player {
@@ -21,7 +21,7 @@ export const toWebTiles = (result: Player): Tile[] => {
   return result.rack.tiles.map(tile => ({
     id: tile.id,
     color: tile.color,
-    form: tile.form,
+    shape: tile.shape,
     x: 0,
     y: 0,
     disabled: false
@@ -37,12 +37,12 @@ export interface TilesOnBoard {
   coordinates: Coord;
   id: number;
   color: Color;
-  form: Form;
+  shape: Shape;
 }
 export interface TilesOnBag {
   id: number;
   color: Color;
-  form: Form;
+  shape: Shape;
 }
 
 export interface RestBoard {
@@ -83,7 +83,7 @@ export interface RestTilesSwap {
 export const toBoard = (result: RestBoard): Tile[] => {
   return result.board.tiles.map(tile1 => ({
     x: tile1.coordinates.x, y: tile1.coordinates.y,
-    id: tile1.id, form: tile1.form, color: tile1.color, disabled: false
+    id: tile1.id, shape: tile1.shape, color: tile1.color, disabled: false
   }));
 };
 export const toPlayers = (result: RestBoard): Player[] => {
