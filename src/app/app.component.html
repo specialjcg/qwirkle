@@ -9,8 +9,8 @@
 <body>
 
 
-<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)"></app-new-user>
-<app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId" (gameSelectChange)="gameChange($event)" [userId]="this.userId"></app-choose-game>
+<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)" ></app-new-user>
+<app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId" (gameSelectChange)="gameChange($event)" [userId]="this.userId" [games]="this.games"></app-choose-game>
 <app-choose-player *ngIf="this.gameId!==0" class="positionPlayer"  [gameId]="gameId" [nameToTurn]="this.nameToTurn" [players]="this.players"></app-choose-player>
 
 

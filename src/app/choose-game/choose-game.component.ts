@@ -9,8 +9,9 @@ import {ListGamedId, Player} from '../../infra/httpRequest/player';
 })
 export class ChooseGameComponent implements OnInit {
   @Input() userId: number;
+
   @Output() gameSelectChange = new EventEmitter<number>();
-  games: ListGamedId = {listGameId: []};
+  @Input() games: ListGamedId = {listGameId: []};
   @Input() gameId: number;
   players: Player[];
 

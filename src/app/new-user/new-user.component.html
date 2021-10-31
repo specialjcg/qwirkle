@@ -2,7 +2,7 @@
 <mat-form-field appearance="fill">
   <mat-label>UserId</mat-label>
   <mat-select [(value)]="this.userId" >
-    <mat-option *ngFor="let user of users.listUsersId;let i=index"  [value]=user (click)="userChoice(this.users.listUsersId[i])">
+    <mat-option  *ngFor="let user of users.listUsersId;let i=index"  [value]=user (click)="userChoice(this.users.listUsersId[i])">
       {{user}}
     </mat-option>
   </mat-select>

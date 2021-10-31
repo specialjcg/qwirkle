@@ -1,14 +1,5 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./src/tsconfig.spec.json"
-    }
 
-  ],
   "compilerOptions": {
     "target": "ES5",
     "experimentalDecorators": true,

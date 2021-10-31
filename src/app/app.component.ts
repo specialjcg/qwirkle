@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack} from '../infra/httpRequest/player';
+import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
 import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
@@ -52,7 +52,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private panZoomAPI: PanZoomAPI;
   private apiSubscription: Subscription;
   players: Player[] = [];
-
+  games: ListGamedId = {listGameId: []};
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
     this.score = {
@@ -215,7 +215,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   getRackTileImage(tile: Tile): string {
-
     return '../../assets/img/' + toNameImage(tile);
   }
 
@@ -375,8 +374,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  countUserChange(event: number): void {
+  async countUserChange(event: number): Promise<void> {
     this.userId = event;
+    this.games = await this.serviceQwirkle.getGamesByUserId(this.userId);
   }
 
   getPawStyle(i: number): string {
