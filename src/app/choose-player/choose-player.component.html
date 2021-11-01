@@ -4,7 +4,7 @@
     <mat-card-title class="name">  {{name}} </mat-card-title>
 
   </mat-card-title-group>
-  <mat-card-content >
+  <mat-card-content *ngIf="this.players.length!==0">
     <app-total-score  [totalScore]="this.players[i].points"></app-total-score>&nbsp;
     <app-result-score  [score]="this.players[i].lastTurnPoints"></app-result-score>
   </mat-card-content>

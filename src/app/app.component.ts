@@ -1,13 +1,13 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
-import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
+import { toTileviewModel} from '../infra/httpRequest/tiles';
 import {toRarrange, toTiles} from '../domain/SetPositionTile';
 
 
@@ -29,7 +29,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Rack;
+  score: Rack ;
   voidTile: Tile[] = [{disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gameId = 0;
@@ -53,14 +53,21 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private apiSubscription: Subscription;
   players: Player[] = [];
   games: ListGamedId = {listGameId: []};
+  private playTileTempory: RestTilesPlay[] = [];
+  winner = '';
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
+    this.reset();
+  }
+
+  private reset(): void {
     this.score = {
-      code: 0,
+      code: 1,
       tilesPlayed: [],
       newRack: [],
       points: 0
     };
+    this.board = [];
     this.nameToTurn = '';
     this.player = {
       id: 0,
@@ -68,13 +75,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       gameId: 0,
       gamePosition: 0,
       points: 0,
-      lastTurnPoints : 0,
+      lastTurnPoints: 0,
       rack: {tiles: []},
       isTurn: true
     };
   }
 
   ngOnInit(): void {
+
     this.signalRService.startConnection();
 
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
@@ -132,12 +140,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
-    this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
-    // console.log(playerId + ' has played:');
-    // tilesPlayed.forEach(tilePlayed => {
-    //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
-    //     + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
-    // });
+
   }
 
   receiveTilesSwapped = (playerId: number) => {
@@ -160,10 +163,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const height = this.scene.nativeElement.clientHeight;
     const width = this.scene.nativeElement.clientWidth;
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
-    const xmax = this.xmax();
     const ymin = this.getYmin();
     const ymax = this.getYmax();
-    const shelveDisplay = document.querySelector('.container');
     if (ymin >= 0) {
       if (xmin <= 0) {
 
@@ -230,31 +231,38 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
       this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
 
-    if (event.previousContainer === event.container) {
-
-
-    } else {
+    if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-      this.validSimulation().then();
+
 
     }
     this.plate = toPlate(this.board);
-    this.autoZoom().then();
-  }
+    this.score = {
+      code: 1,
+      tilesPlayed: [],
+      newRack: [],
+      points: 0
+    };
+    this.playTileTempory = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
+    this.serviceQwirkle.playTileSimulation(this.playTileTempory).then(async (resp) => {
+      this.score = resp;
+      this.autoZoom().then();
+    });
+
+
+
+    }
 
   dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
-    if (event.previousContainer === event.container) {
-
-
-    } else {
+    if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
 
     }
 
     this.plate = toPlate(this.board);
-
+    this.autoZoom().then();
 
   }
 
@@ -270,14 +278,21 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async game(): Promise<void> {
+
+
+
     this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
-      this.nameToTurn = res;
+      this.nameToTurn = '';
+      if (this.winner === ''){this.nameToTurn = res; }
     });
 
 
     this.serviceQwirkle.getGames(this.gameId).then(board => {
-       this.board = board;
+       this.board = board.boards;
        this.plate = toPlate(this.board);
+       this.players = board.players;
+       this.player = board.players.filter(player => player.id === this.player.id)[0];
+       this.rack = toRarrange(this.player.rack.tiles);
        this.autoZoom();
 
     });
@@ -293,26 +308,18 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.getPlayerIdToPlay().then();
         this.game().then();
-        await this.serviceQwirkle.getPlayers(this.gameId).then((result) => {
-          this.player = result.filter(player => player.id === this.player.id)[0];
-          this.rack = toRarrange(this.player.rack.tiles);
-        });
-        this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
+        this.score = {
+        code: 1,
+        tilesPlayed: [],
+        newRack: [],
+        points: 0
+      };
       }
     );
 
   }
 
-  async validSimulation(): Promise<void> {
-    this.playTile = fromBoard(this.board.filter(tile => tile.disabled), this.player.id);
-    if (this.playTile.length > 0) {
-      this.serviceQwirkle.playTileSimulation(this.playTile).then((resp) => {
-        this.score = resp; } );
-    }
-    else {
-      this.score.points = 0;
-    }
-  }
+
 
   async swapTiles(): Promise<void> {
     this.swapTile = fromBag(this.bag.filter(tile => tile.disabled), this.player.id);
@@ -342,17 +349,17 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         event.currentIndex);
       this.plate = toPlate(this.board);
 
-      this.validSimulation().then();
+
 
     }
-    console.log(this.plate);
     this.player.rack.tiles = toTiles(this.rack);
-    console.log(toTileviewModel(this.player));
+    if (this.rack.length === 6){
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
-      this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
+      this.serviceQwirkle.getGames(this.gameId).then(board => this.players = board.players);
       this.player = this.players.filter(player => player.id === this.player.id)[0];
-      this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
-    }));
+      this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+      this.rack = toRarrange(this.player.rack.tiles);
+    })); }
   }
 
 
@@ -360,17 +367,33 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
    gameChange(gameId: number): void {
     this.gameId = gameId;
-    this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
-      this.player = result;
+    this.serviceQwirkle.getGames(this.gameId).then(board => {
+      this.players = board.players;
+      this.serviceQwirkle.getWinners(this.gameId).then(res => {
+          this.winner = '';
+          if (res !== null){
+        this.winner = board.players.filter(player => player.id === res[0])[0].pseudo;
+        this.nameToTurn = '';
+        }
+        });
 
-      console.log('playerId :' + this.player.id);
-      this.getPlayerIdToPlay().then();
-      this.nameToTurn = '';
+        this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+         this.player = result;
 
-      this.game().then();
 
-      this.signalRService.sendPlayerInGame(gameId, this.player.id);
-      this.rack = toRarrange(this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition));
+         console.log('playerId :' + this.player.id);
+         this.getPlayerIdToPlay().then();
+         this.nameToTurn = '';
+
+         this.game().then();
+
+         this.signalRService.sendPlayerInGame(gameId, this.player.id);
+         this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+         this.rack = toRarrange(this.player.rack.tiles);
+         this.changeDetector.detectChanges();
+       });
+
+
     });
   }
 
@@ -383,9 +406,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';
   }
 
-  getboardStyle(i: number): string {
-    return 'translate(' + 0 + 'px,' + 0 + 'px)';
-  }
 
   NewGame(): void {
     this.serviceQwirkle.newGame([10, 11]).then();

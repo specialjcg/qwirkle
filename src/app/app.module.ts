@@ -19,6 +19,8 @@ import { NgxPanZoomModule } from 'ngx-panzoom';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ChooseGameComponent } from './choose-game/choose-game.component';
 import {NewGameComponent} from "./new-game/new-game.component";
+import { GiveTemporyScoreComponent } from './give-tempory-score/give-tempory-score.component';
+import { WinnerComponent } from './winner/winner.component';
 
 
 
@@ -34,7 +36,9 @@ export class MyAppModule {
     NewUserComponent,
     ChoosePlayerComponent,
     ChooseGameComponent,
-    NewGameComponent
+    NewGameComponent,
+    GiveTemporyScoreComponent,
+    WinnerComponent
   ],
   imports: [
     BrowserModule, NgxPanZoomModule,
