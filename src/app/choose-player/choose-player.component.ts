@@ -22,7 +22,6 @@ export class ChoosePlayerComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.service.getGames(this.gameId).then(boards => this.players = boards.players);
     this.names = await this.service.getPlayerName(this.gameId).then();
   }
 

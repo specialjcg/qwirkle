@@ -367,15 +367,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
    gameChange(gameId: number): void {
     this.gameId = gameId;
-
     this.serviceQwirkle.getGames(this.gameId).then(board => {
-        this.serviceQwirkle.getWinners(this.gameId).then(res => {
+      this.players = board.players;
+      this.serviceQwirkle.getWinners(this.gameId).then(res => {
           this.winner = '';
           if (res !== null){
         this.winner = board.players.filter(player => player.id === res[0])[0].pseudo;
         this.nameToTurn = '';
         }
         });
+
         this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
          this.player = result;
 

@@ -27,7 +27,6 @@ export class ChooseGameComponent implements OnInit {
   async gameChoice(gameId: number): Promise<void> {
     console.log('game selected : ' + gameId + ' user : ' + this.userId);
     this.gameSelectChange.emit(gameId);
-    this.service.getGames(this.gameId).then(boards => this.players = boards.players);
   }
 
 }
