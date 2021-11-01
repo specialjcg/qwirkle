@@ -114,9 +114,8 @@ export default class HttpTileRepositoryService {
 
   }
 
-  // TODO
   getWinners(gameId: number): Promise<any> {
-    return this.https.post<any>('https://localhost:5001/Games/Winners/' + gameId, {headers})
+    return this.https.post<any>('https://localhost:5001/Games/Winners/' , [gameId], {headers})
       .toPromise().then();
   }
 }

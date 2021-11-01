@@ -54,14 +54,20 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   players: Player[] = [];
   games: ListGamedId = {listGameId: []};
   private playTileTempory: RestTilesPlay[] = [];
+  winner = '';
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
+    this.reset();
+  }
+
+  private reset(): void {
     this.score = {
       code: 1,
       tilesPlayed: [],
       newRack: [],
       points: 0
     };
+    this.board = [];
     this.nameToTurn = '';
     this.player = {
       id: 0,
@@ -69,13 +75,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       gameId: 0,
       gamePosition: 0,
       points: 0,
-      lastTurnPoints : 0,
+      lastTurnPoints: 0,
       rack: {tiles: []},
       isTurn: true
     };
   }
 
   ngOnInit(): void {
+
     this.signalRService.startConnection();
 
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
@@ -271,8 +278,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async game(): Promise<void> {
+
+
+
     this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
-      this.nameToTurn = res;
+      this.nameToTurn = '';
+      if (this.winner === ''){this.nameToTurn = res; }
     });
 
 
@@ -356,18 +367,32 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
    gameChange(gameId: number): void {
     this.gameId = gameId;
-    this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
-      this.player = result;
 
-      console.log('playerId :' + this.player.id);
-      this.getPlayerIdToPlay().then();
-      this.nameToTurn = '';
+    this.serviceQwirkle.getGames(this.gameId).then(board => {
+        this.serviceQwirkle.getWinners(this.gameId).then(res => {
+          this.winner = '';
+          if (res !== null){
+        this.winner = board.players.filter(player => player.id === res[0])[0].pseudo;
+        this.nameToTurn = '';
+        }
+        });
+        this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+         this.player = result;
 
-      this.game().then();
 
-      this.signalRService.sendPlayerInGame(gameId, this.player.id);
-      this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
-      this.rack = toRarrange(this.player.rack.tiles);
+         console.log('playerId :' + this.player.id);
+         this.getPlayerIdToPlay().then();
+         this.nameToTurn = '';
+
+         this.game().then();
+
+         this.signalRService.sendPlayerInGame(gameId, this.player.id);
+         this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+         this.rack = toRarrange(this.player.rack.tiles);
+         this.changeDetector.detectChanges();
+       });
+
+
     });
   }
 
