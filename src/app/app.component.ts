@@ -1,13 +1,13 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../infra/httpRequest/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
-import {Tiles, toTileviewModel} from '../infra/httpRequest/tiles';
+import { toTileviewModel} from '../infra/httpRequest/tiles';
 import {toRarrange, toTiles} from '../domain/SetPositionTile';
 
 
@@ -134,11 +134,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
     this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
-    // console.log(playerId + ' has played:');
-    // tilesPlayed.forEach(tilePlayed => {
-    //   console.log('color: ' + tilePlayed.color + ' form: ' + tilePlayed.form + ' x: '
-    //     + tilePlayed.coordinates.x + ' y: ' + tilePlayed.coordinates.y);
-    // });
+
   }
 
   receiveTilesSwapped = (playerId: number) => {
@@ -161,10 +157,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const height = this.scene.nativeElement.clientHeight;
     const width = this.scene.nativeElement.clientWidth;
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
-    const xmax = this.xmax();
     const ymin = this.getYmin();
     const ymax = this.getYmax();
-    const shelveDisplay = document.querySelector('.container');
     if (ymin >= 0) {
       if (xmin <= 0) {
 
@@ -231,10 +225,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
       this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
 
-    if (event.previousContainer === event.container) {
-
-
-    } else {
+    if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
 
@@ -258,17 +249,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
-    if (event.previousContainer === event.container) {
-
-
-    } else {
+    if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
 
     }
 
     this.plate = toPlate(this.board);
-
+    this.autoZoom().then();
 
   }
 
@@ -381,7 +369,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.game().then();
 
       this.signalRService.sendPlayerInGame(gameId, this.player.id);
-      this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition)
+      this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
       this.rack = toRarrange(this.player.rack.tiles);
     });
   }
@@ -395,9 +383,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     return 'translate(' + -i * 65 + 'px,' + i * 15 + 'px)';
   }
 
-  getboardStyle(i: number): string {
-    return 'translate(' + 0 + 'px,' + 0 + 'px)';
-  }
 
   NewGame(): void {
     this.serviceQwirkle.newGame([10, 11]).then();
