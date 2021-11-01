@@ -1,11 +1,17 @@
-  <div class="playerToTurn" >
+  <div *ngIf="score.code===1" class="playerToTurn" >
 
      Score temporaire
 
 
-
-      5
+    {{score.points}}
 
   </div>
+  <div *ngIf="score.code!==1" class="playerToTurn" >
 
+    cout non jouable!!
+
+
+
+
+  </div>
 
