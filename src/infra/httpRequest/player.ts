@@ -74,17 +74,20 @@ export interface RestTilesPlay {
   x: number;
   y: number;
 }
-
+export interface BoardGame {
+  boards: Tile[];
+  players: Player[];
+}
 export interface RestTilesSwap {
   playerId: number;
   tileId: number;
 }
 
-export const toBoard = (result: RestBoard): Tile[] => {
-  return result.board.tiles.map(tile1 => ({
+export const toBoard = (result: RestBoard): BoardGame => {
+  return {boards: result.board.tiles.map(tile1 => ({
     x: tile1.coordinates.x, y: tile1.coordinates.y,
     id: tile1.id, shape: tile1.shape, color: tile1.color, disabled: false
-  }));
+  })), players: result.players};
 };
 export const toPlayers = (result: RestBoard): Player[] => {
   return result.players;

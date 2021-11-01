@@ -22,7 +22,7 @@ export class ChoosePlayerComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.players =  await this.service.getPlayers(this.gameId).then();
+    this.service.getGames(this.gameId).then(boards => this.players = boards.players);
     this.names = await this.service.getPlayerName(this.gameId).then();
   }
 
@@ -31,10 +31,6 @@ export class ChoosePlayerComponent implements OnInit {
       return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
   }
 
-  playerChoice(player: Player, name: string): void {
-    this.nameToPlay = name;
-    this.playerSelectChange.emit(player);
-  }
 
   isNameTurn(): boolean {
     return this.nameToTurn !== '' && this.nameToTurn !== null;

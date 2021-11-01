@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {PlayerTile, PlayerTileToSwap, Tile} from '../../domain/Tile';
 import {
+  BoardGame,
   ListGamedId,
   ListNamePlayer,
   ListUsersId,
@@ -34,6 +35,8 @@ const toListUsersId = (response: number[]): ListUsersId => {
 const toListNamePlayer = (response: string[]): ListNamePlayer => ({listNamePlayer: response});
 
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -44,7 +47,7 @@ export default class HttpTileRepositoryService {
   }
 
 
-  getGames(GameId: number): Promise<Tile[]> {
+  getGames(GameId: number): Promise<BoardGame> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
       .toPromise().then(response => toBoard(response));
   }
@@ -53,11 +56,6 @@ export default class HttpTileRepositoryService {
     return this.https.get<string>('https://localhost:5001/Games/Players/' + gameId + '/' + userId, {headers})
       .toPromise().then();
 
-  }
-
-  getPlayers(GameId: number): Promise<Player[]> {
-    return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
-      .toPromise().then(response => toPlayers(response));
   }
 
   playTile(tiles: PlayerTile[]): Promise<Rack> {

@@ -133,7 +133,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
     this.game().then();
-    this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
 
   }
 
@@ -278,8 +277,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
     this.serviceQwirkle.getGames(this.gameId).then(board => {
-       this.board = board;
+       this.board = board.boards;
        this.plate = toPlate(this.board);
+       this.players = board.players;
+       this.player = board.players.filter(player => player.id === this.player.id)[0];
+       this.rack = toRarrange(this.player.rack.tiles);
        this.autoZoom();
 
     });
@@ -295,11 +297,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.getPlayerIdToPlay().then();
         this.game().then();
-        await this.serviceQwirkle.getPlayers(this.gameId).then((result) => {
-          this.player = result.filter(player => player.id === this.player.id)[0];
-          this.rack = toRarrange(this.player.rack.tiles);
-        });
-        this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
         this.score = {
         code: 1,
         tilesPlayed: [],
@@ -347,7 +344,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.player.rack.tiles = toTiles(this.rack);
     if (this.rack.length === 6){
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
-      this.players = await this.serviceQwirkle.getPlayers(this.gameId).then();
+      this.serviceQwirkle.getGames(this.gameId).then(board => this.players = board.players);
       this.player = this.players.filter(player => player.id === this.player.id)[0];
       this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
       this.rack = toRarrange(this.player.rack.tiles);
