@@ -408,7 +408,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   NewGame(): void {
-    this.serviceQwirkle.newGame([10, 11]).then();
+    this.serviceQwirkle.newGame([1, 2]).then();
   }
 
   async getPlayerIdToPlay(): Promise<void> {
