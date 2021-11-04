@@ -8,12 +8,12 @@ import {ListGamedId, Player} from '../../infra/httpRequest/player';
   styleUrls: ['./choose-game.component.css']
 })
 export class ChooseGameComponent implements OnInit {
-  @Input() userId: number;
+  @Input() userId: number=0;
 
   @Output() gameSelectChange = new EventEmitter<number>();
   @Input() games: ListGamedId = {listGameId: []};
-  @Input() gameId: number;
-  players: Player[];
+  @Input() gameId: number=0;
+  players: Player[]=[];
 
   constructor(public service: HttpTileRepositoryService) {
   }

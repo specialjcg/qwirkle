@@ -6,7 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./result-score.component.css']
 })
 export class ResultScoreComponent implements OnInit {
-  @Input() score: number;
+  @Input() score: number=0;
   constructor() { }
 
   ngOnInit(): void {

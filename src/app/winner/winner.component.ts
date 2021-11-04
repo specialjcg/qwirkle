@@ -6,7 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./winner.component.css']
 })
 export class WinnerComponent implements OnInit {
-  @Input() winner: string;
+  @Input() winner: string='';
   constructor() { }
 
   ngOnInit(): void {

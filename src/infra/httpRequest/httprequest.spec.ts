@@ -8,7 +8,7 @@ describe('Get response from qwirkle api', () => {
     const result: Player[] = [
       {
         id: 5,
-        pseudo: null,
+        pseudo: '',
         gameId: 5,
         gamePosition: 1,
         lastTurnPoints: 0,

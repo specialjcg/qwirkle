@@ -6,8 +6,8 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./tile-pawn.component.css']
 })
 export class TilePawnComponent implements OnInit {
-  @Input() image: string;
-  @Input() style: string;
+  @Input() image: string='';
+  @Input() style: string='';
   constructor() { }
 
   ngOnInit(): void {

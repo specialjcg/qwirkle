@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Rack} from "../../infra/httpRequest/player";
+import {Rack} from '../../infra/httpRequest/player';
 
 @Component({
   selector: 'app-give-tempory-score',
@@ -7,7 +7,7 @@ import {Rack} from "../../infra/httpRequest/player";
   styleUrls: ['./give-tempory-score.component.css']
 })
 export class GiveTemporyScoreComponent implements OnInit {
-  @Input() score: Rack;
+  @Input() score: Rack = {code: 0, tilesPlayed : [], newRack: [], points: 0 };
   constructor() { }
 
   ngOnInit(): void {

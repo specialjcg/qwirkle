@@ -21,7 +21,7 @@ import {toRarrange, toTiles} from '../domain/SetPositionTile';
 
 
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
-  @ViewChild('scene', {static: false}) scene: ElementRef;
+  @ViewChild('scene', {static: false}) scene!: ElementRef;
   title = 'qwirkle';
   rack: Tile[] = [];
   board: Tile[] = [];
@@ -29,15 +29,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Rack ;
+  score: Rack={code: 0, tilesPlayed : [], newRack: [], points: 0 };
   voidTile: Tile[] = [{disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gameId = 0;
   userId = 0;
-  player: Player;
-  playerNameToPlay: string;
-  nameToTurn: string;
-  panzoomModel: PanZoomModel;
+  player!: Player;
+  playerNameToPlay: string='';
+  nameToTurn: string='';
+  panzoomModel!: PanZoomModel;
   private panZoomConfigOptions: PanZoomConfigOptions = {
     zoomLevels: 10,
     scalePerZoomLevel: 2.0,
@@ -48,9 +48,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   };
   panzoomConfig: PanZoomConfig = new PanZoomConfig(this.panZoomConfigOptions);
   scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
-  private modelChangedSubscription: Subscription;
-  private panZoomAPI: PanZoomAPI;
-  private apiSubscription: Subscription;
+  private modelChangedSubscription!: Subscription;
+  private panZoomAPI!: PanZoomAPI;
+  private apiSubscription!: Subscription;
   players: Player[] = [];
   games: ListGamedId = {listGameId: []};
   private playTileTempory: RestTilesPlay[] = [];
@@ -118,7 +118,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   resetZoomToFit(): void {
-    const shelveDisplay = document.querySelector('.container');
+    const shelveDisplay = document.querySelector('.container') as HTMLElement;
     const height = shelveDisplay.clientHeight;
     const width = shelveDisplay.clientWidth;
 
@@ -223,7 +223,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (line[0] !== undefined) {
       return 'translate(' + 0 + 'px,' + i * 100 + 'px)';
     }
-
+    return ''
   }
 
   drop(event: CdkDragDrop<Tile[], any>, index: number): void {
@@ -292,7 +292,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
        this.plate = toPlate(this.board);
        this.players = board.players;
        this.player = board.players.filter(player => player.id === this.player.id)[0];
-       this.rack = toRarrange(this.player.rack.tiles);
+      this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+
+      this.rack = toRarrange(this.player.rack.tiles);
        this.autoZoom();
 
     });
@@ -353,6 +355,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     }
     this.player.rack.tiles = toTiles(this.rack);
+    this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+
     if (this.rack.length === 6){
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
       this.serviceQwirkle.getGames(this.gameId).then(board => this.players = board.players);
@@ -379,6 +383,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
          this.player = result;
+          this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
 
          console.log('playerId :' + this.player.id);
@@ -388,8 +393,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
          this.game().then();
 
          this.signalRService.sendPlayerInGame(gameId, this.player.id);
-         this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
-         this.rack = toRarrange(this.player.rack.tiles);
+                 this.rack = toRarrange(this.player.rack.tiles);
          this.changeDetector.detectChanges();
        });
 

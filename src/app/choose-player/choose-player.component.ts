@@ -8,11 +8,11 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
   styleUrls: ['./choose-player.component.css']
 })
 export class ChoosePlayerComponent implements OnInit {
-  @Input() gameId: number;
-  @Input() nameToTurn: string;
-  @Input() score: number;
+  @Input() gameId: number=0;
+  @Input() nameToTurn: string='';
+  @Input() score: number=0;
   @Output() playerSelectChange = new EventEmitter<Player>();
-  @Input() players: Player[];
+  @Input() players: Player[]=[];
   names: ListNamePlayer = {listNamePlayer: []};
   nameToPlay = '';
 

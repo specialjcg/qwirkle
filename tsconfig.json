@@ -6,8 +6,13 @@
     "esModuleInterop": true,
     "allowJs": true,
     "types": ["jest","node"],
+    "strict": true,
+    "lib": [ "dom","es2015","es2017" ],
 
-    "lib": [ "dom","es2015","es2017" ]
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictTemplates": true,
+    "strictInputAccessModifiers": true
   }
-
 }

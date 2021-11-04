@@ -10,7 +10,7 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
 
 
 export class NewGameComponent implements OnInit {
-  @Input() game: number;
+  @Input() game: number=0;
   @Output() gameChange = new EventEmitter<number>();
   games: ListGamedId = {listGameId: []};
   constructor(public service: HttpTileRepositoryService) {

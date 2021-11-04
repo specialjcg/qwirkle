@@ -45,11 +45,11 @@ const shiftToLeft = (tile: Tile): Tile => ({
   y: tile.y, disabled: true
 });
 
-const otherTileInRow = (tileInsert: Tile) => tile => tile.id !== tileInsert.id && tileInsert.y === tile.y;
+const otherTileInRow = (tileInsert: Tile) => (tile: Tile) => tile.id !== tileInsert.id && tileInsert.y === tile.y;
 
-const tileNotInRow = (tileInsert: Tile) => tile => tileInsert.y !== tile.y;
+const tileNotInRow = (tileInsert: Tile) => (tile: Tile)  => tileInsert.y !== tile.y;
 
-const isUnderPosition = (xposition: number) => tile => tile.x < xposition ;
+const isUnderPosition = (xposition: number) => (tile: Tile)  => tile.x < xposition ;
 
 export const insertPosition = (nexTiles: Tile[], tileInsert: Tile, xposition: number): Tile[] => {
   let rowTile = nexTiles.filter(otherTileInRow(tileInsert));
@@ -114,11 +114,11 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
   const xmax = Math.max(...rowTile.map(tile => tile.x));
   const ymin = Math.min(...rowTile.map(tile => tile.y));
   const ymax = Math.max(...rowTile.map(tile => tile.y));
-  let coordx = [];
+  let coordx:number[] = [];
   for (let k = xmin - 1; k <= xmax + 1; k++) {
     coordx = [...coordx, k];
   }
-  let coordy = [];
+  let coordy:number[] = [];
   for (let k = ymin - 1; k <= ymax + 1; k++) {
     coordy = [...coordy, k];
   }

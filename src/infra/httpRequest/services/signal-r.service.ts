@@ -8,7 +8,7 @@ import HttpTileRepositoryService from '../http-tile-repository.service';
 
 export class SignalRService {
 
-  hubConnection: HubConnection;
+  hubConnection!: HubConnection;
 
   constructor() {
   }
