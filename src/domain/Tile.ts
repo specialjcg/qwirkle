@@ -2,7 +2,7 @@ import {Shape} from './Shape';
 import {Color} from './Color';
 import {setPositionTile} from './SetPositionTile';
 import {positionIsNotFree} from './PositionIsFree';
-import {Tiles} from '../infra/httpRequest/tiles';
+import {Tiles} from './tiles';
 
 export type Tile = {
   disabled: boolean;
@@ -36,7 +36,7 @@ const shiftToRight = (tile: Tile): Tile => ({
   y: tile.y, disabled: true
 });
 
-const tileAfterNewTile = (tile: Tile, xposition: number, newTile: Tile): boolean =>
+export const onRight = (tile: Tile, xposition: number, newTile: Tile): boolean =>
   tile.x >= xposition && tile.y === newTile.y;
 
 const shiftToLeft = (tile: Tile): Tile => ({
@@ -45,40 +45,49 @@ const shiftToLeft = (tile: Tile): Tile => ({
   y: tile.y, disabled: true
 });
 
-const otherTileInRow = (tileInsert: Tile) => (tile: Tile) => tile.id !== tileInsert.id && tileInsert.y === tile.y;
+export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) => tile.id !== tileInsert.id && tileInsert.y === tile.y;
 
 const tileNotInRow = (tileInsert: Tile) => (tile: Tile)  => tileInsert.y !== tile.y;
+export
+const onLeft = (xposition: number) => (tile: Tile)  => tile.x < xposition ;
 
-const isUnderPosition = (xposition: number) => (tile: Tile)  => tile.x < xposition ;
+function placeTileToLeft(rowTile: Tile[], xposition: number, newTile: { shape: Shape; color: Color; x: number; y: number; disabled: boolean; id: number }) {
+  return rowTile.map(tile => {
+    if (onRight(tile, xposition, newTile)) {
+      return shiftToLeft(tile);
+    }
+    return tile;
+  });
+}
+
+function placeTileToRigth(rowTile: Tile[], xposition: number) {
+  return rowTile.map(tile => {
+    if (onLeft(xposition) && tile.disabled) {
+      return shiftToRight(tile);
+    }
+    return tile;
+  });
+}
 
 export const insertPosition = (nexTiles: Tile[], tileInsert: Tile, xposition: number): Tile[] => {
+  if (tileInsert.disabled) {
   let rowTile = nexTiles.filter(otherTileInRow(tileInsert));
 
   const rowTilenotInsert = nexTiles.filter(tileNotInRow(tileInsert));
-  let newTile = {
+  let newTile:Tile = {
     id: tileInsert.id, shape: tileInsert.shape, color: tileInsert.color, x: xposition,
     y: tileInsert.y, disabled: true
   };
   if (positionIsNotFree(rowTile, newTile)) {
-    const before = rowTile.filter(isUnderPosition(xposition));
-    const after = rowTile.filter(tile => tileAfterNewTile(tile, xposition, newTile));
+    const before = rowTile.filter(onLeft(xposition));
+    const after = rowTile.filter(tile => onRight(tile, xposition, newTile));
 
     if (before.length > 0 && after[0].disabled) {
-      rowTile = rowTile.map(tile => {
-        if (tileAfterNewTile(tile, xposition, newTile)) {
-          return shiftToLeft(tile);
-        }
-        return tile;
-      });
+      rowTile = placeTileToLeft(rowTile, xposition, newTile);
 
 
     } else if (before[0] !== undefined && before[before.length - 1].disabled) {
-      rowTile = rowTile.map(tile => {
-        if (isUnderPosition(xposition) && tile.disabled) {
-          return shiftToRight(tile);
-        }
-        return tile;
-      });
+      rowTile = placeTileToRigth(rowTile, xposition);
       newTile = shiftToRight(newTile);
 
     } else {
@@ -98,14 +107,18 @@ export const insertPosition = (nexTiles: Tile[], tileInsert: Tile, xposition: nu
       }
     }
   }
+
   return setPositionTile([...rowTilenotInsert, ...rowTile].filter(tile => tile.id !== newTile.id), newTile);
+  }
+  return nexTiles;
 };
 export const changePosition = (rowTile: Tile[], tileInsert: Tiles, xposition: number, yposition: number): Tile[] => {
+
   const insertTile: Tile = {
     id: tileInsert.id, shape: tileInsert.shape, color: tileInsert.color, x: xposition,
     y: yposition, disabled: true
   };
-  return insertPosition(rowTile, insertTile, xposition);
+ return insertPosition(rowTile, insertTile, xposition);
 };
 
 

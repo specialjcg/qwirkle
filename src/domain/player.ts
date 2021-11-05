@@ -1,6 +1,6 @@
-import {Tile} from '../../domain/Tile';
-import {Color} from '../../domain/Color';
-import {Shape} from '../../domain/Shape';
+import {Tile} from './Tile';
+import {Color} from './Color';
+import {Shape} from './Shape';
 import {Tiles} from './tiles';
 
 export interface Player {

@@ -1,5 +1,5 @@
-import {Color} from '../../domain/Color';
-import {Shape} from '../../domain/Shape';
+import {Color} from './Color';
+import {Shape} from './Shape';
 import {Player} from './player';
 
 export interface Tiles {

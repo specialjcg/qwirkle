@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
-import HttpTileRepositoryService from '../http-tile-repository.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +9,6 @@ export class SignalRService {
 
   hubConnection!: HubConnection;
 
-  constructor() {
-  }
 
   public startConnection = () => {
     const builder = new HubConnectionBuilder();

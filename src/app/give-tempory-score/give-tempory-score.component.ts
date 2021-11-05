@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Rack} from '../../infra/httpRequest/player';
+import {Rack} from '../../domain/player';
 
 @Component({
   selector: 'app-give-tempory-score',

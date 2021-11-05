@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ListNamePlayer, Player} from '../../infra/httpRequest/player';
+import {ListNamePlayer, Player} from '../../domain/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
 @Component({

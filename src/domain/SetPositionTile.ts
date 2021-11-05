@@ -1,6 +1,6 @@
 import {Tile} from './Tile';
 import {positionIsFree} from './PositionIsFree';
-import {Tiles} from '../infra/httpRequest/tiles';
+import {Tiles} from './tiles';
 import {Shape} from './Shape';
 import {Color} from './Color';
 

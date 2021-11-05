@@ -1,4 +1,4 @@
-import {Player, toWebTiles} from './player';
+import {Player, toWebTiles} from '../../domain/player';
 import {Color} from '../../domain/Color';
 import { Shape } from '../../domain/Shape';
 

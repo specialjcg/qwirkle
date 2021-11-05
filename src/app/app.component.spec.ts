@@ -9,8 +9,8 @@ import {MatOptionModule} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {toRarrange} from '../domain/SetPositionTile';
-import {Tiles, TileViewModel, toTileviewModel} from '../infra/httpRequest/tiles';
-import {Player} from '../infra/httpRequest/player';
+import {Tiles, TileViewModel, toTileviewModel} from '../domain/tiles';
+import {Player} from '../domain/player';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 

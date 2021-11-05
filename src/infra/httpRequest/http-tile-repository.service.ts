@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {PlayerTile, PlayerTileToSwap, Tile} from '../../domain/Tile';
+import {PlayerTile, PlayerTileToSwap} from '../../domain/Tile';
 import {
   BoardGame,
   ListGamedId,
@@ -13,11 +13,10 @@ import {
   RestSkipTurn,
   toBoard,
   toChangeRack,
-  toPlayers,
-} from './player';
+} from '../../domain/player';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {TileViewModel} from './tiles';
+import {TileViewModel} from '../../domain/tiles';
 
 const headers = new HttpHeaders()
   .set('Access-Control-Allow-Origin', '*')
