@@ -163,6 +163,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const height = this.scene.nativeElement.clientHeight;
     const width = this.scene.nativeElement.clientWidth;
     const xmin: number = Math.min(...this.board.map(tile => tile.x));
+    const xmax: number = Math.max(...this.board.map(tile => tile.x));
     const ymin = this.getYmin();
     const ymax = this.getYmax();
     if (ymin >= 0) {
@@ -172,7 +173,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         this.panZoomAPI.zoomToFit({
           x: 300,
           y: -400,
-          width,
+          width: width * (Math.abs(xmax - xmin) * 100) / 1000,
           height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
 
@@ -181,7 +182,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         this.panZoomAPI.zoomToFit({
           x: 550,
           y: -400,
-          width,
+          width: width * (Math.abs(xmax - xmin) * 100) / 1000,
           height: height * (Math.abs(ymax - ymin) * 100) / 600
         });
       }
@@ -190,7 +191,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.panZoomAPI.zoomToFit({
         x: 650,
         y: -400,
-        width,
+        width: width * (Math.abs(xmax - xmin) * 100) / 1000,
         height: height * (Math.abs(ymax - ymin) * 100) / 600
       });
     }
@@ -266,16 +267,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   }
 
-  dropInBag(event: CdkDragDrop<Tile[], any>, index: number): void {
-    this.board = changePosition(this.bag, event.previousContainer.data[event.previousIndex], 0, 0);
-    if (event.previousContainer !== event.container) {
-      this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-      // attention : le previous peut potentiellement être le board. à gérer dans ce cas et faire filter sur board et non sur result
-
-    }
-
-    this.plate = toPlate(this.board);
-  }
 
   async game(): Promise<void> {
 
@@ -290,7 +281,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.serviceQwirkle.getGames(this.gameId).then(board => {
        this.board = board.boards;
        this.plate = toPlate(this.board);
-       this.players = board.players;
+       board.players.sort((a, b) => a.id - b.id);
+       this.players = board.players
        this.player = board.players.filter(player => player.id === this.player.id)[0];
       this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
@@ -328,6 +320,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
         this.game().then();
         this.getPlayerIdToPlay().then();
+        this.bag=[];
       }
     );
   }
