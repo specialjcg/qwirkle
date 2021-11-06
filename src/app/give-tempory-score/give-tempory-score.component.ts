@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Rack} from '../../domain/player';
 
 @Component({
@@ -6,11 +6,8 @@ import {Rack} from '../../domain/player';
   templateUrl: './give-tempory-score.component.html',
   styleUrls: ['./give-tempory-score.component.css']
 })
-export class GiveTemporyScoreComponent implements OnInit {
-  @Input() score: Rack = {code: 0, tilesPlayed : [], newRack: [], points: 0 };
-  constructor() { }
+export class GiveTemporyScoreComponent {
+  @Input() score: Rack = {code: 0, tilesPlayed: [], newRack: [], points: 0};
 
-  ngOnInit(): void {
-  }
 
 }

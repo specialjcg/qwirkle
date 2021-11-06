@@ -15,13 +15,13 @@ import {MatCardModule} from '@angular/material/card';
 import {ChoosePlayerComponent} from './choose-player/choose-player.component';
 import {TilePawnComponent} from './TilePawn/tile-pawn.component';
 
-import { NgxPanZoomModule } from 'ngx-panzoom';
-import { NewUserComponent } from './new-user/new-user.component';
-import { ChooseGameComponent } from './choose-game/choose-game.component';
+import {NgxPanZoomModule} from 'ngx-panzoom';
+import {NewUserComponent} from './new-user/new-user.component';
+import {ChooseGameComponent} from './choose-game/choose-game.component';
 import {NewGameComponent} from "./new-game/new-game.component";
-import { GiveTemporyScoreComponent } from './give-tempory-score/give-tempory-score.component';
-import { WinnerComponent } from './winner/winner.component';
-
+import {GiveTemporyScoreComponent} from './give-tempory-score/give-tempory-score.component';
+import {WinnerComponent} from './winner/winner.component';
+import { PickComponent } from './pick/pick.component';
 
 
 export class MyAppModule {
@@ -38,7 +38,9 @@ export class MyAppModule {
     ChooseGameComponent,
     NewGameComponent,
     GiveTemporyScoreComponent,
-    WinnerComponent
+    WinnerComponent,
+    PickComponent
+
   ],
   imports: [
     BrowserModule, NgxPanZoomModule,

@@ -1,15 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-winner',
   templateUrl: './winner.component.html',
   styleUrls: ['./winner.component.css']
 })
-export class WinnerComponent implements OnInit {
-  @Input() winner: string='';
-  constructor() { }
+export class WinnerComponent {
+  @Input() winner: string = '';
 
-  ngOnInit(): void {
-  }
 
 }

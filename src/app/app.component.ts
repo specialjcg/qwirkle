@@ -233,7 +233,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
-
+      this.bag = this.bag.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 
     }
     this.plate = toPlate(this.board);
@@ -253,7 +253,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     }
 
-  dropempty(event: CdkDragDrop<Tile[], any>, index: number): void {
+  dropempty(event: CdkDragDrop<Tile[], any>): void {
     this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
     if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);

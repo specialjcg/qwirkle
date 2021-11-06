@@ -1,17 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-tile-pawn',
   templateUrl: './tile-pawn.component.html',
   styleUrls: ['./tile-pawn.component.css']
 })
-export class TilePawnComponent implements OnInit {
-  @Input() image: string='';
-  @Input() style: string='';
-  constructor() { }
+export class TilePawnComponent {
+  @Input() image: string = '';
+  @Input() style: string = '';
 
-  ngOnInit(): void {
-  }
 
   isImg = () => this.image !== '../../assets/img/';
 }

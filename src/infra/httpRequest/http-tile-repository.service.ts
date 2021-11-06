@@ -48,7 +48,7 @@ export default class HttpTileRepositoryService {
 
   getGames(GameId: number): Promise<BoardGame> {
     return this.https.post<RestBoard>('https://localhost:5001/Games/get', [GameId], {headers})
-      .toPromise().then(response => toBoard(response));
+      .toPromise().then(response => {console.log(response);return toBoard(response)});
   }
 
   getPlayer(gameId: number, userId: number): Promise<Player> {
@@ -98,7 +98,7 @@ export default class HttpTileRepositoryService {
       .toPromise().then(response => toListGamedId(response));
   }
 
-  
+
 
   newGame(players: number[]): Promise<number[]> {
     return this.https.post<Player>('https://localhost:5001/Games/', players).toPromise().then();
