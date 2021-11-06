@@ -1,5 +1,4 @@
 import 'jest-preset-angular';
-
 Object.defineProperty(window, 'CSS', {value: null});
 Object.defineProperty(window, 'getComputedStyle', {
   value: () => {
@@ -21,3 +20,15 @@ Object.defineProperty(document.body.style, 'transform', {
     };
   }
 });
+const mockStorage = () => {
+  let storage: { [key: string]: any } = {};
+  return {
+    getItem: (key: string) => (key in storage ? storage[key] : null),
+    setItem: (key: string, value: any) => (storage[key] = value || ''),
+    removeItem: (key: string) => delete storage[key],
+    clear: () => (storage = {}),
+  };
+};
+
+Object.defineProperty(window, 'localStorage', { value: mockStorage() });
+Object.defineProperty(window, 'sessionStorage', { value: mockStorage() });

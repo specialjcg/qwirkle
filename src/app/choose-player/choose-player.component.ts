@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ListNamePlayer, Player} from '../../domain/player';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Player} from '../../domain/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
 @Component({
@@ -7,13 +7,12 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
   templateUrl: './choose-player.component.html',
   styleUrls: ['./choose-player.component.css']
 })
-export class ChoosePlayerComponent implements OnInit {
-  @Input() gameId: number=0;
-  @Input() nameToTurn: string='';
-  @Input() score: number=0;
+export class ChoosePlayerComponent {
+  @Input() gameId: number = 0;
+  @Input() nameToTurn: string = '';
+  @Input() score: number = 0;
   @Output() playerSelectChange = new EventEmitter<Player>();
-  @Input() players: Player[]=[];
-  names: ListNamePlayer = {listNamePlayer: []};
+  @Input() players: Player[] = [];
   nameToPlay = '';
 
 
@@ -21,13 +20,9 @@ export class ChoosePlayerComponent implements OnInit {
 
   }
 
-  async ngOnInit(): Promise<void> {
-    this.names = await this.service.getPlayerName(this.gameId).then();
-  }
-
 
   playerToTurnClass(name: string): string {
-      return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
+    return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
   }
 
 
