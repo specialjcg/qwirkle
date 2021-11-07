@@ -20,6 +20,7 @@ describe('WinnerComponent', () => {
   });
 
   it('should create', () => {
+    expect(component.winner).toEqual('');
     expect(component).toBeTruthy();
   });
 });

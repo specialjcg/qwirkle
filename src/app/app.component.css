@@ -77,14 +77,14 @@
 /* TODO remove when same button do valid and skipturn and swaptiles */
 .positionSkipTurn{
   position: absolute;
-  top:85vh;
+  top:25vh;
   left:2vw;
 
 }
 /* TODO remove when same button do valid and skipturn and swaptiles */
 .positionSwapTiles{
   position: absolute;
-  top:60vh;
+  top:25vh;
   left:2vw;
 
 }

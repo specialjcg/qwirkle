@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
 import {HttpClient} from '@angular/common/http';
-import {changePosition, Tile, toNameImage, toPlate} from '../domain/Tile';
+import { getInsertTile, insertPosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../domain/player';
@@ -229,8 +229,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   drop(event: CdkDragDrop<Tile[], any>, index: number): void {
 
-    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex],
-      this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y);
+    this.board = insertPosition(this.board, getInsertTile(event.previousContainer.data[event.previousIndex],
+      this.plate[index][event.currentIndex].x, this.plate[index][event.currentIndex].y),this.plate[index][event.currentIndex].x);
 
     if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
@@ -255,7 +255,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
   dropempty(event: CdkDragDrop<Tile[], any>): void {
-    this.board = changePosition(this.board, event.previousContainer.data[event.previousIndex], 0, 0);
+    this.board = insertPosition(this.board, getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),0);
     if (event.previousContainer !== event.container) {
       this.rack = this.rack.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
 

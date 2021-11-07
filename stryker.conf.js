@@ -3,8 +3,8 @@
  */
 module.exports = function(config) {
   config.set({
-    mutate: ["src/domain/*.ts","!src/domain/*spec.ts"],
-    // mutate: ["src/domain/SetPositionTile.ts"],
+    // mutate: ["src/**/*.ts","!src/**/*spec.ts"],
+    mutate: ["src/app/pick/*.ts","!src/app/pick/*spec.ts"],
     mutator: "typescript",
     testRunner: "jest",
     reporters: ["progress", "clear-text", "html"],

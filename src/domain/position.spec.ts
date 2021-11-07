@@ -59,6 +59,13 @@ describe('test position is free', () => {
     const rowTile: Tile[] = setPositionTile([tileTwo], tileOne);
     expect(positionIsFree(rowTile,tileThree)).toBeFalsy()
   });
+  it('should test position is free for positionisfree and id the same but  y too and x', () => {
+    const tileOne: Tile = {id: 1, shape: Shape.Circle, color: Color.Purple, x: 0, y: 0, disabled: true};
+    const tileTwo: Tile = {id: 2, shape: Shape.Square, color: Color.Purple, x: 1, y: 1, disabled: true};
+    const tileThree: Tile = {id: 1, shape: Shape.Square, color: Color.Purple, x: 0, y: 1, disabled: true};
+    const rowTile: Tile[] = [tileTwo, tileOne];
+    expect(positionIsFree(rowTile,tileThree)).toBeFalsy()
+  });
   it('should not set position is free for positionfree', () => {
     const tileOne: Tile = {id: 1, shape: Shape.Circle, color: Color.Purple, x: 0, y: 0, disabled: true};
     const tileTwo: Tile = {id: 2, shape: Shape.Square, color: Color.Purple, x: 0, y: 0, disabled: true};

@@ -20,6 +20,7 @@ describe('TotalScoreComponent', () => {
   });
 
   it('should create', () => {
+    expect(component.totalScore).toEqual(0)
     expect(component).toBeTruthy();
   });
 });

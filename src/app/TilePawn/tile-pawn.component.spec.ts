@@ -20,6 +20,18 @@ describe('MyButtonComponent', () => {
   });
 
   it('should create', () => {
+    expect(component.image).toEqual('')
+    expect(component.style).toEqual('')
     expect(component).toBeTruthy();
+  });
+  it('should return true if   image is not empty', () => {
+    component.image='../../assets/img/tile.svg'
+
+    expect(component.isImg()).toBeTruthy()
+  });
+  it('should return false if   image is  empty', () => {
+    component.image='../../assets/img/'
+
+    expect(component.isImg()).toBeFalsy()
   });
 });

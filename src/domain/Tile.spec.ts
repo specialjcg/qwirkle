@@ -1,4 +1,4 @@
-import {changePosition, insertPosition, onRight, otherTileInRow, Tile, toNameImage, toPlate} from './Tile';
+import {getInsertTile, insertPosition, onRight, otherTileInRow, Tile, toNameImage, toPlate} from './Tile';
 import {Color} from './Color';
 import {setPositionTile} from './SetPositionTile';
 import {Tiles} from './tiles';
@@ -87,12 +87,14 @@ describe('create tiles list', () => {
     const tileOne: Tile = {id: 1, shape: Shape.Circle, color: Color.Purple, x: 0, y: 0, disabled: true};
     const tileTwo: Tile = {id: 2, shape: Shape.Circle, color: Color.Red, x: -1, y: 0, disabled: true};
     const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-    const newRowTile: Tile[] = changePosition(rowTile, {
+
+    const newRowTile: Tile[] = insertPosition(rowTile, getInsertTile({
       id: tileOne.id,
       rackPosition: 1,
       shape: tileOne.shape,
       color: tileOne.color
-    }, tileTwo.x, 0);
+    }, tileTwo.x, 0), tileTwo.x)
+
     expect(newRowTile).toEqual([{id: 1, shape: Shape.Circle, color: Color.Purple, x: -2, y: 0, disabled: true},
       {id: 2, shape: Shape.Circle, color: Color.Red, x: -1, y: 0, disabled: true}
     ]);
@@ -140,12 +142,13 @@ describe('create tiles list', () => {
         y: 0
       }
     ]);
-    const newRowTile2: Tile[] = changePosition(newRowTile, {
+    const newRowTile2: Tile[] = insertPosition(newRowTile, getInsertTile({
       id: tileinsert.id,
       rackPosition: 1,
       shape: tileinsert.shape,
       color: tileinsert.color
-    }, tileinsert.x, 1);
+    }, tileinsert.x, 1), tileinsert.x)
+
     expect(newRowTile2).toEqual([
       {
         color: 4,
@@ -210,7 +213,7 @@ describe('create tiles list', () => {
   it('should not insert a tile between  two tile in row if y not   the same ', () => {
     const tileOne: Tile = {id: 1, shape: Shape.Circle, color: Color.Purple, x: 1, y: 0, disabled: true};
     const tileTwo: Tile = {id: 2, shape: Shape.Circle, color: Color.Red, x: 2, y: 1, disabled: true};
-      const newRowTile: boolean = onRight(tileOne,0, tileTwo);
+    const newRowTile: boolean = onRight(tileOne, 0, tileTwo);
     expect(newRowTile).toEqual(false);
   });
   it('should not insert a tile between  two tile in row if id is the same ', () => {
@@ -299,13 +302,12 @@ describe('create tiles list', () => {
     rowTile = setPositionTile(rowTile, tileTree);
 
 
-    rowTile = changePosition(rowTile, {
+    rowTile = insertPosition(rowTile, getInsertTile({
       id: tileTree.id,
       rackPosition: 1,
       shape: tileTree.shape,
       color: tileTree.color
-    }, 1, -1);
-
+    }, 1, -1), 1);
 
     expect(rowTile).toEqual([{id: 6, shape: Shape.Square, color: Color.Green, x: 1, y: -1, disabled: true},
       {id: 2, shape: Shape.Circle, color: Color.Red, x: -1, y: 0, disabled: true},
@@ -664,8 +666,9 @@ describe('create tiles list', () => {
         color: 4,
         shape: 1
       };
-    rowTile = changePosition(rowTile, rackTile,
-      inserPosition.x, inserPosition.y);
+
+    rowTile = insertPosition(rowTile, getInsertTile(rackTile,
+      inserPosition.x, inserPosition.y), inserPosition.x);
     expect(toPlate(rowTile)).toEqual([
       [
         {

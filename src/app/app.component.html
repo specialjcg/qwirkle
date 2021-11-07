@@ -18,9 +18,9 @@
 <app-give-tempory-score [score]="this.score"></app-give-tempory-score>
 
 <app-winner [winner]="this.winner"></app-winner>
-<button class="positionValid" (click)="valid()">Valid</button>
-<button class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
-<button class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
+<button *ngIf="bag.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()">Jouer</button>
+<button  *ngIf="bag.length!==0" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
+<button *ngIf="bag.length===0 && this.rack.length===6" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
 
 <button class="positionNewGame" (click)="NewGame()">New Game</button>
 <div cdkDropListGroup>

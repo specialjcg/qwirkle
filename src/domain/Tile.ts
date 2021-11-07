@@ -112,14 +112,12 @@ export const insertPosition = (nexTiles: Tile[], tileInsert: Tile, xposition: nu
   }
   return nexTiles;
 };
-export const changePosition = (rowTile: Tile[], tileInsert: Tiles, xposition: number, yposition: number): Tile[] => {
 
-  const insertTile: Tile = {
-    id: tileInsert.id, shape: tileInsert.shape, color: tileInsert.color, x: xposition,
-    y: yposition, disabled: true
-  };
- return insertPosition(rowTile, insertTile, xposition);
-};
+export const getInsertTile = (tileInsert: Tiles, xposition: number, yposition: number) => ({
+  id: tileInsert.id, shape: tileInsert.shape, color: tileInsert.color, x: xposition,
+  y: yposition, disabled: true
+});
+
 
 
 export const toPlate = (rowTile: Tile[]): Tile[][] => {
