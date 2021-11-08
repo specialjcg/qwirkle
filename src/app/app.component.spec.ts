@@ -1,4 +1,4 @@
-import {async, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {NgxPanZoomModule} from 'ngx-panzoom';
 import {MatButtonModule} from '@angular/material/button';
@@ -13,11 +13,15 @@ import {Tiles, TileViewModel, toTileviewModel} from '../domain/tiles';
 import {Player} from '../domain/player';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WinnerComponent} from "./winner/winner.component";
+import {Tile} from "../domain/Tile";
 
 
 
 
 describe('AppComponent', () => {
+  let app: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -29,20 +33,67 @@ describe('AppComponent', () => {
       ],
     }).compileComponents();
   }));
-
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.componentInstance;
+    fixture.detectChanges();
+  });
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
+
+    expect(app.board).toEqual([]);
     expect(app).toBeTruthy();
   });
 
   it(`should have as title 'qwirkle'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
+
+    expect(app.rack).toEqual([]);
+
+    expect(app.bag).toEqual([]);
+    expect(app.plate).toEqual([[]]);
+    expect(app.playerNameToPlay).toEqual('');
+    expect(app.nameToTurn).toEqual('');
+    expect(app.playTile).toEqual([]);
+    expect(app.swapTile).toEqual([]);
+    expect(app.score).toEqual({
+      code: 1,
+      newRack: [],
+      points: 0,
+      tilesPlayed: []
+    });
+    expect(app.voidTile).toEqual([{disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0}]);
+    expect(app.players).toEqual([]);
+    expect(app.games).toEqual({listGameId: []});
+    expect(app.winner).toEqual('');
     expect(app.title).toEqual('qwirkle');
   });
 
-
+  it('should reset the paramêtre', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.board).toEqual([]);
+    expect(app.nameToTurn).toEqual('');
+expect(app.player).toEqual({
+  id: 0,
+  pseudo: '',
+  gameId: 0,
+  gamePosition: 0,
+  points: 0,
+  lastTurnPoints: 0,
+  rack: {tiles: []},
+  isTurn: true
+});
+expect(app['panZoomConfigOptions']).toEqual({
+  zoomLevels: 10,
+  scalePerZoomLevel: 2.0,
+  zoomStepDuration: 0.2,
+  freeMouseWheelFactor: 0.01,
+  zoomToFitZoomLevelFactor: 0.9,
+  dragMouseButton: 'right'
+})
+    expect(app['playTileTempory']).toEqual([])
+  });
   it('should rearrange rack ', () => {
     const rack = [
       {
@@ -220,6 +271,171 @@ describe('AppComponent', () => {
         X: 0,
         Y: 0,
         playerId: 3
+      }
+    ]);
+  });
+  it('should give the style of line style', () => {
+    expect(app.getPawStyle(1)).toEqual("translate(-65px,15px)");
+  });
+  it('should give y min in board style', () => {
+    app.board=[
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 2,
+        "shape": 2,
+        "x": 3,
+        "y": -1
+      },
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 5,
+        "shape": 5,
+        "x": 4,
+        "y": -1
+      },
+      {
+        "color": 3,
+        "disabled": false,
+        "id": 16,
+        "shape": 4,
+        "x": 7,
+        "y": 3
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 19,
+        "shape": 1,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 21,
+        "shape": 3,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "color": 5,
+        "disabled": false,
+        "id": 30,
+        "shape": 6,
+        "x": 3,
+        "y": 2
+      }]
+    expect(app['getYmin']()).toEqual(-1)
+    expect(app['getYmax']()).toEqual(3)
+
+  });
+  it('should autozoom when game', () => {
+    app.board=[
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 2,
+        "shape": 2,
+        "x": 3,
+        "y": -1
+      },
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 5,
+        "shape": 5,
+        "x": 4,
+        "y": -1
+      },
+      {
+        "color": 3,
+        "disabled": false,
+        "id": 16,
+        "shape": 4,
+        "x": 7,
+        "y": 3
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 19,
+        "shape": 1,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 21,
+        "shape": 3,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "color": 5,
+        "disabled": false,
+        "id": 30,
+        "shape": 6,
+        "x": 3,
+        "y": 2
+      }];
+    app.autoZoom()
+    expect(app.panzoomConfig.initialZoomToFit).toEqual({
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    });
+    expect(app.board).toEqual([
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 2,
+        "shape": 2,
+        "x": 3,
+        "y": -1
+      },
+      {
+        "color": 1,
+        "disabled": false,
+        "id": 5,
+        "shape": 5,
+        "x": 4,
+        "y": -1
+      },
+      {
+        "color": 3,
+        "disabled": false,
+        "id": 16,
+        "shape": 4,
+        "x": 7,
+        "y": 3
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 19,
+        "shape": 1,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "color": 4,
+        "disabled": false,
+        "id": 21,
+        "shape": 3,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "color": 5,
+        "disabled": false,
+        "id": 30,
+        "shape": 6,
+        "x": 3,
+        "y": 2
       }
     ]);
   });

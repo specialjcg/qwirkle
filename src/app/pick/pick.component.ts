@@ -25,7 +25,7 @@ export class PickComponent  {
     return '../../assets/img/' + toNameImage(tile);
   }
 
-  dropempty(event: CdkDragDrop<Tile[], any>): void {
+  dropempty(event: CdkDragDrop<Tile[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

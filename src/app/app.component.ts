@@ -29,12 +29,21 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   plate: Tile[][] = [[]];
   playTile: RestTilesPlay[] = [];
   swapTile: RestTilesSwap[] = [];
-  score: Rack={code: 0, tilesPlayed : [], newRack: [], points: 0 };
+  score: Rack={code: 1, tilesPlayed : [], newRack: [], points: 0 };
   voidTile: Tile[] = [{disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0}];
   totalScore = 0;
   gameId = 0;
   userId = 0;
-  player!: Player;
+  player: Player={
+    id: 0,
+    pseudo: '',
+    gameId: 0,
+    gamePosition: 0,
+    points: 0,
+    lastTurnPoints: 0,
+    rack: {tiles: []},
+    isTurn: true
+  };
   playerNameToPlay: string='';
   nameToTurn: string='';
   panzoomModel!: PanZoomModel;
@@ -57,29 +66,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   winner = '';
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
-    this.reset();
+
   }
 
-  private reset(): void {
-    this.score = {
-      code: 1,
-      tilesPlayed: [],
-      newRack: [],
-      points: 0
-    };
-    this.board = [];
-    this.nameToTurn = '';
-    this.player = {
-      id: 0,
-      pseudo: '',
-      gameId: 0,
-      gamePosition: 0,
-      points: 0,
-      lastTurnPoints: 0,
-      rack: {tiles: []},
-      isTurn: true
-    };
-  }
+
 
   ngOnInit(): void {
 

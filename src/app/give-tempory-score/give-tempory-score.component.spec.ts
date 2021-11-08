@@ -35,6 +35,7 @@ describe('GiveTemporyScoreComponent', () => {
   });
 
   it('should create', () => {
+    expect(component.score).toEqual({code: 0, tilesPlayed: [], newRack: [], points: 0})
     expect(component).toBeTruthy();
   });
 });

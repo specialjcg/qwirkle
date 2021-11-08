@@ -35,6 +35,33 @@ describe('ChoosePlayerComponent', () => {
   });
 
   it('should create', () => {
+    expect(component.nameToTurn).toEqual('');
+    expect(component.gameId).toEqual(0);
+    expect(component.score).toEqual(0);
+    expect(component.players).toEqual([]);
+    expect(component.nameToPlay).toEqual('');
     expect(component).toBeTruthy();
   });
+  it('should return style if name is name turn ', () => {
+    component.nameToTurn ='jean'
+
+    expect(component.playerToTurnClass('jean')).toEqual('card-group colorTurnOn')
+  });
+  it('should return style if name is not name turn ', () => {
+    component.nameToTurn ='jean phi'
+
+    expect(component.playerToTurnClass('jean')).toEqual("card-group colorTurnOff")
+  });
+
+  it('should true if name turn ', () => {
+    component.nameToTurn ='jean phi'
+
+    expect(component.isNameTurn()).toBeTruthy()
+  });
+  it('should false if name no turn ', () => {
+    component.nameToTurn =''
+
+    expect(component.isNameTurn()).toBeFalsy()
+  });
+
 });

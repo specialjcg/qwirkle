@@ -27,6 +27,6 @@ export class ChoosePlayerComponent {
 
 
   isNameTurn(): boolean {
-    return this.nameToTurn !== '' && this.nameToTurn !== null;
+    return this.nameToTurn !== '';
   }
 }
