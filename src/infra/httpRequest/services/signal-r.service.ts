@@ -13,7 +13,7 @@ export class SignalRService {
   public startConnection = () => {
     const builder = new HubConnectionBuilder();
     this.hubConnection = builder
-      .withUrl('https://localhost:5001/hubGame')
+      .withUrl('https://qwirkleapi.newtomsoft.fr/hubGame')
       .build();
     this.hubConnection
       .start()
