@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
+import {backurl} from "../http-tile-repository.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class SignalRService {
   public startConnection = () => {
     const builder = new HubConnectionBuilder();
     this.hubConnection = builder
-      .withUrl('https://qwirkleapi.newtomsoft.fr/hubGame')
+      .withUrl(backurl+'/hubGame')
       .build();
     this.hubConnection
       .start()

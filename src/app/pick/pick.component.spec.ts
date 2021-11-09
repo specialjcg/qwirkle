@@ -1,11 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PickComponent } from './pick.component';
+import {PickComponent} from './pick.component';
 import {Tile} from "../../domain/Tile";
-import {Color} from "../../domain/Color";
-import {CdkDragDrop} from "@angular/cdk/drag-drop";
 import {DebugElement} from "@angular/core";
-import {By} from "@angular/platform-browser";
 
 describe('PickComponent', () => {
   let component: PickComponent;
@@ -13,9 +10,9 @@ describe('PickComponent', () => {
   let de: DebugElement;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PickComponent ]
+      declarations: [PickComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -41,14 +38,14 @@ describe('PickComponent', () => {
   });
 
   it('should return true if   image is not empty', () => {
-    const tile:Tile=  {
-        color: 6,
-        disabled: true,
-        id: 31,
-        shape: 2,
-        x: 2,
-        y: 0
-      };
+    const tile: Tile = {
+      color: 6,
+      disabled: true,
+      id: 31,
+      shape: 2,
+      x: 2,
+      y: 0
+    };
 
     expect(component.getRackTileImage(tile)).toEqual("../../assets/img/YellowSquare.svg")
   });

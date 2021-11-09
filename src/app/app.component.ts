@@ -111,7 +111,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const shelveDisplay = document.querySelector('.container') as HTMLElement;
     const height = shelveDisplay.clientHeight;
     const width = shelveDisplay.clientWidth;
-
     this.panzoomConfig.initialZoomToFit = {
       x: 0,
       y: 0,
@@ -161,10 +160,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
         this.panZoomAPI.zoomToFit({
-          x: 300,
-          y: -400,
+          x: width/2+200,
+          y: -height,
           width: width * (Math.abs(xmax - xmin) * 100) / 1000,
-          height: height * (Math.abs(ymax - ymin) * 100) / 600
+          height: height * (Math.abs(ymax - ymin) * 100) / 600+height
         });
 
       } else {
@@ -172,8 +171,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         this.panZoomAPI.zoomToFit({
           x: 550,
           y: -400,
-          width: width * (Math.abs(xmax - xmin) * 100) / 1000,
-          height: height * (Math.abs(ymax - ymin) * 100) / 600
+          width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
+          height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
         });
       }
     } else {
@@ -181,8 +180,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.panZoomAPI.zoomToFit({
         x: 650,
         y: -400,
-        width: width * (Math.abs(xmax - xmin) * 100) / 1000,
-        height: height * (Math.abs(ymax - ymin) * 100) / 600
+        width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
+        height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
       });
     }
 
@@ -374,8 +373,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
          this.getPlayerIdToPlay().then();
          this.nameToTurn = '';
 
-         this.game().then();
 
+          this.game().then();
          this.signalRService.sendPlayerInGame(gameId, this.player.id);
                  this.rack = toRarrange(this.player.rack.tiles);
          this.changeDetector.detectChanges();
@@ -388,6 +387,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   async countUserChange(event: number): Promise<void> {
     this.userId = event;
     this.games = await this.serviceQwirkle.getGamesByUserId(this.userId);
+    this.resetZoomToFit();
   }
 
   getPawStyle(i: number): string {
@@ -396,7 +396,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   NewGame(): void {
-    this.serviceQwirkle.newGame([1, 2]).then();
+    this.serviceQwirkle.newGame([10, 11]).then();
   }
 
   async getPlayerIdToPlay(): Promise<void> {
