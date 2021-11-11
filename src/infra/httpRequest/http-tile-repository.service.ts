@@ -42,8 +42,8 @@ export default class HttpTileRepositoryService {
   }
 
 
-  getGames(GameId: number): Promise<BoardGame> {
-    return this.https.post<RestBoard>(backurl+'/Game/', [GameId], {headers})
+  getGame(GameId: number): Promise<BoardGame> {
+    return this.https.get<RestBoard>(backurl+'/Game/' + GameId, {headers})
       .toPromise().then(response => {
         console.log(response);
         return toBoard(response)
@@ -53,7 +53,6 @@ export default class HttpTileRepositoryService {
   getPlayer(gameId: number, userId: number): Promise<Player> {
     return this.https.get<string>(backurl+'/Player/' + gameId + '/' + userId, {headers})
       .toPromise().then();
-
   }
 
   playTile(tiles: PlayerTile[]): Promise<Rack> {
@@ -82,13 +81,13 @@ export default class HttpTileRepositoryService {
       .toPromise().then();
   }
 
-  getListGames(): Promise<ListGamedId> {
+  getGames(): Promise<ListGamedId> {
     return this.https.get<number[]>(backurl+'/Game/GamesIds/', {headers})
       .toPromise().then(response => toListGamedId(response));
   }
 
   getUsers(): Promise<ListUsersId> {
-    return this.https.get<number[]>(backurl+'/Player/UsersIds/', {headers})
+    return this.https.get<number[]>(backurl+'/User/AllUsersIds/', {headers})
       .toPromise().then(response => toListUsersId(response));
   }
 
@@ -102,14 +101,14 @@ export default class HttpTileRepositoryService {
     return this.https.post<Player>(backurl+'/Game/New/', players).toPromise().then();
   }
 
-  getPlayerNameToPlay(gameId: number): Observable<string> {
+  getPlayerNameTurn(gameId: number): Observable<string> {
     return this.https.get<string>(backurl+'/Player/GetPlayerNameTurn/' + gameId,
       {responseType: 'text' as 'json'});
 
   }
 
   getWinners(gameId: number): Promise<any> {
-    return this.https.post<any>(backurl+'/Player/Winners/', [gameId], {headers})
+    return this.https.get<any>(backurl+'/Player/Winners/' + gameId, {headers})
       .toPromise().then();
   }
 }
