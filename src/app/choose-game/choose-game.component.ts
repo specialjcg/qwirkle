@@ -7,7 +7,7 @@ import {ListGamedId, Player} from '../../domain/player';
   templateUrl: './choose-game.component.html',
   styleUrls: ['./choose-game.component.css']
 })
-export class ChooseGameComponent implements OnInit {
+export class ChooseGameComponent  {
   @Input() userId: number=0;
 
   @Output() gameSelectChange = new EventEmitter<number>();
@@ -18,10 +18,6 @@ export class ChooseGameComponent implements OnInit {
   constructor(public service: HttpTileRepositoryService) {
   }
 
-  async ngOnInit(): Promise<void> {
-
-    this.games = await this.service.getGamesByUserId(this.userId);
-  }
 
 
   async gameChoice(gameId: number): Promise<void> {

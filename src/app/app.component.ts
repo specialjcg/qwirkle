@@ -398,7 +398,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   async countUserChange(event: number): Promise<void> {
     this.userId = event;
-    this.games = await this.serviceQwirkle.getGamesByUserId(this.userId);
+    this.serviceQwirkle.getGamesByUserId(this.userId).then((res)=>
+      {this.games=res;
+        this.games.listGameId.sort((a, b) => a - b);
+
+      }
+    );
+
     this.resetZoomToFit();
   }
 
