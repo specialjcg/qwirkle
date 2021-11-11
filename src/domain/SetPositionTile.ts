@@ -15,7 +15,9 @@ export const setPositionTile = (tiles: Tile[], tile: Tile): Tile[] => {
 export const toRarrange = (rack: Tiles[]): Tile[] => rack.map((tile, index) => {
   return {disabled: true, x: index, y: 0, color: tile.color, shape: tile.shape, id: tile.id};
 });
-
+export const toRarrangeRack = (rack: Tile[]): Tile[] => rack.map((tile, index) => {
+  return {disabled: true, x: index, y: 0, color: tile.color, shape: tile.shape, id: tile.id};
+});
 
 export const toTiles = (rack: Tile[]): Tiles[] => rack.map((tile, index) => {
   return {color: tile.color, shape: tile.shape, id: tile.id, rackPosition: index};

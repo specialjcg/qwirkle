@@ -6,8 +6,13 @@
 
   </div>
 </div>
-<div *ngIf="isImg()" class="box2d"  >
+<div *ngIf="isImg() && !isDrag" class="box2d"  >
   <div class="btn2d">
            <img class="img2d" [src]="this.image" alt=""/>
 </div>
+</div>
+<div *ngIf="isImg() && isDrag" [style.transform]=getclassboxTranslate(this.scale) >
+  <div [style.width]="getclassbtn2dDrag(this.scale)" [style.height]="getclassbox2dDrag(this.scale)" >
+    <img   class="img2d" [src]="this.image" alt=""/>
+  </div>
 </div>

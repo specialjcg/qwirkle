@@ -1,14 +1,23 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
 import {HttpClient} from '@angular/common/http';
 import { getInsertTile, insertPosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDragMove, CdkDragStart, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../domain/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
 import { toTileviewModel} from '../domain/tiles';
-import {toRarrange, toTiles} from '../domain/SetPositionTile';
+import {toRarrange, toRarrangeRack, toTiles} from '../domain/SetPositionTile';
 
 
 
@@ -323,6 +332,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   dropResult(event: CdkDragDrop<Tile[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+
     } else {
       this.board = this.board.filter(tile => tile !== event.previousContainer.data[event.previousIndex]);
       transferArrayItem(event.previousContainer.data,
@@ -334,15 +344,17 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
     }
+    this.rack=toRarrangeRack(event.container.data)
     this.player.rack.tiles = toTiles(this.rack);
-    this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
     if (this.rack.length === 6){
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
-      this.serviceQwirkle.getGame(this.gameId).then(board => this.players = board.players);
+      this.serviceQwirkle.getGame(this.gameId).then(board => {this.players = board.players;
       this.player = this.players.filter(player => player.id === this.player.id)[0];
       this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
       this.rack = toRarrange(this.player.rack.tiles);
+      console.log(this.player.rack.tiles)
+      this.changeDetector.detectChanges();});
     })); }
   }
 
@@ -408,9 +420,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.apiSubscription.unsubscribe();
   }
 
-  private getCssScale(zoomLevel: any): number {
+  getCssScale(zoomLevel: any): number {
     return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
   }
+
 
 }
 
