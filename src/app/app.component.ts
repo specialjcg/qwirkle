@@ -423,7 +423,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.apiSubscription.unsubscribe();
   }
 
-  private getCssScale(zoomLevel: any): number {
+  getCssScale(zoomLevel: any): number {
     return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
   }
 
