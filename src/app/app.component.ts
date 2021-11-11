@@ -137,16 +137,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
-    this.game().then();
-
-  }
+    this.game().then();  }
 
   receiveTilesSwapped = (playerId: number) => {
     console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
   }
 
   receivePlayerIdTurn = (playerId: number) => {
-    console.log('it\'s playerId ' + playerId + ' turn'); // TODO replace log
+    this.game().then();
   }
 
   receiveGameOver = (winnerPlayersIds: number[]) => {
@@ -270,13 +268,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
 
-    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe(res => {
+    this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe(res => {
       this.nameToTurn = '';
       if (this.winner === ''){this.nameToTurn = res; }
     });
 
 
-    this.serviceQwirkle.getGames(this.gameId).then(board => {
+    this.serviceQwirkle.getGame(this.gameId).then(board => {
        this.board = board.boards;
        this.plate = toPlate(this.board);
        board.players.sort((a, b) => a.id - b.id);
@@ -351,7 +349,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (this.rack.length === 6){
     this.serviceQwirkle.rackChangeOrder(toTileviewModel(this.player)).then((async rack => {
-      this.serviceQwirkle.getGames(this.gameId).then(board => {this.players = board.players
+      this.serviceQwirkle.getGame(this.gameId).then(board => {this.players = board.players;
       this.player = this.players.filter(player => player.id === this.player.id)[0];
       this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
       this.rack = toRarrange(this.player.rack.tiles);
@@ -365,7 +363,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
    gameChange(gameId: number): void {
     this.gameId = gameId;
-    this.serviceQwirkle.getGames(this.gameId).then(board => {
+    this.serviceQwirkle.getGame(this.gameId).then(board => {
       this.players = board.players;
 
       this.serviceQwirkle.getWinners(this.gameId).then(res => {
@@ -408,13 +406,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   NewGame(): void {
-    this.serviceQwirkle.newGame([10, 11]).then();
+    this.serviceQwirkle.newGame([15, 16]).then();
   }
 
   async getPlayerIdToPlay(): Promise<void> {
-    this.serviceQwirkle.getPlayerNameToPlay(this.gameId).subscribe((res) => {
+    this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((res) => {
       this.playerNameToPlay = res;
-
     });
   }
 
