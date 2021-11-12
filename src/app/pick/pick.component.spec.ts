@@ -3,6 +3,8 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {PickComponent} from './pick.component';
 import {Tile} from "../../domain/Tile";
 import {DebugElement} from "@angular/core";
+import {CdkDragDrop} from "@angular/cdk/drag-drop";
+import {never} from "rxjs";
 
 describe('PickComponent', () => {
   let component: PickComponent;
@@ -49,5 +51,15 @@ describe('PickComponent', () => {
 
     expect(component.getRackTileImage(tile)).toEqual("../../assets/img/YellowSquare.svg")
   });
+  it('should drop a tile when empty ', () => {
+    const tile: Tile[] = [{
+      color: 6,
+      disabled: true,
+      id: 31,
+      shape: 2,
+      x: 2,
+      y: 0
+    }];
 
+  });
 });
