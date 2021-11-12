@@ -18,7 +18,7 @@ export class NewGameComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.games = await this.service.getListGames();
+    this.games = await this.service.getGames();
   }
 
   newGame(): void {
