@@ -5,14 +5,13 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild
 } from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
 import {HttpClient} from '@angular/common/http';
 import { getInsertTile, insertPosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
-import {CdkDragDrop, CdkDragMove, CdkDragStart, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDragDrop,  moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../domain/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
@@ -137,14 +136,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
-    this.game().then();  }
+    this.game().then();
+
+  }
 
   receiveTilesSwapped = (playerId: number) => {
     console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
   }
 
   receivePlayerIdTurn = (playerId: number) => {
-    this.game().then();
+    console.log('it\'s playerId ' + playerId + ' turn'); // TODO replace log
   }
 
   receiveGameOver = (winnerPlayersIds: number[]) => {
@@ -412,12 +413,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   NewGame(): void {
-    this.serviceQwirkle.newGame([15, 16]).then();
+    this.serviceQwirkle.newGame([10, 11]).then();
   }
 
   async getPlayerIdToPlay(): Promise<void> {
     this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((res) => {
       this.playerNameToPlay = res;
+
     });
   }
 

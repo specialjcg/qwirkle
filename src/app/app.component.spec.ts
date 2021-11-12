@@ -13,6 +13,7 @@ import {toTileviewModel} from '../domain/tiles';
 import {Player, RestTilesPlay} from '../domain/player';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule} from "@angular/forms";
 
 
 describe('AppComponent', () => {
@@ -24,7 +25,7 @@ describe('AppComponent', () => {
         AppComponent
       ], imports: [
         BrowserModule, NgxPanZoomModule,
-        BrowserAnimationsModule,
+        BrowserAnimationsModule,FormsModule,
         MatButtonModule, HttpClientModule, DragDropModule, MatIconModule, MatOptionModule, MatSelectModule, MatCardModule
       ],
     }).compileComponents();
@@ -310,7 +311,7 @@ describe('AppComponent', () => {
     const log = jest.spyOn(global.console, 'log');
     app.receivePlayerIdTurn(1);
 
-    expect(log).toHaveBeenCalledWith('it\'s playerId 1 turn');
+    expect(log).toHaveBeenCalled();
   });
   it('should receiveGameOver ', () => {
 
