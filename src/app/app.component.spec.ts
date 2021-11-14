@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {NgxPanZoomModule, PanZoomModel} from 'ngx-panzoom';
 import {MatButtonModule} from '@angular/material/button';
@@ -34,7 +34,7 @@ describe('AppComponent', () => {
   let app: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let service: HttpTileRepositoryService;
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
       declarations: [AppComponent,
         TilePawnComponent,
