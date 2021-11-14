@@ -29,8 +29,8 @@ jobs:
         uses: actions/setup-node@v1 # downloads node and npm
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install # installs your dependencies
+      - run: yarn install # installs your dependencies
       - run: npm run test # builds your app
-      - run: npm test # runs your test suite
+      
         env:
           CI: true
