@@ -1,4 +1,4 @@
-import {getTestBed, TestBed} from '@angular/core/testing';
+import { TestBed} from '@angular/core/testing';
 
 import HttpTileRepositoryService, {backurl} from './http-tile-repository.service';
 import {BrowserModule} from '@angular/platform-browser';
@@ -12,8 +12,7 @@ import {MatOptionModule} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
-import {Tile} from "../../domain/Tile";
-import {BoardGame, Player} from "../../domain/player";
+import {BoardGame, ListGamedId, ListUsersId, Player} from "../../domain/player";
 
 describe('HttpTileRepositoryService', () => {
   let service: HttpTileRepositoryService;
@@ -25,7 +24,7 @@ describe('HttpTileRepositoryService', () => {
       BrowserAnimationsModule,
       MatButtonModule, HttpClientModule, DragDropModule, MatIconModule, MatOptionModule, MatSelectModule, MatCardModule,
         HttpClientTestingModule
-    ], providers: [ HttpTileRepositoryService ]
+    ], providers: [ HttpTileRepositoryService ],
 
 
     });
@@ -64,6 +63,71 @@ describe('HttpTileRepositoryService', () => {
 
 
     req.flush(mockBoard);
+  });
+  it('should give http response for get_player_by user Id', () => {
+    let mockListuserId=[1,2];
+    service.getGamesByUserId(1).then((res) => {
+      expect(res).not.toBe('');
+      expect(res).toEqual({"listGameId": [1, 2]});
+    });
+
+    const req = httpMock
+      .expectOne(backurl+'/Game/GamesByUserId/' +  1);
+
+
+    req.flush(mockListuserId);
+  });
+  it('should give http response for get_games', () => {
+    let mockListGameId=[1,2];
+    service.getGames().then((res) => {
+      expect(res).not.toBe(<ListGamedId>{});
+      expect(res).toEqual({listGameId: [1,2]});
+    });
+
+    const req = httpMock
+      .expectOne(backurl+'/Game/GamesIds/');
+
+
+    req.flush(mockListGameId);
+  });
+  it('should give http response for new_games', () => {
+    let mockListnewgame=[10,11];
+    service.newGame([10,11]).then((res) => {
+      expect(res).not.toBe([]);
+      expect(res).toEqual([10,11]);
+    });
+
+    const req = httpMock
+      .expectOne(backurl+'/Game/New/');
+
+
+    req.flush(mockListnewgame);
+  });
+  it('should give http response for get winner', () => {
+    let mockListnewgame=true;
+    service.getWinners(1).then((res) => {
+      expect(res).not.toBe([]);
+      expect(res).toEqual(true);
+    });
+
+    const req = httpMock
+      .expectOne(backurl+'/Player/Winners/' + 1);
+
+
+    req.flush(mockListnewgame);
+  });
+  it('should give http response for new user', () => {
+    let mockListUsersId={listUsersId: [1,2]};
+    service.getUsers().then((res) => {
+      expect(res).not.toBe(<ListUsersId>{});
+      expect(res).toEqual({"listUsersId": {"listUsersId": [1, 2]}});
+    });
+
+    const req = httpMock
+      .expectOne(backurl+'/User/AllUsersIds/');
+
+
+    req.flush(mockListUsersId);
   });
   it('should give http response for getPlayer', () => {
     const mockPlayer: Player = {

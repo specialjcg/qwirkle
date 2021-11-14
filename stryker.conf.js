@@ -4,7 +4,7 @@
 module.exports = function(config) {
   config.set({
     // mutate: ["src/**/*.ts","!src/**/*spec.ts"],
-    mutate: ["src/app/**/*.ts","!src/app/**/*spec.ts"],
+    mutate: ["src/app/app.component.ts","!src/app/**/*spec.ts"],
     mutator: "typescript",
     testRunner: "jest",
     reporters: ["progress", "clear-text", "html"],
