@@ -19,8 +19,7 @@ export class ChooseGameComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
-    this.games = await this.service.getGamesByUserId(this.userId);
+    this.games = await this.service.getUserGames()
   }
 
 
