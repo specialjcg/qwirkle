@@ -17,6 +17,12 @@ export type Tile = {
 export const toNameImage = (tile: Tile) => (tile.shape === 0) ? '' : Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
   Object.keys(Shape)[Object.values(Shape).indexOf(tile.shape)] + '.svg';
 
+export type Login = {
+  pseudo: string,
+  password: string,
+  isRemember: boolean
+  };
+
 export type PlayerTile = {
   playerId: number,
   tileId: number,

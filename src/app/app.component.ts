@@ -153,16 +153,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   receiveTilesPlayed = async (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
-    this.game().then();
-
-  }
+    this.game().then();  }
 
   receiveTilesSwapped = (playerId: number) => {
     console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
   }
 
   receivePlayerIdTurn = (playerId: number) => {
-    console.log('it\'s playerId ' + playerId + ' turn'); // TODO replace log
+    this.game().then();
   }
 
   receiveGameOver = (winnerPlayersIds: number[]) => {
@@ -453,13 +451,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   NewGame(): void {
-    this.serviceQwirkle.newGame([10, 11]).then();
+    this.serviceQwirkle.newGame([15, 16]).then();
   }
 
   async getPlayerIdToPlay(): Promise<void> {
     this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((res) => {
       this.playerNameToPlay = res;
-
     });
   }
 

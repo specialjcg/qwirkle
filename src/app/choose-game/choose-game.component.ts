@@ -19,6 +19,12 @@ export class ChooseGameComponent {
   }
 
 
+  async ngOnInit(): Promise<void> {
+    this.games = await this.service.getUserGames()
+  }
+
+
+
   async gameChoice(gameId: number): Promise<void> {
     console.log('game selected : ' + gameId + ' user : ' + this.userId);
     this.gameSelectChange.emit(gameId);
