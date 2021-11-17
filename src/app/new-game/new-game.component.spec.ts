@@ -53,7 +53,7 @@ describe('NewGameComponent', () => {
     expect(component.gameChange.emit).toHaveBeenCalled();
   }));
   it('should init games when ngOnInit', () => {
-    let getgame = jest.spyOn(service, 'getListGames');
+    let getgame = jest.spyOn(service, 'getGames');
     component.ngOnInit();
     expect(getgame).toHaveBeenCalled()
   });

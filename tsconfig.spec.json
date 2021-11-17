@@ -6,11 +6,12 @@
       "jest", // 1
       "node"
     ],
+    "module": "commonjs",
+    "allowJs": true,
     "esModuleInterop": true, // 2
     "emitDecoratorMetadata": true // 3
   },
   "files": [
-    "src/test.ts",
     "src/polyfills.ts"
   ],
   "include": [

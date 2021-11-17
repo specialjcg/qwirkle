@@ -50,9 +50,5 @@ describe('NewUserComponent', () => {
     fixture.detectChanges();
     expect(component.userChange.emit).toHaveBeenCalledWith(10);
   }));
-  it('should init users when ngOnInit', () => {
-    let getuser = jest.spyOn(service, 'getUsers');
-    component.ngOnInit();
-    expect(getuser).toHaveBeenCalled()
-  });
+
 });

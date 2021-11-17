@@ -8,12 +8,12 @@ import { Login } from '../../domain/Tile';
   templateUrl: './new-user.component.html',
   styleUrls: ['./new-user.component.css']
 })
-export class NewUserComponent implements OnInit {
+export class NewUserComponent  {
   @Input() userId: number=0;
   @Output() userChange = new EventEmitter<number>();
-  users: ListUsersId = {listUsersId: []};
-  constructor(public service: HttpTileRepositoryService) {
-  }
+  @Input() users: ListUsersId = {listUsersId: []};
+
+
 
   async ngOnInit(): Promise<void> {
     await this.service.LogoutUser();
@@ -23,6 +23,7 @@ export class NewUserComponent implements OnInit {
     this.userId = await this.service.whoAmI();
     this.users = await this.service.getUsers();
   }
+
 
 
   userChoice(user: number): void {

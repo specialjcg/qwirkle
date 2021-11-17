@@ -5,21 +5,34 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild
 } from '@angular/core';
 import {SignalRService} from '../infra/httpRequest/services/signal-r.service';
 import {HttpClient} from '@angular/common/http';
 import { getInsertTile, insertPosition, Tile, toNameImage, toPlate} from '../domain/Tile';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
-import {CdkDragDrop, CdkDragMove, CdkDragStart, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {fromBag, fromBoard, Player, RestTilesPlay, RestTilesSwap, Rack, ListGamedId} from '../domain/player';
+import {CdkDragDrop,  moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {
+  fromBag,
+  fromBoard,
+  Player,
+  RestTilesPlay,
+  RestTilesSwap,
+  Rack,
+  ListGamedId,
+  ListUsersId
+} from '../domain/player';
 import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from 'ngx-panzoom';
 import {Subscription} from 'rxjs';
 import { toTileviewModel} from '../domain/tiles';
 import {toRarrange, toRarrangeRack, toTiles} from '../domain/SetPositionTile';
 
-
+interface Rect {
+  x: number; // the x0 (top left) coordinate
+  y: number; // the y0 (top left) coordinate
+  width: number; // the x1 (bottom right) coordinate
+  height: number; // the y1 (bottom right) coordinate
+}
 
 
 @Component({
@@ -73,6 +86,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   games: ListGamedId = {listGameId: []};
   private playTileTempory: RestTilesPlay[] = [];
   winner = '';
+  public users: ListUsersId={listUsersId: []};
   constructor(private changeDetector: ChangeDetectorRef, public signalRService: SignalRService,
               private http: HttpClient, private serviceQwirkle: HttpTileRepositoryService) {
 
@@ -81,7 +95,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-
+     this.serviceQwirkle.getUsers().then(res=>{
+       this.users=res
+    });
     this.signalRService.startConnection();
 
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
@@ -158,44 +174,67 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.changeDetector.detectChanges();
     const height = this.scene.nativeElement.clientHeight;
     const width = this.scene.nativeElement.clientWidth;
-    const xmin: number = Math.min(...this.board.map(tile => tile.x));
-    const xmax: number = Math.max(...this.board.map(tile => tile.x));
-    const ymin = this.getYmin();
+    const xmin: number = this.getXmin() ;
+    const xmax: number =  this.getXmax();
+    const ymin =this.getYmin() ;
     const ymax = this.getYmax();
-    if (ymin >= 0) {
-      if (xmin <= 0) {
 
+    const newRect:Rect=this.newrect(ymin, xmin, width, height, xmax, ymax);
 
-        this.panZoomAPI.zoomToFit({
-          x: width/2+200,
-          y: -height,
-          width: width * (Math.abs(xmax - xmin) * 100) / 1000,
-          height: height * (Math.abs(ymax - ymin) * 100) / 600+height
-        });
-
-      } else {
-
-        this.panZoomAPI.zoomToFit({
-          x: 550,
-          y: -400,
-          width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
-          height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
-        });
-      }
-    } else {
-
-      this.panZoomAPI.zoomToFit({
-        x: 650,
-        y: -400,
-        width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
-        height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
-      });
-    }
-
-
+    this.panZoomAPI.zoomToFit(newRect);
     this.changeDetector.detectChanges();
 
 
+  }
+
+  private newrect(ymin: number, xmin: number, width: number, height: number, xmax: number, ymax: number):Rect {
+    let newRect: Rect;
+    if (ymin >= 0) {
+      if (xmin <= 0) {
+         newRect=this.isInRightBottom(width, height, xmax, xmin, ymax, ymin)
+
+
+      } else {
+        newRect= this.isInRightTop(width, height, xmax, xmin, ymax, ymin)
+
+
+      }
+    } else {
+      newRect= this.isInLeft(width, height, xmax, xmin, ymax, ymin)
+
+
+    }
+    return newRect
+  }
+
+  private isInLeft(width: number, height: number, xmax: number, xmin: number, ymax: number, ymin: number) {
+    return {
+      x: 650,
+      y: -400,
+      width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
+      height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
+    };
+  }
+  private isInRightTop(width: number, height: number, xmax: number, xmin: number, ymax: number, ymin: number) {
+    return {
+      x: 550,
+      y: -400,
+      width: width * (Math.abs(xmax - xmin) * 100) / 1000+width/1000,
+      height: height * (Math.abs(ymax - ymin) * 100) / 600+height/1000
+    };
+  }
+
+  private  isInRightBottom(width: number, height: number, xmax: number, xmin: number, ymax: number, ymin: number) {
+    return {
+      x: width / 2 + 200,
+      y: -height,
+      width: width * (Math.abs(xmax - xmin) * 100) / 1000,
+      height: height * (Math.abs(ymax - ymin) * 100) / 600 + height
+    };
+  }
+
+  private getXmin() {
+    return Math.min(...this.board.map(tile => tile.x));
   }
 
   private getYmin(): number {
@@ -206,7 +245,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     return Math.max(...this.board.map(tile => tile.y));
   }
 
-  private xmax(): number {
+  private getXmax(): number {
     return   Math.max(...this.board.map(tile => tile.x));
   }
 
@@ -396,7 +435,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   async countUserChange(event: number): Promise<void> {
     this.userId = event;
-    this.games = await this.serviceQwirkle.getGamesByUserId(this.userId);
+    this.serviceQwirkle.getGamesByUserId(this.userId).then((res)=>
+      {this.games=res;
+        this.games.listGameId.sort((a, b) => a - b);
+
+      }
+    );
+
     this.resetZoomToFit();
   }
 
@@ -423,6 +468,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   getCssScale(zoomLevel: any): number {
     return Math.pow(this.panzoomConfig.scalePerZoomLevel, zoomLevel - this.panzoomConfig.neutralZoomLevel);
   }
+
 
 
 }

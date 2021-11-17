@@ -46,6 +46,7 @@ export default class HttpTileRepositoryService {
       .toPromise().then();
   }
 
+
   LogoutUser() {
     return this.https.get<boolean>(backurl+'/User/Logout/', httpOptions)
       .toPromise().then();
