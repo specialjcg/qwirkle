@@ -87,7 +87,7 @@ export default class HttpTileRepositoryService {
   }
 
   getUsers(): Promise<ListUsersId> {
-    return this.https.get<number[]>(backurl+'/User/AllUsersIds/', {headers})
+    return this.https.get<number[]>(backurl+'/Admin/AllUsersIds/', {headers})
       .toPromise().then(response => toListUsersId(response));
   }
 
