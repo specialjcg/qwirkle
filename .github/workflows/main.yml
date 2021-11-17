@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
@@ -13,8 +11,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
+
   test: # names the job
     runs-on: ubuntu-latest # sets the version of linux we want to use, should be what you have on your server
 
@@ -29,8 +30,30 @@ jobs:
         uses: actions/setup-node@v1 # downloads node and npm
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install # installs your dependencies
+      - run: npm install
       - run: npm run test # builds your app
-      
+
         env:
           CI: true
+      - uses: actions/checkout@v2
+      - name: Build dist angular
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/checkout@v2
+      - run: mkdir ~/distfiles
+      - uses: actions/download-artifact@v2
+        with:
+          name: distfiles
+          path: distfiles
+
+      - uses: actions/checkout@master
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host:
+          username:
+          password:
+          port:
+          source: distfiles/*
+          target: var/www/qwirkle/frontend/
