@@ -12,7 +12,8 @@ export class NewUserComponent  {
   @Input() userId: number=0;
   @Output() userChange = new EventEmitter<number>();
   @Input() users: ListUsersId = {listUsersId: []};
-
+constructor(public service: HttpTileRepositoryService) {
+}
 
 
   async ngOnInit(): Promise<void> {
