@@ -18,7 +18,7 @@ jobs:
 
   test: # names the job
     runs-on: ubuntu-latest # sets the version of linux we want to use, should be what you have on your server
-
+    environment: Environments
     strategy:
       fail-fast: false # tells github to not run further steps if this one fails
       matrix:
@@ -40,20 +40,25 @@ jobs:
         run: |
           npm ci
           npm run build
-      - uses: actions/checkout@v2
-      - run: mkdir ~/distfiles
-      - uses: actions/download-artifact@v2
+      - name: Archive build
+        if: success()
+        uses: actions/upload-artifact@v1
         with:
-          name: distfiles
-          path: distfiles
+          name: deploy_dist
+          path: dist
 
       - uses: actions/checkout@master
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
+        env:
+          SERVER: ${{ secrets.SERVER }}
+          USER: ${{ secrets.USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
         with:
-          host:
-          username:
-          password:
-          port:
-          source: distfiles/*
+          host: SERVER
+          username: USER
+          password: PASSWORD
+          PORT: PORT
+          source: dist/*
           target: var/www/qwirkle/frontend/
