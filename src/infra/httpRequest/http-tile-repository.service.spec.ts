@@ -124,7 +124,7 @@ describe('HttpTileRepositoryService', () => {
     });
 
     const req = httpMock
-      .expectOne(backurl+'/User/AllUsersIds/');
+      .expectOne(backurl+'/Admin/AllUsersIds/');
 
 
     req.flush(mockListUsersId);

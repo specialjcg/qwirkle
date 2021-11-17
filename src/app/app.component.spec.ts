@@ -338,7 +338,7 @@ describe('AppComponent', () => {
     const log = jest.spyOn(global.console, 'log');
     app.receivePlayerIdTurn(1);
 
-    expect(log).toHaveBeenCalledWith('it\'s playerId ' + 1 +' turn');
+    expect(log).toHaveBeenCalled();
   });
   it('should receiveGameOver ', () => {
 
