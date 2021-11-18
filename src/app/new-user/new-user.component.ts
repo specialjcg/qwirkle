@@ -8,7 +8,7 @@ import { Login } from '../../domain/Tile';
   templateUrl: './new-user.component.html',
   styleUrls: ['./new-user.component.css']
 })
-export class NewUserComponent  {
+export class NewUserComponent implements OnInit{
   @Input() userId: number=0;
   @Output() userChange = new EventEmitter<number>();
   @Input() users: ListUsersId = {listUsersId: []};
@@ -16,13 +16,15 @@ constructor(public service: HttpTileRepositoryService) {
 }
 
 
-  async ngOnInit(): Promise<void> {
-    await this.service.LogoutUser();
+   ngOnInit(): void{
+    // await this.service.LogoutUser();
     let login: Login;
-    login = {pseudo: 'JC', password:'qwirkle', isRemember:true}
-    let isConnected = await this.service.LoginUser(login);
-    this.userId = await this.service.whoAmI();
-    this.users = await this.service.getUsers();
+    login = {pseudo: 'jc11', password:'qwirkle', isRemember:true}
+    this.service.LoginUser(login).subscribe( res => {
+      console.log(res);
+      this.service.whoAmI().subscribe(resa=>{this.userId=resa; this.service.getUsers().then(res1=>this.users =res1);});
+
+    });
   }
 
 

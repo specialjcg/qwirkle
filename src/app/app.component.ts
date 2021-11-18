@@ -95,9 +95,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-     this.serviceQwirkle.getUsers().then(res=>{
-       this.users=res
-    });
+
     this.signalRService.startConnection();
 
     this.signalRService.hubConnection.on('ReceivePlayersInGame', (playersIds: any[]) => {
