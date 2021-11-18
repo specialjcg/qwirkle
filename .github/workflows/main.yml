@@ -50,8 +50,16 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v1
         with:
-          name: dist
-          path: dist
+          name: build
+          path: build
+      
+
+      - uses: actions/checkout@v2
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
       - name: Build site assets
         working-directory: ${{ github.workspace }}
         run: ls -la
@@ -63,6 +71,6 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           PORT: ${{ secrets.PORT }}
-          source: './dist'
+          source: 'build/'
           target: '~/var/www/qwirkle/frontend/'
           strip_components: 1
