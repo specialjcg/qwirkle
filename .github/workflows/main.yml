@@ -62,7 +62,7 @@ jobs:
       - name: Build site assets
         working-directory: ${{ github.workspace }}
         run: ls -la
-      - uses: actions/checkout@master
+
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
