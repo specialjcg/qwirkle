@@ -37,6 +37,8 @@ jobs:
         env:
           CI: true
       - uses: actions/checkout@v2
+        with:
+          clean: false
       - name: Build dist angular
         run: |
           npm ci
