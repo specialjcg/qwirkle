@@ -10,7 +10,9 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+defaults:
+  run:
+    working-directory: frontend
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -50,16 +52,16 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v1
         with:
-          name: qwirkle
-          path: qwirkle
+          name: dist
+          path: dist
 
 
       - uses: actions/checkout@v2
       - name: Download Artifact
         uses: actions/download-artifact@master
         with:
-          name: qwirkle
-          path: qwirkle
+          name: dist
+          path: dist
       - name: Build site assets
         working-directory: ${{ github.workspace }}
         run: ls -la
@@ -71,6 +73,6 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           PORT: ${{ secrets.PORT }}
-          source: 'qwirkle/'
+          source: 'frontend/dist'
           target: '~/var/www/qwirkle/frontend/'
           strip_components: 1
