@@ -1,0 +1,122 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(106, 183, 222, 1.0);
+  background: -webkit-linear-gradient(top left, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+  background: -moz-linear-gradient(top left, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+  background: linear-gradient(to bottom right, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
+}
+
+.card {
+  height: 300px;
+  width: 400px;
+  background: linear-gradient(
+    150.46deg,
+    rgba(255, 255, 255, 0.5) -12.61%,
+    rgba(255, 255, 255, 0.25) 110.1%
+  );
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.card h2 {
+  color: #2F4858;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+
+.card .inputBox {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.card .inputBox input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  padding: 10px 20px;
+  border-radius: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+.btn{
+  position: relative;
+  top:2vh;
+}
+.card .btn {
+
+  color: #000;
+  width: 140px;
+  font-size: 16px;
+  margin-left: 10px;
+  height: 35px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+  text-align: center;
+  transition: 0.5s;
+  background-size: 200% auto;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+}
+
+
+/* Demo Stuff End -> */
+
+/* <- Magic Stuff Start */
+
+.btn:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+.btn-1 {
+  background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
+}
+
+.btn-2 {
+  background-image: linear-gradient(to right, #fbc2eb 0%, #a6c1ee 51%, #fbc2eb 100%);
+}
+
+.btn-3 {
+  background-image: linear-gradient(to right, #84fab0 0%, #8fd3f4 51%, #84fab0 100%);
+}
+
+.btn-4 {
+  background-image: linear-gradient(to right, #a1c4fd 0%, #c2e9fb 51%, #a1c4fd 100%);
+}
+
+.btn-5 {
+  background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 51%, #ffecd2 100%);
+}
+.card .forget {
+  color: #2F4858;
+}
+
+.card .forget a {
+  color: #2F4858;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+

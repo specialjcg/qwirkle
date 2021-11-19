@@ -1,22 +1,20 @@
-<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+<div class="container">
+  <div class="card">
+    <h2>Login</h2>
+    <form action="#">
+      <div class="inputBox">
+        <input type="text" placeholder="Username">
+      </div>
+      <div class="inputBox">
+        <input type="password" placeholder="Password">
+      </div>
+      <div class="inputBox">
+        <button class="btn btn-3">Login</button>
+        <button class="btn btn-3" routerLink="/register" routerLinkActive="active">Register</button>
+      </div>
 
-  <mat-card class="box">
-    <mat-card-header>
-      <mat-card-title>Log in</mat-card-title>
-    </mat-card-header>
 
-    <form class="example-form">
-      <mat-card-content>
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Username">
-        </mat-form-field>
-
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Password">
-        </mat-form-field>
-      </mat-card-content>
-      <button mat-stroked-button color="accent" class="btn-block">Log in</button>
     </form>
-  </mat-card>
-
+  </div>
 </div>
+
