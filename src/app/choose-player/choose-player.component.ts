@@ -1,32 +1,34 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Player} from '../../domain/player';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Player } from '../../domain/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
 @Component({
-  selector: 'app-choose-player',
-  templateUrl: './choose-player.component.html',
-  styleUrls: ['./choose-player.component.css']
+    selector: 'app-choose-player',
+    templateUrl: './choose-player.component.html',
+    styleUrls: ['./choose-player.component.css']
 })
 export class ChoosePlayerComponent {
-  @Input() gameId: number = 0;
-  @Input() nameToTurn: string = '';
-  @Input() score: number = 0;
-  @Output() playerSelectChange = new EventEmitter<Player>();
-  @Input() players: Player[] = [];
-  nameToPlay = '';
+    @Input() gameId = 0;
 
+    @Input() nameToTurn = '';
 
-  constructor(public service: HttpTileRepositoryService) {
+    @Input() score = 0;
 
-  }
+    @Output() playerSelectChange = new EventEmitter<Player>();
 
+    @Input() players: Player[] = [];
 
-  playerToTurnClass(name: string): string {
-    return name === this.nameToTurn ? 'card-group colorTurnOn' : 'card-group colorTurnOff';
-  }
+    nameToPlay = '';
 
+    constructor(public service: HttpTileRepositoryService) {}
 
-  isNameTurn(): boolean {
-    return this.nameToTurn !== '';
-  }
+    playerToTurnClass(name: string): string {
+        return name === this.nameToTurn
+            ? 'card-group colorTurnOn'
+            : 'card-group colorTurnOff';
+    }
+
+    isNameTurn(): boolean {
+        return this.nameToTurn !== '';
+    }
 }

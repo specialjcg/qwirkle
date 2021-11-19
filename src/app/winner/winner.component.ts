@@ -1,13 +1,10 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 const SPACE = '';
 @Component({
-  selector: 'app-winner',
-  templateUrl: './winner.component.html',
-  styleUrls: ['./winner.component.css']
+    selector: 'app-winner',
+    templateUrl: './winner.component.html',
+    styleUrls: ['./winner.component.css']
 })
 export class WinnerComponent {
-
-  @Input() winner: string = SPACE;
-
-
+    @Input() winner: string = SPACE;
 }

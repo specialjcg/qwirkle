@@ -1,25 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WinnerComponent } from './winner.component';
+import { LogInComponent } from './log-in.component';
 
-describe('WinnerComponent', () => {
-    let component: WinnerComponent;
-    let fixture: ComponentFixture<WinnerComponent>;
+describe('LogInComponent', () => {
+    let component: LogInComponent;
+    let fixture: ComponentFixture<LogInComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [WinnerComponent]
+            declarations: [LogInComponent]
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(WinnerComponent);
+        fixture = TestBed.createComponent(LogInComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
     it('should create', () => {
-        expect(component.winner).toEqual('');
         expect(component).toBeTruthy();
     });
 });
