@@ -48,7 +48,7 @@ export default class HttpTileRepositoryService {
 
     //todo : to remove
     whoAmI(): Observable<number> {
-        return this.https.get<number>(backurl + '/User/WhoAmI', httpOptions);
+        return this.https.get<number>(backurl + '/User/WhoAmI/', httpOptions);
     }
 
     getGame(GameId: number): Promise<BoardGame> {
