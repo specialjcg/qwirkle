@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Login } from '../../../domain/Tile';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
 import { ListUsersId } from '../../../domain/player';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-log-in',
@@ -17,14 +18,19 @@ export class LogInComponent implements OnInit {
 
     login: Login = { pseudo: '', password: '', isRemember: true };
 
-    constructor(public service: HttpTileRepositoryService) {}
+    constructor(public service: HttpTileRepositoryService, private router: Router) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.login = { pseudo: '', password: '', isRemember: true };
+    }
 
     getLogin() {
         this.service.LogoutUser().subscribe();
-        this.service.LoginUser(this.login).subscribe();
-
+        this.service.LoginUser(this.login).subscribe((islogin) => {
+            if (islogin) {
+                this.router.navigate(['game']).then();
+            }
+        });
     }
 
     changeUserName(ValueUserName: HTMLInputElement) {
