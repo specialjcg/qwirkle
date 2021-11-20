@@ -22,15 +22,9 @@ export class LogInComponent implements OnInit {
     ngOnInit(): void {}
 
     getLogin() {
-        // await this.service.LogoutUser();
-        console.log(this.login);
-        this.service.LoginUser(this.login).subscribe((res) => {
-            console.log(res);
-            this.service.whoAmI().subscribe((resa) => {
-                this.userId = resa;
-                this.service.getUsers().then((res1) => (this.users = res1));
-            });
-        });
+        this.service.LogoutUser().subscribe();
+        this.service.LoginUser(this.login).subscribe();
+
     }
 
     changeUserName(ValueUserName: HTMLInputElement) {

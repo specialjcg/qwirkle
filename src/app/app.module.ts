@@ -20,6 +20,8 @@ import { RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {AppRoutingModule} from "./app-routing.module";
 import {MatInputModule} from "@angular/material/input";
+import {AuthService} from "../infra/httpRequest/services/auth.service";
+import HttpTileRepositoryService from "../infra/httpRequest/http-tile-repository.service";
 
 export class MyAppModule {}
 
@@ -40,8 +42,13 @@ export class MyAppModule {}
         RegisterComponent,
         GameqwirkleComponent
     ],
-  imports: [BrowserAnimationsModule, AngularMaterialModule, AppRoutingModule, MatInputModule],
-    providers: [],
+    imports: [
+        BrowserAnimationsModule,
+        AngularMaterialModule,
+        AppRoutingModule,
+        MatInputModule
+    ],
+    providers: [AuthService, HttpTileRepositoryService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
