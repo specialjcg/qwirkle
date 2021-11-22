@@ -1,8 +1,7 @@
 
 
-<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)" [users]="this.users"></app-new-user>
-<app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId"
-                 (gameSelectChange)="gameChange($event)" [userId]="this.userId" [games]="this.games"></app-choose-game>
+<app-choose-game class="positionSelectGame" [gameId]="this.gameId"
+                 (gameSelectChange)="gameChange($event)"  [games]="this.games"></app-choose-game>
 <app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"
                    [players]="this.players"></app-choose-player>
 <app-give-tempory-score [score]="this.score"></app-give-tempory-score>
@@ -11,7 +10,7 @@
 <button *ngIf="bag.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()">Jouer</button>
 <button  *ngIf="bag.length!==0" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
 <button *ngIf="bag.length===0 && this.rack.length===6" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
-
+<button class="positionLogOut" (click)="logOut()">Logout</button>
 <button class="positionNewGame" (click)="NewGame()">New Game</button>
 <div cdkDropListGroup>
   <div *ngIf="this.winner === ''" class="position-firstPlayer">

@@ -13,6 +13,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { EventEmitter, Input, Output } from '@angular/core';
 import { ListGamedId, Player } from '../../domain/player';
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {RouterTestingModule} from "@angular/router/testing";
+import HttpTileRepositoryService from "../../infra/httpRequest/http-tile-repository.service";
+import {AuthGuard} from "../auth/auth.guard";
 
 describe('ChooseGameComponent', () => {
     let component: ChooseGameComponent;
@@ -21,18 +25,8 @@ describe('ChooseGameComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ChooseGameComponent],
-            imports: [
-                BrowserModule,
-                NgxPanZoomModule,
-                BrowserAnimationsModule,
-                MatButtonModule,
-                HttpClientModule,
-                DragDropModule,
-                MatIconModule,
-                MatOptionModule,
-                MatSelectModule,
-                MatCardModule
-            ]
+          imports: [HttpClientTestingModule, RouterTestingModule],
+          providers: [HttpTileRepositoryService]
         }).compileComponents();
     });
 
@@ -43,10 +37,8 @@ describe('ChooseGameComponent', () => {
     });
 
     it('should create', () => {
-        expect(component.userId).toEqual(0);
         expect(component.games).toEqual({ listGameId: [] });
         expect(component.gameId).toEqual(0);
-        expect(component.players).toEqual([]);
         expect(component).toBeTruthy();
     });
     it('should emit on click  for game choice', fakeAsync(async () => {
@@ -57,6 +49,6 @@ describe('ChooseGameComponent', () => {
         await component.gameChoice(component.gameId);
         fixture.detectChanges();
         expect(component.gameSelectChange.emit).toHaveBeenCalled();
-        expect(console.log).toHaveBeenCalledWith('game selected : 1 user : 0');
+        expect(console.log).toHaveBeenCalledWith('game selected : 1');
     }));
 });

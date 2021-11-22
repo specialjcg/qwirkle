@@ -17,16 +17,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment.prod';
+import { Register } from '../../domain/register';
+import { toListGamedId } from '../../domain/games';
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
     .set('Access-Control-Allow-Origin', '*')
     .set('Content-Type', 'application/json; charset=utf-8');
 
 const httpOptions = { headers: headers, withCredentials: true };
-
-const toListGamedId = (response: number[]): ListGamedId => {
-    return { listGameId: response };
-};
 
 const toListUsersId = (response: number[]): ListUsersId => {
     return { listUsersId: response };
@@ -42,8 +40,16 @@ export default class HttpTileRepositoryService {
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
     }
 
+    setRegister(register: Register): Observable<boolean> {
+        return this.https.post<boolean>(
+            backurl + '/User/Register',
+            register,
+            httpOptions
+        );
+    }
+
     LogoutUser(): Observable<boolean> {
-        return this.https.get<boolean>(backurl + '/User/Logout/', httpOptions);
+        return this.https.get<boolean>(backurl + '/User/Logout', httpOptions);
     }
 
     //todo : to remove
@@ -61,9 +67,9 @@ export default class HttpTileRepositoryService {
             });
     }
 
-    getPlayer(gameId: number, userId: number): Promise<Player> {
+    getPlayer(gameId: number): Promise<Player> {
         return this.https
-            .get<string>(backurl + '/Player/' + gameId + '/' + userId, httpOptions)
+            .get<string>(backurl + '/Player/' + gameId, httpOptions)
             .toPromise()
             .then();
     }
@@ -104,11 +110,8 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    getGames(): Promise<ListGamedId> {
-        return this.https
-            .get<number[]>(backurl + '/Game/GamesIds/', httpOptions)
-            .toPromise()
-            .then((response) => toListGamedId(response));
+    getGames(): Observable<number[]> {
+        return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
 
     getUsers(): Promise<ListUsersId> {
@@ -125,24 +128,24 @@ export default class HttpTileRepositoryService {
             .then((response) => toListGamedId(response));
     }
 
-    getUserGames(): Promise<ListGamedId> {
-        return this.https
-            .get<number[]>(backurl + '/Game/UserGames/', httpOptions)
-            .toPromise()
-            .then((response) => toListGamedId(response));
-    }
 
     newGame(players: number[]): Promise<number[]> {
         return this.https
-            .post<Player>(backurl + '/Game/New/', players)
+            .post<Player>(backurl + '/Game/New/', players, httpOptions)
             .toPromise()
             .then();
     }
 
     getPlayerNameTurn(gameId: number): Observable<string> {
-        return this.https.get<string>(backurl + '/Player/GetPlayerNameTurn/' + gameId, {
+        const httpNameTurnoptions = {
+            headers: headers,
+            withCredentials: true,
             responseType: 'text' as 'json'
-        });
+        };
+        return this.https.get<string>(
+            backurl + '/Player/NameTurn/' + gameId,
+            httpNameTurnoptions
+        );
     }
 
     getWinners(gameId: number): Promise<never> {

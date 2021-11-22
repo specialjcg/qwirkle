@@ -6,10 +6,10 @@ import { AuthGuard } from './auth/auth.guard';
 import { GameqwirkleComponent } from './components/gameqwirkle/gameqwirkle.component';
 
 const routes: Routes = [
-    { path: '', pathMatch: 'full', redirectTo: 'login' },
+    { path: '', pathMatch: 'full', redirectTo: 'game' },
     { path: 'login', component: LogInComponent },
     { path: 'register', component: RegisterComponent },
-    { path: 'game', component: GameqwirkleComponent, canActivate: [AuthGuard] }
+    { path: 'game', canActivate: [AuthGuard], component: GameqwirkleComponent }
 ];
 
 @NgModule({

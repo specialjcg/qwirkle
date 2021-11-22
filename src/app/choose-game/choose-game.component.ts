@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 import { ListGamedId, Player } from '../../domain/player';
+import {toListGamedId} from "../../domain/games";
 
 @Component({
     selector: 'app-choose-game',
@@ -8,7 +9,6 @@ import { ListGamedId, Player } from '../../domain/player';
     styleUrls: ['./choose-game.component.css']
 })
 export class ChooseGameComponent {
-    @Input() userId = 0;
 
     @Output() gameSelectChange = new EventEmitter<number>();
 
@@ -16,16 +16,15 @@ export class ChooseGameComponent {
 
     @Input() gameId = 0;
 
-    players: Player[] = [];
 
     constructor(public service: HttpTileRepositoryService) {}
 
     async ngOnInit(): Promise<void> {
-        this.games = await this.service.getUserGames();
+        this.service.getGames().subscribe((games) => (this.games = toListGamedId(games)));
     }
 
     async gameChoice(gameId: number): Promise<void> {
-        console.log('game selected : ' + gameId + ' user : ' + this.userId);
+        console.log('game selected : ' + gameId );
         this.gameSelectChange.emit(gameId);
     }
 }

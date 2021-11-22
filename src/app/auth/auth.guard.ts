@@ -3,11 +3,9 @@ import {
     ActivatedRouteSnapshot,
     CanActivate,
     Router,
-    RouterStateSnapshot,
-    UrlTree
+    RouterStateSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { AuthService } from '../../infra/httpRequest/services/auth.service';
 import { catchError, map } from 'rxjs/operators';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 
@@ -16,7 +14,7 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
 })
 export class AuthGuard implements CanActivate {
     constructor(
-        private authService: AuthService,
+
         private router: Router,
         public service: HttpTileRepositoryService
     ) {}
@@ -25,14 +23,11 @@ export class AuthGuard implements CanActivate {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<boolean> {
-        return this.authService.isAuthenticated().pipe(
+        return this.service.getGames().pipe(
             map((authenticated) => {
                 console.log(authenticated);
-                this.service.whoAmI().subscribe((resa) => {
-                    return authenticated === resa;
-                });
-                this.router.navigate(['/login']).then();
-                return false;
+
+                return true;
             }),
             catchError((error) => {
                 this.router.navigate(['/login']).then();

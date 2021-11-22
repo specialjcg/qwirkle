@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NewUserComponent } from './new-user/new-user.component';
 import { GiveTemporyScoreComponent } from './give-tempory-score/give-tempory-score.component';
 import { WinnerComponent } from './winner/winner.component';
 import { PickComponent } from './pick/pick.component';
@@ -15,8 +14,18 @@ import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository
 import { LogInComponent } from './components/log-in/log-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { GameqwirkleComponent } from './components/gameqwirkle/gameqwirkle.component';
-import { AngularMaterialModule } from './angular-material.module';
 import { RouterModule } from '@angular/router';
+
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgxPanZoomModule } from 'ngx-panzoom';
+import { MatButtonModule } from '@angular/material/button';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatIconModule } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
 
 describe('AppComponent', () => {
     let app: AppComponent;
@@ -24,23 +33,19 @@ describe('AppComponent', () => {
     let service: HttpTileRepositoryService;
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                AppComponent,
-                TilePawnComponent,
-                TotalScoreComponent,
-                ResultScoreComponent,
-                NewUserComponent,
-                ChoosePlayerComponent,
-                ChooseGameComponent,
-                NewGameComponent,
-                GiveTemporyScoreComponent,
-                WinnerComponent,
-                PickComponent,
-                LogInComponent,
-                RegisterComponent,
-                GameqwirkleComponent
+            imports: [
+                BrowserModule,
+                NgxPanZoomModule,
+                BrowserAnimationsModule,
+                MatButtonModule,
+                HttpClientModule,
+                DragDropModule,
+                MatIconModule,
+                MatOptionModule,
+                MatSelectModule,
+                MatCardModule,
+                HttpClientTestingModule
             ],
-            imports: [BrowserAnimationsModule, AngularMaterialModule, RouterModule],
             providers: [HttpTileRepositoryService]
         }).compileComponents();
         service = TestBed.inject(HttpTileRepositoryService);

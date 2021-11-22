@@ -1,28 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GameqwirkleComponent } from './gameqwirkle.component';
-import { AppComponent } from '../../app.component';
 import { toRarrange } from '../../../domain/SetPositionTile';
 import { Player, RestTilesPlay } from '../../../domain/player';
 import { toTileviewModel } from '../../../domain/tiles';
 import { PanZoomModel } from 'ngx-panzoom';
 import { Tile } from '../../../domain/Tile';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
-import { TilePawnComponent } from '../../TilePawn/tile-pawn.component';
-import { TotalScoreComponent } from '../../total-score/total-score.component';
-import { ResultScoreComponent } from '../../result-score/result-score.component';
-import { NewUserComponent } from '../../new-user/new-user.component';
-import { ChoosePlayerComponent } from '../../choose-player/choose-player.component';
-import { ChooseGameComponent } from '../../choose-game/choose-game.component';
-import { NewGameComponent } from '../../new-game/new-game.component';
-import { GiveTemporyScoreComponent } from '../../give-tempory-score/give-tempory-score.component';
-import { WinnerComponent } from '../../winner/winner.component';
-import { PickComponent } from '../../pick/pick.component';
-import { LogInComponent } from '../log-in/log-in.component';
-import { RegisterComponent } from '../register/register.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AngularMaterialModule } from '../../angular-material.module';
-import { RouterModule } from '@angular/router';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AuthGuard } from '../../auth/auth.guard';
 
 describe('GameqwirkleComponent', () => {
     let app: GameqwirkleComponent;
@@ -30,23 +17,8 @@ describe('GameqwirkleComponent', () => {
     let service: HttpTileRepositoryService;
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
-                TilePawnComponent,
-                TotalScoreComponent,
-                ResultScoreComponent,
-                NewUserComponent,
-                ChoosePlayerComponent,
-                ChooseGameComponent,
-                NewGameComponent,
-                GiveTemporyScoreComponent,
-                WinnerComponent,
-                PickComponent,
-                LogInComponent,
-                RegisterComponent,
-                GameqwirkleComponent
-            ],
-            imports: [BrowserAnimationsModule, AngularMaterialModule, RouterModule],
-            providers: [HttpTileRepositoryService]
+            imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [HttpTileRepositoryService, AuthGuard]
         }).compileComponents();
     });
 
@@ -91,18 +63,20 @@ describe('GameqwirkleComponent', () => {
         });
 
         it('should reset the paramêtre', () => {
-
             expect(app.board).toEqual([]);
             expect(app.nameToTurn).toEqual('');
             expect(app.player).toEqual({
-                id: 0,
-                pseudo: '',
                 gameId: 0,
                 gamePosition: 0,
-                points: 0,
+                id: 0,
+                isTurn: true,
                 lastTurnPoints: 0,
-                rack: { tiles: [] },
-                isTurn: true
+                points: 0,
+                pseudo: '',
+                rack: {
+                    tiles: []
+                },
+                userId: 0
             });
             expect(app['panZoomConfigOptions']).toEqual({
                 zoomLevels: 10,
@@ -206,6 +180,7 @@ describe('GameqwirkleComponent', () => {
             const player: Player = {
                 id: 3,
                 pseudo: 'Thomas',
+                userId: 3,
                 gameId: 3,
                 gamePosition: 1,
                 points: 17,
@@ -557,65 +532,7 @@ describe('GameqwirkleComponent', () => {
         });
     });
     describe('autoZoom', () => {
-        it('should autozoom when game with xmin', () => {
-            app.board = [
-                {
-                    color: 1,
-                    disabled: false,
-                    id: 2,
-                    shape: 2,
-                    x: -3,
-                    y: 5
-                },
-                {
-                    color: 1,
-                    disabled: false,
-                    id: 5,
-                    shape: 5,
-                    x: -4,
-                    y: 4
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 16,
-                    shape: 4,
-                    x: -7,
-                    y: 3
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 19,
-                    shape: 1,
-                    x: -2,
-                    y: 0
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 21,
-                    shape: 3,
-                    x: -1,
-                    y: 0
-                },
-                {
-                    color: 5,
-                    disabled: false,
-                    id: 30,
-                    shape: 6,
-                    x: -3,
-                    y: 2
-                }
-            ];
-            app.autoZoom().then();
-            app['panZoomAPI'].zoomToFit({ height: 500, width: 500, x: 100, y: 100 });
-        });
-        it('should autozoom when game with xmin and board empty', () => {
-            app.board = [];
-            app.autoZoom().then();
-            expect(app.panzoomModel.pan).toEqual({ x: 0, y: 0 });
-        });
+
         it('should autozoom when game with xmax', () => {
             app.board = [
                 {

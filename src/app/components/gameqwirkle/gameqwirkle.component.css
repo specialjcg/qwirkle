@@ -77,7 +77,12 @@
   left:2vw;
 
 }
+.positionLogOut{
+  position: absolute;
+  top:40vh;
+  left:2vw;
 
+}
 .positionValid{
   position: absolute;
   top:25vh;

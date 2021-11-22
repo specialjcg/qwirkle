@@ -36,6 +36,8 @@ import { HttpClient } from '@angular/common/http';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
 import { toRarrange, toRarrangeRack, toTiles } from '../../../domain/SetPositionTile';
 import { toTileviewModel } from '../../../domain/tiles';
+import { Router } from '@angular/router';
+import { toListGamedId } from '../../../domain/games';
 
 interface Rect {
     x: number; // the x0 (top left) coordinate
@@ -78,6 +80,7 @@ export class GameqwirkleComponent implements OnInit {
 
     player: Player = {
         id: 0,
+        userId: 0,
         pseudo: '',
         gameId: 0,
         gamePosition: 0,
@@ -108,7 +111,7 @@ export class GameqwirkleComponent implements OnInit {
 
     private modelChangedSubscription!: Subscription;
 
-    private panZoomAPI!: PanZoomAPI;
+    public panZoomAPI!: PanZoomAPI;
 
     private apiSubscription!: Subscription;
 
@@ -126,10 +129,15 @@ export class GameqwirkleComponent implements OnInit {
         private changeDetector: ChangeDetectorRef,
         public signalRService: SignalRService,
         private http: HttpClient,
-        private serviceQwirkle: HttpTileRepositoryService
+        private serviceQwirkle: HttpTileRepositoryService,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
+        this.serviceQwirkle
+            .getGames()
+            .subscribe((games) => (this.games = toListGamedId(games)));
+        this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
         this.signalRService.startConnection();
 
         this.signalRService.hubConnection.on(
@@ -400,7 +408,7 @@ export class GameqwirkleComponent implements OnInit {
             this.plate = toPlate(this.board);
             board.players.sort((a, b) => a.id - b.id);
             this.players = board.players;
-            this.player = board.players.find((player) => player.id === this.player.id)!;
+            this.player = board.players.find((player) => player.userId === this.userId)!;
             this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
             this.rack = toRarrange(this.player.rack.tiles);
@@ -503,7 +511,7 @@ export class GameqwirkleComponent implements OnInit {
                 }
             });
 
-            this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+            this.serviceQwirkle.getPlayer(gameId).then((result) => {
                 this.player = result;
                 this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
@@ -534,7 +542,7 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     NewGame(): void {
-        this.serviceQwirkle.newGame([15, 16]).then();
+        this.serviceQwirkle.newGame([3]).then();
     }
 
     async getPlayerIdToPlay(): Promise<void> {
@@ -553,5 +561,10 @@ export class GameqwirkleComponent implements OnInit {
             this.panzoomConfig.scalePerZoomLevel,
             zoomLevel - this.panzoomConfig.neutralZoomLevel
         );
+    }
+
+    logOut() {
+        this.serviceQwirkle.LogoutUser().subscribe();
+        this.router.navigate(['/login']).then();
     }
 }

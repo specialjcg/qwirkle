@@ -4,18 +4,18 @@
     <h2>Register</h2>
     <form action="#">
       <div class="inputBox">
-        <input type="text" placeholder="Username">
+        <input type="text" placeholder="Username" #ValueUserName (change)="changeUserName(ValueUserName)" [value]="this.register.pseudo">
       </div>
       <div class="inputBox">
-        <input type="text" placeholder="Email">
+        <input type="text" placeholder="Email" #ValueEmail (change)="changeEmail(ValueEmail)" [value]="this.register.email">
       </div>
 
       <div class="inputBox">
-        <input type="password" placeholder="Password">
+        <input type="password" placeholder="Password" #Valuepassword (change)="changePassword(Valuepassword)" [value]="this.register.password">
       </div>
       <div class="inputBox">
         <button class="btn btn-3" routerLink="/login" routerLinkActive="active">Login</button>
-        <button class="btn btn-3" routerLink="/register" routerLinkActive="active">Register</button>
+        <button class="btn btn-3" (click)="getregister()">Register</button>
       </div>
 
 

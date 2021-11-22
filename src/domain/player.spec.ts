@@ -16,6 +16,7 @@ describe('player', () => {
         const player: Player = {
             id: 0,
             pseudo: '',
+            userId: 0,
             gameId: 0,
             gamePosition: 0,
             points: 0,
@@ -30,6 +31,7 @@ describe('player', () => {
         const player: Player = {
             id: 1,
             pseudo: '',
+            userId: 0,
             gameId: 0,
             gamePosition: 0,
             points: 0,
@@ -211,6 +213,7 @@ describe('player', () => {
                 {
                     id: 3,
                     pseudo: 'Thomas',
+                    userId:3,
                     gameId: 2,
                     gamePosition: 2,
                     points: 22,
@@ -260,6 +263,7 @@ describe('player', () => {
                 {
                     id: 4,
                     pseudo: 'Jean charles',
+                    userId:3,
                     gameId: 2,
                     gamePosition: 1,
                     points: 19,
@@ -309,104 +313,106 @@ describe('player', () => {
             ]
         };
         expect(toPlayers(restboard)).toEqual([
-            {
-                gameId: 2,
-                gamePosition: 2,
-                id: 3,
-                isTurn: false,
-                lastTurnPoints: 5,
-                points: 22,
-                pseudo: 'Thomas',
-                rack: {
-                    tiles: [
-                        {
-                            color: 1,
-                            id: 1,
-                            rackPosition: 0,
-                            shape: 1
-                        },
-                        {
-                            color: 6,
-                            id: 33,
-                            rackPosition: 0,
-                            shape: 3
-                        },
-                        {
-                            color: 5,
-                            id: 61,
-                            rackPosition: 0,
-                            shape: 1
-                        },
-                        {
-                            color: 5,
-                            id: 66,
-                            rackPosition: 2,
-                            shape: 6
-                        },
-                        {
-                            color: 2,
-                            id: 82,
-                            rackPosition: 5,
-                            shape: 4
-                        },
-                        {
-                            color: 4,
-                            id: 92,
-                            rackPosition: 0,
-                            shape: 2
-                        }
-                    ]
+          {
+            "gameId": 2,
+            "gamePosition": 2,
+            "id": 3,
+            "isTurn": false,
+            "lastTurnPoints": 5,
+            "points": 22,
+            "pseudo": "Thomas",
+            "rack": {
+              "tiles": [
+                {
+                  "color": 1,
+                  "id": 1,
+                  "rackPosition": 0,
+                  "shape": 1
+                },
+                {
+                  "color": 6,
+                  "id": 33,
+                  "rackPosition": 0,
+                  "shape": 3
+                },
+                {
+                  "color": 5,
+                  "id": 61,
+                  "rackPosition": 0,
+                  "shape": 1
+                },
+                {
+                  "color": 5,
+                  "id": 66,
+                  "rackPosition": 2,
+                  "shape": 6
+                },
+                {
+                  "color": 2,
+                  "id": 82,
+                  "rackPosition": 5,
+                  "shape": 4
+                },
+                {
+                  "color": 4,
+                  "id": 92,
+                  "rackPosition": 0,
+                  "shape": 2
                 }
+              ]
             },
-            {
-                gameId: 2,
-                gamePosition: 1,
-                id: 4,
-                isTurn: true,
-                lastTurnPoints: 6,
-                points: 19,
-                pseudo: 'Jean charles',
-                rack: {
-                    tiles: [
-                        {
-                            color: 1,
-                            id: 41,
-                            rackPosition: 1,
-                            shape: 5
-                        },
-                        {
-                            color: 2,
-                            id: 45,
-                            rackPosition: 0,
-                            shape: 3
-                        },
-                        {
-                            color: 6,
-                            id: 67,
-                            rackPosition: 0,
-                            shape: 1
-                        },
-                        {
-                            color: 4,
-                            id: 91,
-                            rackPosition: 2,
-                            shape: 1
-                        },
-                        {
-                            color: 4,
-                            id: 94,
-                            rackPosition: 1,
-                            shape: 4
-                        },
-                        {
-                            color: 6,
-                            id: 103,
-                            rackPosition: 3,
-                            shape: 1
-                        }
-                    ]
+            "userId": 3
+          },
+          {
+            "gameId": 2,
+            "gamePosition": 1,
+            "id": 4,
+            "isTurn": true,
+            "lastTurnPoints": 6,
+            "points": 19,
+            "pseudo": "Jean charles",
+            "rack": {
+              "tiles": [
+                {
+                  "color": 1,
+                  "id": 41,
+                  "rackPosition": 1,
+                  "shape": 5
+                },
+                {
+                  "color": 2,
+                  "id": 45,
+                  "rackPosition": 0,
+                  "shape": 3
+                },
+                {
+                  "color": 6,
+                  "id": 67,
+                  "rackPosition": 0,
+                  "shape": 1
+                },
+                {
+                  "color": 4,
+                  "id": 91,
+                  "rackPosition": 2,
+                  "shape": 1
+                },
+                {
+                  "color": 4,
+                  "id": 94,
+                  "rackPosition": 1,
+                  "shape": 4
+                },
+                {
+                  "color": 6,
+                  "id": 103,
+                  "rackPosition": 3,
+                  "shape": 1
                 }
-            }
+              ]
+            },
+            "userId": 3
+          }
         ]);
     });
     it("should return Boargame with mock restboard'", () => {
@@ -581,6 +587,7 @@ describe('player', () => {
                 {
                     id: 3,
                     pseudo: 'Thomas',
+                  userId:3,
                     gameId: 2,
                     gamePosition: 2,
                     points: 22,
@@ -630,6 +637,7 @@ describe('player', () => {
                 {
                     id: 4,
                     pseudo: 'Jean charles',
+                  userId:3,
                     gameId: 2,
                     gamePosition: 1,
                     points: 19,
@@ -679,252 +687,254 @@ describe('player', () => {
             ]
         };
         expect(toBoard(restboard)).toEqual({
-            boards: [
-                {
-                    color: 1,
-                    disabled: false,
-                    id: 2,
-                    shape: 2,
-                    x: 3,
-                    y: -1
-                },
-                {
-                    color: 1,
-                    disabled: false,
-                    id: 5,
-                    shape: 5,
-                    x: 4,
-                    y: -1
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 16,
-                    shape: 4,
-                    x: 7,
-                    y: 3
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 19,
-                    shape: 1,
-                    x: 2,
-                    y: 0
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 21,
-                    shape: 3,
-                    x: 1,
-                    y: 0
-                },
-                {
-                    color: 5,
-                    disabled: false,
-                    id: 30,
-                    shape: 6,
-                    x: 3,
-                    y: 2
-                },
-                {
-                    color: 6,
-                    disabled: false,
-                    id: 31,
-                    shape: 1,
-                    x: 2,
-                    y: 1
-                },
-                {
-                    color: 1,
-                    disabled: false,
-                    id: 37,
-                    shape: 1,
-                    x: 2,
-                    y: -1
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 49,
-                    shape: 1,
-                    x: 6,
-                    y: 3
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 56,
-                    shape: 2,
-                    x: -1,
-                    y: 0
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 58,
-                    shape: 4,
-                    x: 0,
-                    y: 0
-                },
-                {
-                    color: 4,
-                    disabled: false,
-                    id: 60,
-                    shape: 6,
-                    x: -2,
-                    y: 0
-                },
-                {
-                    color: 5,
-                    disabled: false,
-                    id: 63,
-                    shape: 3,
-                    x: 4,
-                    y: 2
-                },
-                {
-                    color: 5,
-                    disabled: false,
-                    id: 65,
-                    shape: 5,
-                    x: 1,
-                    y: 2
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 86,
-                    shape: 2,
-                    x: 5,
-                    y: 3
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 87,
-                    shape: 3,
-                    x: 4,
-                    y: 3
-                },
-                {
-                    color: 3,
-                    disabled: false,
-                    id: 89,
-                    shape: 5,
-                    x: 8,
-                    y: 3
-                },
-                {
-                    color: 5,
-                    disabled: false,
-                    id: 97,
-                    shape: 1,
-                    x: 2,
-                    y: 2
-                }
-            ],
-            players: [
-                {
-                    gameId: 2,
-                    gamePosition: 2,
-                    id: 3,
-                    isTurn: false,
-                    lastTurnPoints: 5,
-                    points: 22,
-                    pseudo: 'Thomas',
-                    rack: {
-                        tiles: [
-                            {
-                                color: 1,
-                                id: 1,
-                                rackPosition: 0,
-                                shape: 1
-                            },
-                            {
-                                color: 6,
-                                id: 33,
-                                rackPosition: 0,
-                                shape: 3
-                            },
-                            {
-                                color: 5,
-                                id: 61,
-                                rackPosition: 0,
-                                shape: 1
-                            },
-                            {
-                                color: 5,
-                                id: 66,
-                                rackPosition: 2,
-                                shape: 6
-                            },
-                            {
-                                color: 2,
-                                id: 82,
-                                rackPosition: 5,
-                                shape: 4
-                            },
-                            {
-                                color: 4,
-                                id: 92,
-                                rackPosition: 0,
-                                shape: 2
-                            }
-                        ]
-                    }
-                },
-                {
-                    gameId: 2,
-                    gamePosition: 1,
-                    id: 4,
-                    isTurn: true,
-                    lastTurnPoints: 6,
-                    points: 19,
-                    pseudo: 'Jean charles',
-                    rack: {
-                        tiles: [
-                            {
-                                color: 1,
-                                id: 41,
-                                rackPosition: 1,
-                                shape: 5
-                            },
-                            {
-                                color: 2,
-                                id: 45,
-                                rackPosition: 0,
-                                shape: 3
-                            },
-                            {
-                                color: 6,
-                                id: 67,
-                                rackPosition: 0,
-                                shape: 1
-                            },
-                            {
-                                color: 4,
-                                id: 91,
-                                rackPosition: 2,
-                                shape: 1
-                            },
-                            {
-                                color: 4,
-                                id: 94,
-                                rackPosition: 1,
-                                shape: 4
-                            },
-                            {
-                                color: 6,
-                                id: 103,
-                                rackPosition: 3,
-                                shape: 1
-                            }
-                        ]
-                    }
-                }
-            ]
+          "boards": [
+            {
+              "color": 1,
+              "disabled": false,
+              "id": 2,
+              "shape": 2,
+              "x": 3,
+              "y": -1
+            },
+            {
+              "color": 1,
+              "disabled": false,
+              "id": 5,
+              "shape": 5,
+              "x": 4,
+              "y": -1
+            },
+            {
+              "color": 3,
+              "disabled": false,
+              "id": 16,
+              "shape": 4,
+              "x": 7,
+              "y": 3
+            },
+            {
+              "color": 4,
+              "disabled": false,
+              "id": 19,
+              "shape": 1,
+              "x": 2,
+              "y": 0
+            },
+            {
+              "color": 4,
+              "disabled": false,
+              "id": 21,
+              "shape": 3,
+              "x": 1,
+              "y": 0
+            },
+            {
+              "color": 5,
+              "disabled": false,
+              "id": 30,
+              "shape": 6,
+              "x": 3,
+              "y": 2
+            },
+            {
+              "color": 6,
+              "disabled": false,
+              "id": 31,
+              "shape": 1,
+              "x": 2,
+              "y": 1
+            },
+            {
+              "color": 1,
+              "disabled": false,
+              "id": 37,
+              "shape": 1,
+              "x": 2,
+              "y": -1
+            },
+            {
+              "color": 3,
+              "disabled": false,
+              "id": 49,
+              "shape": 1,
+              "x": 6,
+              "y": 3
+            },
+            {
+              "color": 4,
+              "disabled": false,
+              "id": 56,
+              "shape": 2,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "color": 4,
+              "disabled": false,
+              "id": 58,
+              "shape": 4,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "color": 4,
+              "disabled": false,
+              "id": 60,
+              "shape": 6,
+              "x": -2,
+              "y": 0
+            },
+            {
+              "color": 5,
+              "disabled": false,
+              "id": 63,
+              "shape": 3,
+              "x": 4,
+              "y": 2
+            },
+            {
+              "color": 5,
+              "disabled": false,
+              "id": 65,
+              "shape": 5,
+              "x": 1,
+              "y": 2
+            },
+            {
+              "color": 3,
+              "disabled": false,
+              "id": 86,
+              "shape": 2,
+              "x": 5,
+              "y": 3
+            },
+            {
+              "color": 3,
+              "disabled": false,
+              "id": 87,
+              "shape": 3,
+              "x": 4,
+              "y": 3
+            },
+            {
+              "color": 3,
+              "disabled": false,
+              "id": 89,
+              "shape": 5,
+              "x": 8,
+              "y": 3
+            },
+            {
+              "color": 5,
+              "disabled": false,
+              "id": 97,
+              "shape": 1,
+              "x": 2,
+              "y": 2
+            }
+          ],
+          "players": [
+            {
+              "gameId": 2,
+              "gamePosition": 2,
+              "id": 3,
+              "isTurn": false,
+              "lastTurnPoints": 5,
+              "points": 22,
+              "pseudo": "Thomas",
+              "rack": {
+                "tiles": [
+                  {
+                    "color": 1,
+                    "id": 1,
+                    "rackPosition": 0,
+                    "shape": 1
+                  },
+                  {
+                    "color": 6,
+                    "id": 33,
+                    "rackPosition": 0,
+                    "shape": 3
+                  },
+                  {
+                    "color": 5,
+                    "id": 61,
+                    "rackPosition": 0,
+                    "shape": 1
+                  },
+                  {
+                    "color": 5,
+                    "id": 66,
+                    "rackPosition": 2,
+                    "shape": 6
+                  },
+                  {
+                    "color": 2,
+                    "id": 82,
+                    "rackPosition": 5,
+                    "shape": 4
+                  },
+                  {
+                    "color": 4,
+                    "id": 92,
+                    "rackPosition": 0,
+                    "shape": 2
+                  }
+                ]
+              },
+              "userId": 3
+            },
+            {
+              "gameId": 2,
+              "gamePosition": 1,
+              "id": 4,
+              "isTurn": true,
+              "lastTurnPoints": 6,
+              "points": 19,
+              "pseudo": "Jean charles",
+              "rack": {
+                "tiles": [
+                  {
+                    "color": 1,
+                    "id": 41,
+                    "rackPosition": 1,
+                    "shape": 5
+                  },
+                  {
+                    "color": 2,
+                    "id": 45,
+                    "rackPosition": 0,
+                    "shape": 3
+                  },
+                  {
+                    "color": 6,
+                    "id": 67,
+                    "rackPosition": 0,
+                    "shape": 1
+                  },
+                  {
+                    "color": 4,
+                    "id": 91,
+                    "rackPosition": 2,
+                    "shape": 1
+                  },
+                  {
+                    "color": 4,
+                    "id": 94,
+                    "rackPosition": 1,
+                    "shape": 4
+                  },
+                  {
+                    "color": 6,
+                    "id": 103,
+                    "rackPosition": 3,
+                    "shape": 1
+                  }
+                ]
+              },
+              "userId": 3
+            }
+          ]
         });
     });
     it('should return Rack with restRack', () => {

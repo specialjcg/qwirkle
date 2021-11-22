@@ -6,6 +6,7 @@ import { Tiles } from './tiles';
 export interface Player {
     id: number;
     pseudo: string;
+    userId: number;
     gameId: number;
     gamePosition: number;
     points: number;
