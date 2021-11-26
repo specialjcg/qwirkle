@@ -4,7 +4,7 @@
   "scripts": {
     "postinstall": "ngcc",
     "ng": "ng",
-    "start": "ng serve --ssl",
+    "start": "ng serve",
     "build": "ng build",
     "test": "jest",
     "e2e": "ng e2e",
