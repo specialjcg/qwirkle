@@ -25,15 +25,18 @@ export class LogInComponent implements OnInit {
     getLogin() {
         this.service.LoginUser(this.login).subscribe(
             (response) => {
+                console.log(response);
                 if (response) {
                     this.router.navigate(['/game']).then();
                 } else {
-                    this.router.navigate(['/login']).then();
+                    this.router.navigate(['/']).then();
                 }
             },
             (error) => {
-                this.service.LogoutUser().subscribe();
-                this.router.navigate(['/login']).then();
+                console.log(error);
+                this.service
+                    .LogoutUser()
+                    .subscribe(() => this.router.navigate(['/login']).then());
             }
         );
     }

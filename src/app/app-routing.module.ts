@@ -9,7 +9,8 @@ const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'game' },
     { path: 'login', component: LogInComponent },
     { path: 'register', component: RegisterComponent },
-    { path: 'game', canActivate: [AuthGuard], component: GameqwirkleComponent }
+    { path: 'game', canActivate: [AuthGuard], component: GameqwirkleComponent },
+  { path: '**', pathMatch: 'full', redirectTo: 'login' }
 ];
 
 @NgModule({
