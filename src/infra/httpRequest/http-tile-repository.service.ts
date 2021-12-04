@@ -16,7 +16,7 @@ import {
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TileViewModel } from '../../domain/tiles';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment.production';
 import { Register } from '../../domain/register';
 import { toListGamedId } from '../../domain/games';
 export const backurl = environment.backend.baseURL;
