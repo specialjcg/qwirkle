@@ -12,9 +12,7 @@ import { of } from 'rxjs';
     styleUrls: ['./log-in.component.css']
 })
 export class LogInComponent implements OnInit {
-
     @Output() userChange = new EventEmitter<number>();
-
 
     login: Login = { pseudo: '', password: '', isRemember: true };
 
@@ -24,7 +22,7 @@ export class LogInComponent implements OnInit {
         this.login = { pseudo: '', password: '', isRemember: true };
     }
 
-    async getLogin() {
+    getLogin() {
         this.service.LoginUser(this.login).subscribe(
             (response) => {
                 if (response) {

@@ -13,11 +13,7 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    constructor(
-
-        private router: Router,
-        public service: HttpTileRepositoryService
-    ) {}
+    constructor(private router: Router, public service: HttpTileRepositoryService) {}
 
     canActivate(
         next: ActivatedRouteSnapshot,
