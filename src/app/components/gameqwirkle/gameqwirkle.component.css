@@ -77,6 +77,12 @@
   left:2vw;
 
 }
+.positionBot{
+  position: absolute;
+  top:60vh;
+  left:2vw;
+
+}
 .positionLogOut{
   position: absolute;
   top:40vh;

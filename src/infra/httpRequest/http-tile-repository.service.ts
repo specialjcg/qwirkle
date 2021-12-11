@@ -128,7 +128,6 @@ export default class HttpTileRepositoryService {
             .then((response) => toListGamedId(response));
     }
 
-
     newGame(players: number[]): Promise<number[]> {
         return this.https
             .post<Player>(backurl + '/Game/New/', players, httpOptions)
@@ -151,6 +150,13 @@ export default class HttpTileRepositoryService {
     getWinners(gameId: number): Promise<never> {
         return this.https
             .get<never>(backurl + '/Player/Winners/' + gameId, httpOptions)
+            .toPromise()
+            .then();
+    }
+
+    getBot(gameId: number): Promise<never> {
+        return this.https
+            .get<never>(backurl + '/Bot/BestMoves/' + gameId, httpOptions)
             .toPromise()
             .then();
     }

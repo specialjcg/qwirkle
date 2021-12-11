@@ -418,7 +418,7 @@ export class GameqwirkleComponent implements OnInit {
 
     async valid(): Promise<void> {
         this.playTile = fromBoard(
-            this.board.filter((tile) => tile.disabled),
+            this.board.filter((tile: Tile) => tile.disabled),
             this.player.id
         );
         this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
@@ -515,7 +515,7 @@ export class GameqwirkleComponent implements OnInit {
                 this.player = result;
                 this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
-                console.log('playerId :' + this.player.id);
+                console.log('playerId :' + this.player);
                 this.getPlayerIdToPlay().then();
                 this.nameToTurn = '';
 
@@ -566,5 +566,9 @@ export class GameqwirkleComponent implements OnInit {
     logOut() {
         this.serviceQwirkle.LogoutUser().subscribe();
         this.router.navigate(['/login']).then();
+    }
+
+    Bot() {
+        this.serviceQwirkle.getBot(this.gameId).then();
     }
 }

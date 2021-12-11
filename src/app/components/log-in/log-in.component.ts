@@ -36,7 +36,7 @@ export class LogInComponent implements OnInit {
                 console.log(error);
                 this.service
                     .LogoutUser()
-                    .subscribe(() => this.router.navigate(['/login']).then());
+                    .subscribe(() => this.router.navigate(['/']).then());
             }
         );
     }
