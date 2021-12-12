@@ -22,6 +22,7 @@ export class AuthGuard implements CanActivate {
         return this.service.getGames().pipe(
             map((authenticated) => {
                 console.log(authenticated);
+
                 return true;
             }),
             catchError((error) => {
