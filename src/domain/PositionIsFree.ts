@@ -10,12 +10,8 @@ export const positionIsNotFree = (
         x: number;
         y: number;
         disabled: boolean;
-        id: number;
     }
-): boolean =>
-    tiles.some(
-        (tile) => (tile.x === newTile.x && tile.y === newTile.y) || tile.id === newTile.id
-    );
+): boolean => tiles.some((tile) => tile.x === newTile.x && tile.y === newTile.y);
 export const positionIsFree = (
     tiles: Tile[],
     newTile: {
@@ -24,9 +20,6 @@ export const positionIsFree = (
         x: number;
         y: number;
         disabled: boolean;
-        id: number;
     }
 ): boolean =>
-    tiles.filter(
-        (tile) => (tile.x === newTile.x && tile.y === newTile.y) || tile.id === newTile.id
-    ).length === 0;
+    tiles.filter((tile) => tile.x === newTile.x && tile.y === newTile.y).length === 0;

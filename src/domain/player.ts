@@ -1,4 +1,4 @@
-import { Tile } from './Tile';
+import {PlayerTile, Tile} from './Tile';
 import { Color } from './Color';
 import { Shape } from './Shape';
 import { Tiles } from './tiles';
@@ -20,7 +20,6 @@ export const toWebPlayer = (result: Player): number => {
 
 export const toWebTiles = (result: Player): Tile[] => {
     return result.rack.tiles.map((tile) => ({
-        id: tile.id,
         color: tile.color,
         shape: tile.shape,
         x: 0,
@@ -36,7 +35,6 @@ interface Coord {
 
 export interface TilesOnBoard {
     coordinates: Coord;
-    id: number;
     color: Color;
     shape: Shape;
 }
@@ -67,7 +65,6 @@ export interface RestSkipTurn {
 
 export interface RestTilesPlay {
     playerId: number;
-    tileId: number;
     x: number;
     y: number;
 }
@@ -77,7 +74,6 @@ export interface BoardGame {
 }
 export interface RestTilesSwap {
     playerId: number;
-    tileId: number;
 }
 
 export const toBoard = (result: RestBoard): BoardGame => {
@@ -85,7 +81,6 @@ export const toBoard = (result: RestBoard): BoardGame => {
         boards: result.board.tiles.map((tile1) => ({
             x: tile1.coordinates.x,
             y: tile1.coordinates.y,
-            id: tile1.id,
             shape: tile1.shape,
             color: tile1.color,
             disabled: false
@@ -104,16 +99,17 @@ export const toChangeRack = (rack: RestRack): Rack => {
         points: rack.points
     };
 };
-export const fromBoard = (result: Tile[], playerId: number): RestTilesPlay[] => {
-    return result.map<RestTilesPlay>((tile) => ({
+export const fromBoard = (result: Tile[], playerId: number): PlayerTile[] => {
+    return result.map<PlayerTile>((tile) => ({
         playerId,
-        tileId: tile.id,
+        shape: tile.shape,
+        color: tile.color,
         x: tile.x,
         y: tile.y
     }));
 };
 export const fromBag = (result: Tile[], playerId: number): RestTilesSwap[] => {
-    return result.map<RestTilesSwap>((tile) => ({ playerId, tileId: tile.id }));
+    return result.map<RestTilesSwap>((tile) => ({ playerId }));
 };
 
 export interface Rack {

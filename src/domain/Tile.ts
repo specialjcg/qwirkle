@@ -6,7 +6,7 @@ import { Tiles } from './tiles';
 
 export type Tile = {
     disabled: boolean;
-    readonly id: number;
+
     readonly shape: Shape;
     readonly color: Color;
     readonly y: number;
@@ -27,19 +27,19 @@ export type Login = {
 };
 
 export type PlayerTile = {
+    readonly shape: Shape;
+    readonly color: Color;
+
     playerId: number;
-    tileId: number;
     x: number;
     y: number;
 };
 
 export type PlayerTileToSwap = {
     playerId: number;
-    tileId: number;
 };
 
 const shiftToRight = (tile: Tile): Tile => ({
-    id: tile.id,
     shape: tile.shape,
     color: tile.color,
     x: tile.x - 1,
@@ -51,7 +51,6 @@ export const onRight = (tile: Tile, xposition: number, newTile: Tile): boolean =
     tile.x >= xposition && tile.y === newTile.y;
 
 const shiftToLeft = (tile: Tile): Tile => ({
-    id: tile.id,
     shape: tile.shape,
     color: tile.color,
     x: tile.x + 1,
@@ -60,7 +59,8 @@ const shiftToLeft = (tile: Tile): Tile => ({
 });
 
 export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) =>
-    tile.id !== tileInsert.id && tileInsert.y === tile.y;
+    !(tile.shape === tileInsert.shape && tile.color === tileInsert.color) &&
+    tileInsert.y === tile.y;
 
 const tileNotInRow = (tileInsert: Tile) => (tile: Tile) => tileInsert.y !== tile.y;
 export const onLeft = (xposition: number) => (tile: Tile) => tile.x < xposition;
@@ -74,7 +74,7 @@ function placeTileToLeft(
         x: number;
         y: number;
         disabled: boolean;
-        id: number;
+
     }
 ) {
     return rowTile.map((tile) => {
@@ -104,7 +104,6 @@ export const insertPosition = (
 
         const rowTilenotInsert = nexTiles.filter(tileNotInRow(tileInsert));
         let newTile: Tile = {
-            id: tileInsert.id,
             shape: tileInsert.shape,
             color: tileInsert.color,
             x: xposition,
@@ -124,7 +123,6 @@ export const insertPosition = (
                 if (before.length >= after.length) {
                     const xmax = Math.max(...rowTile.map((max) => max.x));
                     newTile = {
-                        id: tileInsert.id,
                         shape: tileInsert.shape,
                         color: tileInsert.color,
                         x: xmax + 1,
@@ -135,7 +133,6 @@ export const insertPosition = (
                     const xmin = Math.min(...rowTile.map((min) => min.x));
 
                     newTile = {
-                        id: tileInsert.id,
                         shape: tileInsert.shape,
                         color: tileInsert.color,
                         x: xmin - 1,
@@ -147,7 +144,10 @@ export const insertPosition = (
         }
 
         return setPositionTile(
-            [...rowTilenotInsert, ...rowTile].filter((tile) => tile.id !== newTile.id),
+            [...rowTilenotInsert, ...rowTile].filter(
+                (tile) =>
+                    !(tile.shape === tileInsert.shape && tile.color === tileInsert.color)
+            ),
             newTile
         );
     }
@@ -158,8 +158,7 @@ export const getInsertTile = (
     tileInsert: Tiles,
     xposition: number,
     yposition: number
-) => ({
-    id: tileInsert.id,
+): Tile => ({
     shape: tileInsert.shape,
     color: tileInsert.color,
     x: xposition,
@@ -182,7 +181,7 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
     }
     const result: Tile[][] = new Array(coordy.length).fill(null).map((_, indexY) =>
         new Array(coordx.length).fill(null).map((_, indexX) => ({
-            id: 0,
+
             shape: 0,
             color: 0,
             x: coordx[indexX],

@@ -17,6 +17,7 @@ import {
 import {
     getInsertTile,
     insertPosition,
+    PlayerTile,
     Tile,
     toNameImage,
     toPlate
@@ -64,13 +65,13 @@ export class GameqwirkleComponent implements OnInit {
 
     plate: Tile[][] = [[]];
 
-    playTile: RestTilesPlay[] = [];
+    playTile: PlayerTile[] = [];
 
     swapTile: RestTilesSwap[] = [];
 
     score: Rack = { code: 1, tilesPlayed: [], newRack: [], points: 0 };
 
-    voidTile: Tile[] = [{ disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0 }];
+    voidTile: Tile[] = [{ disabled: false, shape: 0, color: 0, y: 0, x: 0 }];
 
     totalScore = 0;
 
@@ -96,7 +97,7 @@ export class GameqwirkleComponent implements OnInit {
 
     panzoomModel!: PanZoomModel;
 
-    private panZoomConfigOptions: PanZoomConfigOptions = {
+    panZoomConfigOptions: PanZoomConfigOptions = {
         zoomLevels: 10,
         scalePerZoomLevel: 2,
         zoomStepDuration: 0.2,
@@ -119,7 +120,7 @@ export class GameqwirkleComponent implements OnInit {
 
     games: ListGamedId = { listGameId: [] };
 
-    private playTileTempory: RestTilesPlay[] = [];
+    playTileTempory: PlayerTile[] = [];
 
     winner = '';
 
@@ -233,16 +234,18 @@ export class GameqwirkleComponent implements OnInit {
     async autoZoom(): Promise<void> {
         this.resetZoomToFit();
         this.changeDetector.detectChanges();
-        const height = this.scene.nativeElement.clientHeight;
-        const width = this.scene.nativeElement.clientWidth;
-        const xmin: number = this.getXmin();
-        const xmax: number = this.getXmax();
-        const ymin = this.getYmin();
-        const ymax = this.getYmax();
+        if (this.scene) {
+            const height = this.scene.nativeElement.clientHeight;
+            const width = this.scene.nativeElement.clientWidth;
+            const xmin: number = this.getXmin();
+            const xmax: number = this.getXmax();
+            const ymin = this.getYmin();
+            const ymax = this.getYmax();
 
-        const newRect: Rect = this.newrect(ymin, xmin, width, height, xmax, ymax);
+            const newRect: Rect = this.newrect(ymin, xmin, width, height, xmax, ymax);
 
-        this.panZoomAPI.zoomToFit(newRect);
+            this.panZoomAPI.zoomToFit(newRect);
+        }
         this.changeDetector.detectChanges();
     }
 
@@ -314,19 +317,19 @@ export class GameqwirkleComponent implements OnInit {
         };
     }
 
-    private getXmin() {
+    getXmin() {
         return Math.min(...this.board.map((tile) => tile.x));
     }
 
-    private getYmin(): number {
+    getYmin(): number {
         return Math.min(...this.board.map((tile) => tile.y));
     }
 
-    private getYmax(): number {
+    getYmax(): number {
         return Math.max(...this.board.map((tile) => tile.y));
     }
 
-    private getXmax(): number {
+    getXmax(): number {
         return Math.max(...this.board.map((tile) => tile.x));
     }
 
@@ -342,6 +345,14 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<Tile[], any>, index: number): void {
+        console.log(this.board);
+        console.log(
+            getInsertTile(
+                event.previousContainer.data[event.previousIndex],
+                this.plate[index][event.currentIndex].x,
+                this.plate[index][event.currentIndex].y
+            )
+        );
         this.board = insertPosition(
             this.board,
             getInsertTile(
@@ -412,7 +423,7 @@ export class GameqwirkleComponent implements OnInit {
             this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
             this.rack = toRarrange(this.player.rack.tiles);
-            this.autoZoom();
+            this.autoZoom().then();
         });
     }
 

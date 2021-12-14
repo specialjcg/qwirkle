@@ -137,37 +137,31 @@ describe('HttpTileRepositoryService', () => {
                 tiles: [
                     {
                         rackPosition: 5,
-                        id: 71,
                         color: 2,
                         shape: 3
                     },
                     {
                         rackPosition: 1,
-                        id: 5,
                         color: 1,
                         shape: 4
                     },
                     {
                         rackPosition: 0,
-                        id: 31,
                         color: 6,
                         shape: 2
                     },
                     {
                         rackPosition: 1,
-                        id: 105,
                         color: 5,
                         shape: 6
                     },
                     {
                         rackPosition: 2,
-                        id: 77,
                         color: 1,
                         shape: 3
                     },
                     {
                         rackPosition: 0,
-                        id: 87,
                         color: 2,
                         shape: 6
                     }

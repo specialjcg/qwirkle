@@ -4,7 +4,6 @@ import { Tiles } from './tiles';
 
 export const setPositionTile = (tiles: Tile[], tile: Tile): Tile[] => {
     const newTile = {
-        id: tile.id,
         shape: tile.shape,
         color: tile.color,
         x: tile.x,
@@ -28,7 +27,6 @@ export const toRarrange = (rack: Tiles[]): Tile[] =>
             y: 0,
             color: tile.color,
             shape: tile.shape,
-            id: tile.id
         };
     });
 export const toRarrangeRack = (rack: Tile[]): Tile[] =>
@@ -39,11 +37,10 @@ export const toRarrangeRack = (rack: Tile[]): Tile[] =>
             y: 0,
             color: tile.color,
             shape: tile.shape,
-            id: tile.id
         };
     });
 
 export const toTiles = (rack: Tile[]): Tiles[] =>
     rack.map((tile, index) => {
-        return { color: tile.color, shape: tile.shape, id: tile.id, rackPosition: index };
+        return { color: tile.color, shape: tile.shape,  rackPosition: index };
     });

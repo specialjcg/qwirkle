@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Login, PlayerTile, PlayerTileToSwap } from '../../domain/Tile';
 import {
-    BoardGame,
-    ListGamedId,
-    ListUsersId,
-    Player,
-    Rack,
-    RestBag,
-    RestBoard,
-    RestRack,
-    RestSkipTurn,
-    toBoard,
-    toChangeRack
+  BoardGame,
+  ListGamedId,
+  ListUsersId,
+  Player,
+  Rack,
+  RestBag,
+  RestBoard,
+  RestRack,
+  RestSkipTurn, RestTilesSwap,
+  toBoard,
+  toChangeRack
 } from '../../domain/player';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TileViewModel } from '../../domain/tiles';
-import { environment } from '../../environments/environment.production';
+import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
 import { toListGamedId } from '../../domain/games';
 export const backurl = environment.backend.baseURL;
@@ -95,7 +95,7 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    swapTile(tiles: PlayerTileToSwap[]): Promise<Rack> {
+  swapTile(tiles: RestTilesSwap[]): Promise<Rack> {
         return this.https
             .post<RestBag>(backurl + '/Action/SwapTiles/', tiles, httpOptions)
             .toPromise()

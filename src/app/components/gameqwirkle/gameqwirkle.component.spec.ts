@@ -53,7 +53,7 @@ describe('GameqwirkleComponent', () => {
                 tilesPlayed: []
             });
             expect(app.voidTile).toEqual([
-                { disabled: false, id: 0, shape: 0, color: 0, y: 0, x: 0 }
+                { disabled: false,  shape: 0, color: 0, y: 0, x: 0 }
             ]);
             expect(app.players).toEqual([]);
             expect(app.games).toEqual({ listGameId: [] });
@@ -78,7 +78,7 @@ describe('GameqwirkleComponent', () => {
                 },
                 userId: 0
             });
-            expect(app['panZoomConfigOptions']).toEqual({
+            expect(app.panZoomConfigOptions).toEqual({
                 zoomLevels: 10,
                 scalePerZoomLevel: 2,
                 zoomStepDuration: 0.2,
@@ -86,43 +86,43 @@ describe('GameqwirkleComponent', () => {
                 zoomToFitZoomLevelFactor: 0.9,
                 dragMouseButton: 'right'
             });
-            expect(app['playTileTempory']).toEqual([]);
+            expect(app.playTileTempory).toEqual([]);
         });
         it('should rearrange rack ', () => {
             const rack = [
                 {
                     rackPosition: 5,
-                    id: 71,
+
                     color: 2,
                     shape: 3
                 },
                 {
                     rackPosition: 1,
-                    id: 5,
+
                     color: 1,
                     shape: 4
                 },
                 {
                     rackPosition: 0,
-                    id: 31,
+
                     color: 6,
                     shape: 2
                 },
                 {
                     rackPosition: 1,
-                    id: 105,
+
                     color: 5,
                     shape: 6
                 },
                 {
                     rackPosition: 0,
-                    id: 87,
+
                     color: 2,
                     shape: 6
                 },
                 {
                     rackPosition: 2,
-                    id: 77,
+
                     color: 1,
                     shape: 3
                 }
@@ -131,7 +131,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 2,
                     disabled: true,
-                    id: 71,
+
                     shape: 3,
                     x: 0,
                     y: 0
@@ -139,7 +139,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: true,
-                    id: 5,
+
                     shape: 4,
                     x: 1,
                     y: 0
@@ -147,7 +147,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 6,
                     disabled: true,
-                    id: 31,
+
                     shape: 2,
                     x: 2,
                     y: 0
@@ -155,7 +155,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: true,
-                    id: 105,
+
                     shape: 6,
                     x: 3,
                     y: 0
@@ -163,7 +163,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 2,
                     disabled: true,
-                    id: 87,
+
                     shape: 6,
                     x: 4,
                     y: 0
@@ -171,7 +171,7 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: true,
-                    id: 77,
+
                     shape: 3,
                     x: 5,
                     y: 0
@@ -189,37 +189,31 @@ describe('GameqwirkleComponent', () => {
                     tiles: [
                         {
                             rackPosition: 5,
-                            id: 71,
                             color: 2,
                             shape: 3
                         },
                         {
                             rackPosition: 1,
-                            id: 5,
                             color: 1,
                             shape: 4
                         },
                         {
                             rackPosition: 0,
-                            id: 31,
                             color: 6,
                             shape: 2
                         },
                         {
                             rackPosition: 1,
-                            id: 105,
                             color: 5,
                             shape: 6
                         },
                         {
                             rackPosition: 2,
-                            id: 77,
                             color: 1,
                             shape: 3
                         },
                         {
                             rackPosition: 0,
-                            id: 87,
                             color: 2,
                             shape: 6
                         }
@@ -230,37 +224,31 @@ describe('GameqwirkleComponent', () => {
             };
             expect(toTileviewModel(player)).toEqual([
                 {
-                    TileId: 71,
                     X: 5,
                     Y: 0,
                     playerId: 3
                 },
                 {
-                    TileId: 5,
                     X: 1,
                     Y: 0,
                     playerId: 3
                 },
                 {
-                    TileId: 31,
                     X: 0,
                     Y: 0,
                     playerId: 3
                 },
                 {
-                    TileId: 105,
                     X: 1,
                     Y: 0,
                     playerId: 3
                 },
                 {
-                    TileId: 77,
                     X: 2,
                     Y: 0,
                     playerId: 3
                 },
                 {
-                    TileId: 87,
                     X: 0,
                     Y: 0,
                     playerId: 3
@@ -284,7 +272,6 @@ describe('GameqwirkleComponent', () => {
             const players: RestTilesPlay[] = [
                 {
                     playerId: 1,
-                    tileId: 0,
                     x: 0,
                     y: 0
                 }
@@ -328,7 +315,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 2,
                     shape: 2,
                     x: 3,
                     y: -1
@@ -336,7 +322,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 5,
                     shape: 5,
                     x: 4,
                     y: -1
@@ -344,7 +329,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 3,
                     disabled: false,
-                    id: 16,
                     shape: 4,
                     x: 7,
                     y: 3
@@ -352,7 +336,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 19,
                     shape: 1,
                     x: 2,
                     y: 0
@@ -360,7 +343,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 21,
                     shape: 3,
                     x: 1,
                     y: 0
@@ -368,16 +350,15 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: 3,
                     y: 2
                 }
             ];
-            expect(app['getYmin']()).toEqual(-1);
-            expect(app['getYmax']()).toEqual(3);
-            expect(app['getXmin']()).toEqual(1);
-            expect(app['getXmax']()).toEqual(7);
+            expect(app.getYmin()).toEqual(-1);
+            expect(app.getYmax()).toEqual(3);
+            expect(app.getXmin()).toEqual(1);
+            expect(app.getXmax()).toEqual(7);
         });
 
         it('should zoom in rect to fit ymin 100 ', () => {
@@ -459,7 +440,6 @@ describe('GameqwirkleComponent', () => {
             const tile: Tile = {
                 color: 5,
                 disabled: false,
-                id: 30,
                 shape: 6,
                 x: 3,
                 y: 2
@@ -473,7 +453,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: 3,
                     y: 2
@@ -532,13 +511,11 @@ describe('GameqwirkleComponent', () => {
         });
     });
     describe('autoZoom', () => {
-
         it('should autozoom when game with xmax', () => {
             app.board = [
                 {
                     color: 1,
                     disabled: false,
-                    id: 2,
                     shape: 2,
                     x: 3,
                     y: -1
@@ -546,7 +523,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 5,
                     shape: 5,
                     x: 4,
                     y: -1
@@ -554,7 +530,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 3,
                     disabled: false,
-                    id: 16,
                     shape: 4,
                     x: 7,
                     y: -3
@@ -562,7 +537,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 19,
                     shape: 1,
                     x: -2,
                     y: 0
@@ -570,7 +544,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 21,
                     shape: 3,
                     x: 1,
                     y: 0
@@ -578,7 +551,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: 3,
                     y: -2
@@ -595,7 +567,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 2,
                     shape: 2,
                     x: 3,
                     y: -1
@@ -603,7 +574,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 5,
                     shape: 5,
                     x: 4,
                     y: -1
@@ -611,7 +581,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 3,
                     disabled: false,
-                    id: 16,
                     shape: 4,
                     x: 7,
                     y: -3
@@ -619,7 +588,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 19,
                     shape: 1,
                     x: -2,
                     y: 0
@@ -627,7 +595,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 21,
                     shape: 3,
                     x: 1,
                     y: 0
@@ -635,7 +602,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: 3,
                     y: -2
@@ -647,7 +613,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 2,
                     shape: 2,
                     x: -3,
                     y: 0
@@ -655,7 +620,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 5,
                     shape: 5,
                     x: -4,
                     y: 2
@@ -663,7 +627,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 3,
                     disabled: false,
-                    id: 16,
                     shape: 4,
                     x: -7,
                     y: 3
@@ -671,7 +634,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 19,
                     shape: 1,
                     x: -2,
                     y: 0
@@ -679,7 +641,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 21,
                     shape: 3,
                     x: -1,
                     y: 0
@@ -687,7 +648,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: -3,
                     y: 4
@@ -704,7 +664,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 2,
                     shape: 2,
                     x: -3,
                     y: 0
@@ -712,7 +671,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 1,
                     disabled: false,
-                    id: 5,
                     shape: 5,
                     x: -4,
                     y: 2
@@ -720,7 +678,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 3,
                     disabled: false,
-                    id: 16,
                     shape: 4,
                     x: -7,
                     y: 3
@@ -728,7 +685,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 19,
                     shape: 1,
                     x: -2,
                     y: 0
@@ -736,7 +692,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 4,
                     disabled: false,
-                    id: 21,
                     shape: 3,
                     x: -1,
                     y: 0
@@ -744,7 +699,6 @@ describe('GameqwirkleComponent', () => {
                 {
                     color: 5,
                     disabled: false,
-                    id: 30,
                     shape: 6,
                     x: -3,
                     y: 4
