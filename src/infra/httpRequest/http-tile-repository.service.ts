@@ -156,7 +156,7 @@ export default class HttpTileRepositoryService {
 
     getBot(gameId: number): Promise<never> {
         return this.https
-            .get<never>(backurl + '/Bot/BestMoves/' + gameId, httpOptions)
+            .get<never>(backurl + '/Ai/BestMoves/' + gameId, httpOptions)
             .toPromise()
             .then();
     }
