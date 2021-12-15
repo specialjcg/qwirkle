@@ -18,6 +18,7 @@ import { GameqwirkleComponent } from './components/gameqwirkle/gameqwirkle.compo
 import { AppRoutingModule } from './app-routing.module';
 import { MatInputModule } from '@angular/material/input';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
+import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/choose-opponent-to-player.component';
 
 export class MyAppModule {}
 
@@ -35,7 +36,8 @@ export class MyAppModule {}
         PickComponent,
         LogInComponent,
         RegisterComponent,
-        GameqwirkleComponent
+        GameqwirkleComponent,
+        ChooseOpponentToPlayerComponent
     ],
     imports: [
         BrowserAnimationsModule,

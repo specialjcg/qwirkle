@@ -551,7 +551,8 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     NewGame(): void {
-        this.serviceQwirkle.newGame([3]).then();
+        this.router.navigate(['opponents']).then();
+
     }
 
     async getPlayerIdToPlay(): Promise<void> {

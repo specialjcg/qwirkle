@@ -1,0 +1,136 @@
+.positionNewGame{
+  position: absolute;
+  top:50vh;
+  left:2vw;
+
+}
+
+button {
+  position: absolute;
+  left: 2vw;
+  top: 20vh;
+  background: #3D94F6;
+  background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
+  background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);
+  background-image: -ms-linear-gradient(top, #3D94F6, #1E62D0);
+  background-image: -o-linear-gradient(top, #3D94F6, #1E62D0);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-family: Brush Script MT, serif;
+  font-size: 30px;
+  font-weight: 100;
+  padding: 10px;
+  -webkit-box-shadow: 1px 1px 10px 0 #000000;
+  -moz-box-shadow: 1px 1px 10px 0 #000000;
+  box-shadow: 1px 1px 10px 0 #000000;
+  text-shadow: 1px 1px 10px #000000;
+  border: solid #337FED 1px;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+button:hover {
+  border: solid #337FED 1px;
+  background: #1E62D0;
+  background-image: -webkit-linear-gradient(top, #1E62D0, #3D94F6);
+  background-image: -moz-linear-gradient(top, #1E62D0, #3D94F6);
+  background-image: -ms-linear-gradient(top, #1E62D0, #3D94F6);
+  background-image: -o-linear-gradient(top, #1E62D0, #3D94F6);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+}
+.cardNetwork {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height:80%;
+}
+#demoFont {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 28px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #76b852  ;
+  font-weight: 800;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+
+}
+
+
+@media (min-width: 481px) and (max-width: 900px) {
+  .btn {
+    position: absolute;
+    top:50%;
+    left: 60%;
+    font-size: x-small;
+    flex: 1 1 auto;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2);*/
+    box-shadow: 0 0 5px #eee;
+    border-radius: 5px;
+    width: 7vw;
+    white-space: pre-wrap !important;
+  }
+  /* Demo Stuff End -> */
+
+  /* <- Magic Stuff Start */
+
+  .btn:hover {
+    background-position: right center; /* change the direction of the change here */
+  }
+
+  .btn-1 {
+    background: #3D94F6;
+    background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -ms-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -o-linear-gradient(top, #3D94F6, #1E62D0);
+  }
+}
+
+@media (min-width: 900px) {
+  .btn {
+    position: absolute;
+    top:50%;
+    left: 60%;
+    flex: 1 1 auto;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2);*/
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+  }
+  /* Demo Stuff End -> */
+
+  /* <- Magic Stuff Start */
+
+  .btn:hover {
+    background-position: right center; /* change the direction of the change here */
+  }
+  .btn-1 {
+    background: #3D94F6;
+    background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -ms-linear-gradient(top, #3D94F6, #1E62D0);
+    background-image: -o-linear-gradient(top, #3D94F6, #1E62D0);
+  }
+}

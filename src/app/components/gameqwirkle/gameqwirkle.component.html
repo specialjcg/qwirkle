@@ -11,7 +11,7 @@
 <button  *ngIf="bag.length!==0" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
 <button *ngIf="bag.length===0 && this.rack.length===6" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
 <button class="positionLogOut" (click)="logOut()">Logout</button>
-<button class="positionNewGame" (click)="NewGame()">New Game</button>
+<button class="positionNewGame" (click)="NewGame()">Opponents</button>
 <button class="positionBot" (click)="Bot()">Bot</button>
 <div cdkDropListGroup>
   <div *ngIf="this.winner === ''" class="position-firstPlayer">

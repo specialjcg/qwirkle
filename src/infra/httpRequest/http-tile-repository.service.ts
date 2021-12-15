@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Login, PlayerTile, PlayerTileToSwap } from '../../domain/Tile';
 import {
-  BoardGame,
-  ListGamedId,
-  ListUsersId,
-  Player,
-  Rack,
-  RestBag,
-  RestBoard,
-  RestRack,
-  RestSkipTurn, RestTilesSwap,
-  toBoard,
-  toChangeRack
+    BoardGame,
+    ListGamedId,
+    ListUsersId,
+    Player,
+    Rack,
+    RestBag,
+    RestBoard,
+    RestRack,
+    RestSkipTurn,
+    RestTilesSwap,
+    toBoard,
+    toChangeRack
 } from '../../domain/player';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -95,7 +96,7 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-  swapTile(tiles: RestTilesSwap[]): Promise<Rack> {
+    swapTile(tiles: RestTilesSwap[]): Promise<Rack> {
         return this.https
             .post<RestBag>(backurl + '/Action/SwapTiles/', tiles, httpOptions)
             .toPromise()
@@ -128,9 +129,9 @@ export default class HttpTileRepositoryService {
             .then((response) => toListGamedId(response));
     }
 
-    newGame(players: number[]): Promise<number[]> {
+    newGame(players: string[]): Promise<number[]> {
         return this.https
-            .post<Player>(backurl + '/Game/New/', players, httpOptions)
+            .post<string[]>(backurl + '/Game/New/', players, httpOptions)
             .toPromise()
             .then();
     }
