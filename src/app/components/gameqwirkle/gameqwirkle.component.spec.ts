@@ -53,7 +53,7 @@ describe('GameqwirkleComponent', () => {
                 tilesPlayed: []
             });
             expect(app.voidTile).toEqual([
-                { disabled: false,  shape: 0, color: 0, y: 0, x: 0 }
+                { disabled: false, shape: 0, color: 0, y: 0, x: 0 }
             ]);
             expect(app.players).toEqual([]);
             expect(app.games).toEqual({ listGameId: [] });
@@ -226,32 +226,44 @@ describe('GameqwirkleComponent', () => {
                 {
                     X: 5,
                     Y: 0,
-                    playerId: 3
+                    color: 2,
+                    gameId: 3,
+                    shape: 3
                 },
                 {
                     X: 1,
                     Y: 0,
-                    playerId: 3
+                    color: 1,
+                    gameId: 3,
+                    shape: 4
                 },
                 {
                     X: 0,
                     Y: 0,
-                    playerId: 3
+                    color: 6,
+                    gameId: 3,
+                    shape: 2
                 },
                 {
                     X: 1,
                     Y: 0,
-                    playerId: 3
+                    color: 5,
+                    gameId: 3,
+                    shape: 6
                 },
                 {
                     X: 2,
                     Y: 0,
-                    playerId: 3
+                    color: 1,
+                    gameId: 3,
+                    shape: 3
                 },
                 {
                     X: 0,
                     Y: 0,
-                    playerId: 3
+                    color: 2,
+                    gameId: 3,
+                    shape: 6
                 }
             ]);
         });

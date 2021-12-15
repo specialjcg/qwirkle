@@ -92,10 +92,10 @@ describe('HttpTileRepositoryService', () => {
         request.flush(mockListGameId);
     });
     it('should give http response for new_games', () => {
-        const mockListnewgame = [10, 11];
-        service.newGame([10, 11]).then((res) => {
-            expect(res).not.toBe([]);
-            expect(res).toEqual([10, 11]);
+        const mockListnewgame = ['10', '11'];
+        service.newGame(['10', '11']).then((response) => {
+            expect(response).not.toBe([]);
+            expect(response).toEqual(['10', '11']);
         });
 
         const request = httpMock.expectOne(backurl + '/Game/New/');
@@ -104,9 +104,9 @@ describe('HttpTileRepositoryService', () => {
     });
     it('should give http response for get winner', () => {
         const mockListnewgame = true;
-        service.getWinners(1).then((res) => {
-            expect(res).not.toBe([]);
-            expect(res).toEqual(true);
+        service.getWinners(1).then((response) => {
+            expect(response).not.toBe([]);
+            expect(response).toEqual(true);
         });
 
         const request = httpMock.expectOne(backurl + '/Player/Winners/' + 1);
@@ -115,9 +115,9 @@ describe('HttpTileRepositoryService', () => {
     });
     it('should give http response for new user', () => {
         const mockListUsersId = { listUsersId: [1, 2] };
-        service.getUsers().then((res) => {
-            expect(res).not.toBe(<ListUsersId>{});
-            expect(res).toEqual({ listUsersId: { listUsersId: [1, 2] } });
+        service.getUsers().then((response) => {
+            expect(response).not.toBe(<ListUsersId>{});
+            expect(response).toEqual({ listUsersId: { listUsersId: [1, 2] } });
         });
 
         const request = httpMock.expectOne(backurl + '/Admin/AllUsersIds/');
@@ -170,9 +170,9 @@ describe('HttpTileRepositoryService', () => {
 
             isTurn: true
         };
-        service.getPlayer(1).then((res) => {
-            expect(res).not.toBe(<Player>{});
-            expect(res).toEqual(mockPlayer);
+        service.getPlayer(1).then((response) => {
+            expect(response).not.toBe(<Player>{});
+            expect(response).toEqual(mockPlayer);
         });
 
         const request = httpMock.expectOne(backurl + '/Player/' + 1);

@@ -129,7 +129,7 @@ export default class HttpTileRepositoryService {
             .then((response) => toListGamedId(response));
     }
 
-    newGame(players: string[]): Promise<number[]> {
+    newGame(players: string[]): Promise<string[]> {
         return this.https
             .post<string[]>(backurl + '/Game/New/', players, httpOptions)
             .toPromise()
