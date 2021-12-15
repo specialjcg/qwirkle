@@ -10,6 +10,12 @@ const routes: Routes = [
     { path: 'login', component: LogInComponent },
     { path: 'register', component: RegisterComponent },
     {
+        path: 'game/:id',
+        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
+        component: GameqwirkleComponent
+    },
+    {
         path: 'game',
         canLoad: [AuthGuard],
         canActivate: [AuthGuard],

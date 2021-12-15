@@ -4,10 +4,10 @@ export const environment = {
         baseURL: 'https://localhost:5001'
     }
 };
-
-//export const environment = {
-//    production: true,
-//    backend: {
-//        baseURL: 'https://qwirkleapi.newtomsoft.fr'
-//    }
-//};
+//
+// export const environment = {
+//     production: true,
+//     backend: {
+//         baseURL: 'https://qwirkleapi.newtomsoft.fr'
+//     }
+// };

@@ -1,7 +1,7 @@
 import {PlayerTile, Tile} from './Tile';
 import { Color } from './Color';
 import { Shape } from './Shape';
-import { Tiles } from './tiles';
+import {Tiles, TileViewModel} from './tiles';
 
 export interface Player {
     id: number;
@@ -99,13 +99,13 @@ export const toChangeRack = (rack: RestRack): Rack => {
         points: rack.points
     };
 };
-export const fromBoard = (result: Tile[], playerId: number): PlayerTile[] => {
-    return result.map<PlayerTile>((tile) => ({
-        playerId,
+export const fromBoard = (result: Tile[], gameId: number): TileViewModel[] => {
+    return result.map((tile) => ({
+        gameId: gameId,
         shape: tile.shape,
         color: tile.color,
-        x: tile.x,
-        y: tile.y
+        X: tile.x,
+        Y: tile.y
     }));
 };
 export const fromBag = (result: Tile[], playerId: number): RestTilesSwap[] => {

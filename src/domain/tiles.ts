@@ -10,13 +10,17 @@ export interface Tiles {
 }
 
 export interface TileViewModel {
-    playerId: number;
+    gameId: number;
+    shape: Shape;
+    color: Color;
     X: number;
-    Y: 0;
+    Y: number;
 }
 export const toTileviewModel = (player: Player): TileViewModel[] =>
     player.rack.tiles.map((tile) => ({
-        playerId: player.id,
+        gameId: player.gameId,
+        shape: tile.shape,
+        color: tile.color,
         X: tile.rackPosition,
         Y: 0
     }));

@@ -25,7 +25,7 @@ export class LogInComponent implements OnInit {
     getLogin() {
         this.service.LoginUser(this.login).subscribe(
             (response) => {
-                console.log(response);
+
                 if (response) {
                     this.router.navigate(['/game']).then();
                 } else {
@@ -33,7 +33,7 @@ export class LogInComponent implements OnInit {
                 }
             },
             (error) => {
-                console.log(error);
+
                 this.service
                     .LogoutUser()
                     .subscribe(() => this.router.navigate(['/']).then());

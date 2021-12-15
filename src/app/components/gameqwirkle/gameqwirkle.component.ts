@@ -36,8 +36,8 @@ import { SignalRService } from '../../../infra/httpRequest/services/signal-r.ser
 import { HttpClient } from '@angular/common/http';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
 import { toRarrange, toRarrangeRack, toTiles } from '../../../domain/SetPositionTile';
-import { toTileviewModel } from '../../../domain/tiles';
-import { Router } from '@angular/router';
+import { TileViewModel, toTileviewModel } from '../../../domain/tiles';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toListGamedId } from '../../../domain/games';
 
 interface Rect {
@@ -65,7 +65,7 @@ export class GameqwirkleComponent implements OnInit {
 
     plate: Tile[][] = [[]];
 
-    playTile: PlayerTile[] = [];
+    playTile: TileViewModel[] = [];
 
     swapTile: RestTilesSwap[] = [];
 
@@ -120,7 +120,7 @@ export class GameqwirkleComponent implements OnInit {
 
     games: ListGamedId = { listGameId: [] };
 
-    playTileTempory: PlayerTile[] = [];
+    playTileTempory: TileViewModel[] = [];
 
     winner = '';
 
@@ -131,10 +131,13 @@ export class GameqwirkleComponent implements OnInit {
         public signalRService: SignalRService,
         private http: HttpClient,
         private serviceQwirkle: HttpTileRepositoryService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
+        this.gameId = Number(this.route.snapshot.paramMap.get('id'));
+
         this.serviceQwirkle
             .getGames()
             .subscribe((games) => (this.games = toListGamedId(games)));
@@ -177,6 +180,7 @@ export class GameqwirkleComponent implements OnInit {
         this.apiSubscription = this.panzoomConfig.api.subscribe(
             (api: PanZoomAPI) => (this.panZoomAPI = api)
         );
+        this.game().then();
     }
 
     onModelChanged(model: PanZoomModel): void {
@@ -234,18 +238,18 @@ export class GameqwirkleComponent implements OnInit {
     async autoZoom(): Promise<void> {
         this.resetZoomToFit();
         this.changeDetector.detectChanges();
-        if (this.scene) {
-            const height = this.scene.nativeElement.clientHeight;
-            const width = this.scene.nativeElement.clientWidth;
-            const xmin: number = this.getXmin();
-            const xmax: number = this.getXmax();
-            const ymin = this.getYmin();
-            const ymax = this.getYmax();
 
-            const newRect: Rect = this.newrect(ymin, xmin, width, height, xmax, ymax);
+        const height = this.scene.nativeElement.clientHeight;
+        const width = this.scene.nativeElement.clientWidth;
+        const xmin: number = this.getXmin();
+        const xmax: number = this.getXmax();
+        const ymin = this.getYmin();
+        const ymax = this.getYmax();
 
-            this.panZoomAPI.zoomToFit(newRect);
-        }
+        const newRect: Rect = this.newrect(ymin, xmin, width, height, xmax, ymax);
+
+        this.panZoomAPI.zoomToFit(newRect);
+
         this.changeDetector.detectChanges();
     }
 
@@ -345,14 +349,6 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<Tile[], any>, index: number): void {
-        console.log(this.board);
-        console.log(
-            getInsertTile(
-                event.previousContainer.data[event.previousIndex],
-                this.plate[index][event.currentIndex].x,
-                this.plate[index][event.currentIndex].y
-            )
-        );
         this.board = insertPosition(
             this.board,
             getInsertTile(
@@ -380,7 +376,7 @@ export class GameqwirkleComponent implements OnInit {
         };
         this.playTileTempory = fromBoard(
             this.board.filter((tile) => tile.disabled),
-            this.player.id
+            this.player.gameId
         );
         this.serviceQwirkle
             .playTileSimulation(this.playTileTempory)
@@ -430,7 +426,7 @@ export class GameqwirkleComponent implements OnInit {
     async valid(): Promise<void> {
         this.playTile = fromBoard(
             this.board.filter((tile: Tile) => tile.disabled),
-            this.player.id
+            this.player.gameId
         );
         this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
             this.score = resp;
@@ -509,6 +505,7 @@ export class GameqwirkleComponent implements OnInit {
 
     gameChange(gameId: number): void {
         this.gameId = gameId;
+
         this.serviceQwirkle.getGame(this.gameId).then((board) => {
             this.players = board.players;
 
@@ -533,6 +530,7 @@ export class GameqwirkleComponent implements OnInit {
                 this.game().then();
                 this.signalRService.sendPlayerInGame(gameId, this.player.id);
                 this.rack = toRarrange(this.player.rack.tiles);
+                this.router.navigate(['game/' + gameId]);
                 this.changeDetector.detectChanges();
             });
         });

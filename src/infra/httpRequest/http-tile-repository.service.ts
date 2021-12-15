@@ -74,7 +74,7 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    playTile(tiles: PlayerTile[]): Promise<Rack> {
+    playTile(tiles: TileViewModel[]): Promise<Rack> {
         return this.https
             .post<RestBoard>(backurl + '/Action/PlayTiles/', tiles, httpOptions)
             .toPromise()
@@ -88,7 +88,7 @@ export default class HttpTileRepositoryService {
             .then((response) => toChangeRack(response));
     }
 
-    playTileSimulation(tiles: PlayerTile[]): Promise<Rack> {
+    playTileSimulation(tiles: TileViewModel[]): Promise<Rack> {
         return this.https
             .post<RestBoard>(backurl + '/Action/PlayTilesSimulation/', tiles, httpOptions)
             .toPromise()
