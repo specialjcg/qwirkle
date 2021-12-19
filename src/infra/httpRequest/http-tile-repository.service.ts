@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Login, PlayerTile, PlayerTileToSwap } from '../../domain/Tile';
+import { Login } from '../../domain/Tile';
 import {
     BoardGame,
     ListGamedId,
@@ -20,9 +20,10 @@ import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
 import { toListGamedId } from '../../domain/games';
+
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
-    .set('Access-Control-Allow-Origin', '*')
+    .set('Access-Control-Allow-Origin', 'https://qwirkleapi.newtomsoft.fr')
     .set('Content-Type', 'application/json; charset=utf-8');
 
 const httpOptions = { headers: headers, withCredentials: true };
@@ -35,11 +36,7 @@ const toListUsersId = (response: number[]): ListUsersId => {
     providedIn: 'root'
 })
 export default class HttpTileRepositoryService {
-
-
-    constructor(private https: HttpClient) {
-
-    }
+    constructor(private https: HttpClient) {}
 
     LoginUser(login: Login): Observable<boolean> {
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
