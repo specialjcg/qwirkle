@@ -35,7 +35,11 @@ const toListUsersId = (response: number[]): ListUsersId => {
     providedIn: 'root'
 })
 export default class HttpTileRepositoryService {
-    constructor(private https: HttpClient) {}
+
+
+    constructor(private https: HttpClient) {
+
+    }
 
     LoginUser(login: Login): Observable<boolean> {
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);

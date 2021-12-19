@@ -378,8 +378,8 @@ describe('GameqwirkleComponent', () => {
             expect(appProto.newrect(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 150.01,
                 width: 90.01,
-                x: 550,
-                y: -400
+                x: 205,
+                y: -10
             });
             expect(appProto.isInRightBottom(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 100,
@@ -391,10 +391,10 @@ describe('GameqwirkleComponent', () => {
         it('should zoom in rect to fit ymin -100 ', () => {
             const appProto = Object.getPrototypeOf(app);
             expect(appProto.newrect(-100, 100, 10, 10, 10, 10)).toEqual({
-                height: 183.343_333_333_333_33,
+                height: 193.333_333_333_333_34,
                 width: 90.01,
-                x: 650,
-                y: -400
+                x: 205,
+                y: -10
             });
             expect(appProto.isInRightBottom(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 100,
@@ -490,8 +490,8 @@ describe('GameqwirkleComponent', () => {
             expect(appProto.isInRightTop(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 0.1,
                 width: 0.1,
-                x: 550,
-                y: -400
+                x: 250,
+                y: -100
             });
         });
         it('should zoom in rect to fit height -100', () => {

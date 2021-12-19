@@ -786,6 +786,143 @@ describe('create tiles list', () => {
             }
         ]);
     });
+    it('should insert a tile in board with same color and shape   ', () => {
+        const tileinsert: Tile = {
+            shape: Shape.Clover,
+            color: Color.Red,
+            x: 0,
+            y: 2,
+            disabled: true
+        };
+        const rowTile: Tile[] = [
+            {
+                x: -1,
+                y: 2,
+                shape: 1,
+                color: 2,
+                disabled: false
+            },
+            {
+                x: 1,
+                y: 0,
+                shape: 6,
+                color: 3,
+                disabled: false
+            },
+            {
+                x: -1,
+                y: 1,
+                shape: 1,
+                color: 4,
+                disabled: false
+            },
+            {
+                x: -1,
+                y: 3,
+                shape: 1,
+                color: 6,
+                disabled: false
+            },
+            {
+                x: -2,
+                y: 2,
+                shape: 4,
+                color: 2,
+                disabled: false
+            },
+            {
+                x: 0,
+                y: 0,
+                shape: 4,
+                color: 4,
+                disabled: false
+            },
+            {
+                x: 0,
+                y: 3,
+                shape: 3,
+                color: 6,
+                disabled: false
+            },
+            {
+                x: 0,
+                y: 1,
+                shape: 2,
+                color: 4,
+                disabled: false
+            }
+        ];
+
+        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+
+        expect(newRowTile.sort((a, b) => a.x - b.x).sort((a, b) => a.y - b.y)).toEqual(
+            [
+                {
+                    shape: Shape.Clover,
+                    color: Color.Red,
+                    x: 0,
+                    y: 2,
+                    disabled: true
+                },
+                {
+                    x: -1,
+                    y: 2,
+                    shape: 1,
+                    color: 2,
+                    disabled: false
+                },
+                {
+                    x: 1,
+                    y: 0,
+                    shape: 6,
+                    color: 3,
+                    disabled: false
+                },
+                {
+                    x: -1,
+                    y: 1,
+                    shape: 1,
+                    color: 4,
+                    disabled: false
+                },
+                {
+                    x: -1,
+                    y: 3,
+                    shape: 1,
+                    color: 6,
+                    disabled: false
+                },
+                {
+                    x: -2,
+                    y: 2,
+                    shape: 4,
+                    color: 2,
+                    disabled: false
+                },
+                {
+                    x: 0,
+                    y: 0,
+                    shape: 4,
+                    color: 4,
+                    disabled: false
+                },
+                {
+                    x: 0,
+                    y: 3,
+                    shape: 3,
+                    color: 6,
+                    disabled: false
+                },
+                {
+                    x: 0,
+                    y: 1,
+                    shape: 2,
+                    color: 4,
+                    disabled: false
+                }
+            ].sort((a, b) => a.x - b.x).sort((a, b) => a.y - b.y)
+        );
+    });
     it('should insert a tile from line  in board in other line tile ', () => {
         const tileOne: Tile = {
             shape: Shape.Circle,

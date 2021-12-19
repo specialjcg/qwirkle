@@ -59,7 +59,6 @@ const shiftToLeft = (tile: Tile): Tile => ({
 });
 
 export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) =>
-    !(tile.shape === tileInsert.shape && tile.color === tileInsert.color) &&
     tileInsert.y === tile.y;
 
 const tileNotInRow = (tileInsert: Tile) => (tile: Tile) => tileInsert.y !== tile.y;
@@ -74,7 +73,6 @@ function placeTileToLeft(
         x: number;
         y: number;
         disabled: boolean;
-
     }
 ) {
     return rowTile.map((tile) => {
@@ -146,7 +144,11 @@ export const insertPosition = (
         return setPositionTile(
             [...rowTilenotInsert, ...rowTile].filter(
                 (tile) =>
-                    !(tile.shape === tileInsert.shape && tile.color === tileInsert.color)
+                    !(
+                        tile.shape === tileInsert.shape &&
+                        tile.color === tileInsert.color &&
+                        tile.disabled === tileInsert.disabled
+                    )
             ),
             newTile
         );
@@ -181,7 +183,6 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
     }
     const result: Tile[][] = new Array(coordy.length).fill(null).map((_, indexY) =>
         new Array(coordx.length).fill(null).map((_, indexX) => ({
-
             shape: 0,
             color: 0,
             x: coordx[indexX],

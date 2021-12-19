@@ -282,10 +282,10 @@ export class GameqwirkleComponent implements OnInit {
         ymin: number
     ) {
         return {
-            x: 650,
-            y: -400,
+            x: width / 2 + 200,
+            y: -height,
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000 + width / 1000,
-            height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height / 1000
+            height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height
         };
     }
 
@@ -298,8 +298,8 @@ export class GameqwirkleComponent implements OnInit {
         ymin: number
     ) {
         return {
-            x: 550,
-            y: -400,
+            x: width / 2 + 200,
+            y: -height,
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000 + width / 1000,
             height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height / 1000
         };
@@ -552,7 +552,6 @@ export class GameqwirkleComponent implements OnInit {
 
     NewGame(): void {
         this.router.navigate(['opponents']).then();
-
     }
 
     async getPlayerIdToPlay(): Promise<void> {
