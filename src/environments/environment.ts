@@ -5,7 +5,7 @@
 export const environment = {
     production: false,
     backend: {
-        baseURL: 'https://localhost:5001'
+        baseURL: 'https://qwirkleapi.newtomsoft.fr'
     }
 };
 
