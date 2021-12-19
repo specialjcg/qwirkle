@@ -408,8 +408,8 @@ describe('GameqwirkleComponent', () => {
             expect(appProto.newrect(0, 100, 10, 10, 10, 10)).toEqual({
                 height: 16.676_666_666_666_67,
                 width: 90.01,
-                x: 550,
-                y: -400
+                x: 205,
+                y: -10
             });
             expect(appProto.isInRightBottom(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 100,
@@ -421,10 +421,10 @@ describe('GameqwirkleComponent', () => {
         it('should zoom in rect to fit xmin -100 ', () => {
             const appProto = Object.getPrototypeOf(app);
             expect(appProto.newrect(-100, -100, 10, 10, 10, 10)).toEqual({
-                height: 183.343_333_333_333_33,
+                height: 193.333_333_333_333_34,
                 width: 110.01,
-                x: 650,
-                y: -400
+                x: 205,
+                y: -10
             });
             expect(appProto.isInRightBottom(100, 100, 10, 10, 10, 10)).toEqual({
                 height: 100,
@@ -499,26 +499,26 @@ describe('GameqwirkleComponent', () => {
             expect(appProto.isInRightTop(100, -100, 30, 10, -30, 10)).toEqual({
                 height: -666.766_666_666_666_7,
                 width: 200.1,
-                x: 550,
-                y: -400
+                x: 250,
+                y: 100
             });
         });
         it('should zoom in rect to fit width 100 isInLeft', () => {
             const appProto = Object.getPrototypeOf(app);
             expect(appProto.isInLeft(100, 100, 10, 10, 10, 10)).toEqual({
-                height: 0.1,
+                height: 100,
                 width: 0.1,
-                x: 650,
-                y: -400
+                x: 250,
+                y: -100
             });
         });
         it('should zoom in rect to fit height -100 isInLeft', () => {
             const appProto = Object.getPrototypeOf(app);
             expect(appProto.isInLeft(100, -100, 30, 10, -30, 10)).toEqual({
-                height: -666.766_666_666_666_7,
+                height: -766.6666666666666,
                 width: 200.1,
-                x: 650,
-                y: -400
+                x: 250,
+                y: 100
             });
         });
     });

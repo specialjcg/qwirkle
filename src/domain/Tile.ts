@@ -59,7 +59,12 @@ const shiftToLeft = (tile: Tile): Tile => ({
 });
 
 export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) =>
-    tileInsert.y === tile.y;
+    tileInsert.y === tile.y &&
+    !(
+        tile.shape === tileInsert.shape &&
+        tile.color === tileInsert.color &&
+        tile.disabled === tileInsert.disabled
+    );
 
 const tileNotInRow = (tileInsert: Tile) => (tile: Tile) => tileInsert.y !== tile.y;
 export const onLeft = (xposition: number) => (tile: Tile) => tile.x < xposition;
