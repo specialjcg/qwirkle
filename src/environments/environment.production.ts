@@ -8,6 +8,6 @@
 export const environment = {
     production: true,
     backend: {
-        baseURL: 'https://qwirkleapi.qwirkleStaging.fr'
+        baseURL: 'https://qwirkleapi.newtomsoft.fr'
     }
 };
