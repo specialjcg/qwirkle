@@ -23,7 +23,7 @@ import { toListGamedId } from '../../domain/games';
 
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
-    .set('Access-Control-Allow-Origin', 'https://qwirkleapi.newtomsoft.fr')
+    .set('Access-Control-Allow-Origin', '*')
     .set('Content-Type', 'application/json; charset=utf-8');
 
 const httpOptions = { headers: headers, withCredentials: true };
@@ -69,9 +69,9 @@ export default class HttpTileRepositoryService {
             });
     }
 
-    getPlayer(gameId: number): Promise<Player> {
+    getPlayer(gameId: number, userId: number): Promise<Player> {
         return this.https
-            .get<string>(backurl + '/Player/' + gameId, httpOptions)
+            .get<string>(backurl + '/Player/' + gameId + '/' + userId, httpOptions)
             .toPromise()
             .then();
     }

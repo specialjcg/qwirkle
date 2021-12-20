@@ -147,6 +147,7 @@ export class GameqwirkleComponent implements OnInit {
         this.signalRService.hubConnection.on(
             'ReceivePlayersInGame',
             (playersIds: any[]) => {
+                console.log('ReceivePlayersInGame:' + playersIds);
                 this.receivePlayersInGame(playersIds);
             }
         );
@@ -519,18 +520,18 @@ export class GameqwirkleComponent implements OnInit {
                 }
             });
 
-            this.serviceQwirkle.getPlayer(gameId).then((result) => {
+            this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
                 this.player = result;
                 this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
-                console.log('playerId :' + this.player);
+                console.log('playerId :' + this.userId);
                 this.getPlayerIdToPlay().then();
                 this.nameToTurn = '';
 
                 this.game().then();
-                this.signalRService.sendPlayerInGame(gameId, this.player.id);
+                this.signalRService.sendPlayerInGame(gameId, this.userId);
                 this.rack = toRarrange(this.player.rack.tiles);
-                this.router.navigate(['game/' + gameId]);
+                this.router.navigate(['game/' + gameId]).then();
                 this.changeDetector.detectChanges();
             });
         });

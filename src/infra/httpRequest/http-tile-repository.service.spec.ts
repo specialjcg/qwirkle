@@ -170,12 +170,12 @@ describe('HttpTileRepositoryService', () => {
 
             isTurn: true
         };
-        service.getPlayer(1).then((response) => {
+        service.getPlayer(1, 1).then((response) => {
             expect(response).not.toBe(<Player>{});
             expect(response).toEqual(mockPlayer);
         });
 
-        const request = httpMock.expectOne(backurl + '/Player/' + 1);
+        const request = httpMock.expectOne(backurl + '/Player/' + 1 + '/' + 1);
 
         request.flush(mockPlayer);
     });
