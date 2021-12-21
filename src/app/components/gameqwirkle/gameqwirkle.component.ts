@@ -440,6 +440,7 @@ export class GameqwirkleComponent implements OnInit {
                 newRack: [],
                 points: 0
             };
+            this.signalRService.sendPlayerInGame(this.gameId, this.userId);
         });
     }
 
