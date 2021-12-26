@@ -10,65 +10,7 @@
 <body>
 
 
-<app-new-user class="positionUser" [userId]="this.userId" (userChange)="countUserChange($event)" [users]="this.users"></app-new-user>
-<app-choose-game *ngIf="this.userId!==0" class="positionSelectGame" [gameId]="this.gameId"
-                 (gameSelectChange)="gameChange($event)" [userId]="this.userId" [games]="this.games"></app-choose-game>
-<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"
-                   [players]="this.players"></app-choose-player>
-<app-give-tempory-score [score]="this.score"></app-give-tempory-score>
 
-<app-winner [winner]="this.winner"></app-winner>
-<button *ngIf="bag.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()">Jouer</button>
-<button  *ngIf="bag.length!==0" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
-<button *ngIf="bag.length===0 && this.rack.length===6" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
-
-<button class="positionNewGame" (click)="NewGame()">New Game</button>
-<div cdkDropListGroup>
-  <div *ngIf="this.winner === ''" class="position-firstPlayer">
-    <div class="example-container">
-      <div>
-        <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.rack" class="example-list2d"
-             (cdkDropListDropped)="dropResult($event)">
-          <div *ngFor="let tile of this.rack;let i=index">
-            <app-tile-pawn [isDrag]="false" [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
-                           cdkDrag > <app-tile-pawn  [image]="getRackTileImage(tile)" [isDrag]="true" [scale]=getCssScale(this.panzoomModel.zoomLevel)
-                                                      *cdkDragPreview></app-tile-pawn></app-tile-pawn>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <mat-card class="container">
-    <div #scene id="scene" *ngIf="this.plate.length!==0">
-      <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
-        <pan-zoom [config]="panzoomConfig">
-          <div class="position-secondPlayer" *ngFor="let line of plate;let i=index"
-               [style.transform]="getLineStyle(line,i)">
-            <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d"
-                 (cdkDropListDropped)="drop($event,i)">
-              <div *ngFor="let tile of line;let j=index" cdkDrag class="example-box2d"
-                   [cdkDragDisabled]="!tile.disabled">
-                <app-tile-pawn [image]="getRackTileImage(tile)" [isDrag]="false" >
-                  <app-tile-pawn  [image]="getRackTileImage(tile)" [isDrag]="true" [scale]=getCssScale(this.panzoomModel.zoomLevel)
-                                                                                  *cdkDragPreview></app-tile-pawn></app-tile-pawn>
-
-              </div>
-            </div>
-          </div>
-        </pan-zoom>
-      </div>
-    </div>
-    <div *ngIf="this.plate.length===0">
-      <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="voidTile" class="scenevide"
-           (cdkDropListDropped)="dropempty($event)">
-        <div cdkDrag></div>
-      </div>
-    </div>
-  </mat-card>
-  <app-pick [plate]="plate" [board]="board" [bag]="bag"></app-pick>
-</div>
-
+<router-outlet></router-outlet>
 </body>
 </html>

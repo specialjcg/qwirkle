@@ -4,19 +4,21 @@
   "scripts": {
     "postinstall": "ngcc",
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration=local",
     "build": "ng build",
     "test": "jest",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "lint": "tsc --noEmit && eslint . --ext js,ts,json --quiet --fix"
   },
   "private": true,
   "dependencies": {
+    "@angular-eslint/eslint-plugin": "^12.6.1",
     "@angular/animations": "~12.2.10",
     "@angular/cdk": "^12.2.10",
     "@angular/common": "~12.2.10",
     "@angular/compiler": "~12.2.10",
     "@angular/core": "~12.2.10",
+    "@angular/flex-layout": "^12.0.0-beta.35",
     "@angular/forms": "~12.2.10",
     "@angular/material": "^12.2.10",
     "@angular/platform-browser": "~12.2.10",
@@ -25,6 +27,7 @@
     "@microsoft/signalr": "^5.0.10",
     "deepcopy": "^2.1.0",
     "dns": "^0.2.2",
+    "eslint-config-airbnb-typescript": "^16.0.0",
     "ngx-panzoom": "^12.0.0",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
@@ -43,9 +46,17 @@
     "@stryker-mutator/typescript-checker": "^5.4.1",
     "@types/jest": "^27.0.2",
     "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
     "codelyzer": "^6.0.0",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-angular": "^4.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-unicorn": "^38.0.1",
     "jest": "^27.3.1",
     "jest-preset-angular": "^10.1.0",
+    "prettier-eslint": "^13.0.0",
     "ts-jest": "^27.0.2",
     "ts-node": "10.4.0",
     "tslint": "~6.1.0",
@@ -61,9 +72,10 @@
     "not IE 11",
     "maintained node versions"
   ],
-
   "jest": {
-  "preset": "jest-preset-angular",
-  "setupFilesAfterEnv": ["<rootDir>/setupTest.ts"]
-}
+    "preset": "jest-preset-angular",
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTest.ts"
+    ]
+  }
 }

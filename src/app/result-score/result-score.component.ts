@@ -1,12 +1,10 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-result-score',
-  templateUrl: './result-score.component.html',
-  styleUrls: ['./result-score.component.css']
+    selector: 'app-result-score',
+    templateUrl: './result-score.component.html',
+    styleUrls: ['./result-score.component.css']
 })
 export class ResultScoreComponent {
-  @Input() score: number = 0;
-
-
+    @Input() score = 0;
 }

@@ -5,5 +5,5 @@ export enum Shape {
     Diamond,
     Clover,
     FourPointStar,
-    EightPointStar,
+    EightPointStar
 }

@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="card">
+    <h2>Login</h2>
+    <form action="#">
+      <div class="inputBox">
+        <input type="text" placeholder="Username" #ValueUserName (change)="changeUserName(ValueUserName)" [value]="this.login.pseudo">
+      </div>
+      <div class="inputBox">
+        <input type="password" placeholder="Password" #ValuePassword (change)="changePassword(ValuePassword)" [value]="this.login.password">
+      </div>
+      <div class="inputBox">
+        <button class="btn btn-3" (click)="getLogin()">Login</button>
+        <button class="btn btn-3" routerLink="/register" routerLinkActive="active">Register</button>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+

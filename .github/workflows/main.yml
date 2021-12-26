@@ -11,14 +11,14 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
 
   test: # names the job
     runs-on: ubuntu-latest # sets the version of linux we want to use, should be what you have on your server
-
+    environment:
+      name: qwirkle
     strategy:
       fail-fast: false # tells github to not run further steps if this one fails
       matrix:
@@ -36,24 +36,33 @@ jobs:
         env:
           CI: true
       - uses: actions/checkout@v2
+        with:
+          clean: false
       - name: Build dist angular
         run: |
           npm ci
           npm run build
-      - uses: actions/checkout@v2
-      - run: mkdir ~/distfiles
-      - uses: actions/download-artifact@v2
-        with:
-          name: distfiles
-          path: distfiles
 
-      - uses: actions/checkout@master
+
+      - name: Archive build
+
+        if: success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
+
+      - name: Build site assets
+        working-directory: ${{ github.workspace }}
+        run: ls -la
+
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
-          host:
-          username:
-          password:
-          port:
-          source: distfiles/*
-          target: var/www/qwirkle/frontend/
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          source: 'dist'
+          target: '/var/www/qwirkleStaging/frontend/'
+          strip_components: 1
