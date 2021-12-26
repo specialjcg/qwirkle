@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+    production: false,
+    backend: {
+        // baseURL: 'https://qwirkleapi.newtomsoft.fr'
+        baseURL: 'https://localhost:5001'
+    }
 };
 
 /*
