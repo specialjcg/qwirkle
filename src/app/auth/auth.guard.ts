@@ -21,7 +21,6 @@ export class AuthGuard implements CanActivate {
     ): Observable<boolean> {
         return this.service.getGames().pipe(
             map((authenticated) => {
-                console.log(authenticated);
 
                 return true;
             }),

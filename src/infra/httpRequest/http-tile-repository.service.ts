@@ -10,7 +10,6 @@ import {
     RestBoard,
     RestRack,
     RestSkipTurn,
-    RestTilesSwap,
     toBoard,
     toChangeRack
 } from '../../domain/player';
@@ -20,6 +19,8 @@ import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
 import { toListGamedId } from '../../domain/games';
+import { Shape } from '../../domain/Shape';
+import { Color } from '../../domain/Color';
 
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
@@ -64,7 +65,6 @@ export default class HttpTileRepositoryService {
             .get<RestBoard>(backurl + '/Game/' + GameId, httpOptions)
             .toPromise()
             .then((response) => {
-                console.log(response);
                 return toBoard(response);
             });
     }
@@ -83,7 +83,9 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    rackChangeOrder(rack: TileViewModel[]): Promise<Rack> {
+    rackChangeOrder(
+        rack: { PlayerId: number; shape: Shape; color: Color }[]
+    ): Promise<Rack> {
         return this.https
             .post<RestRack>(backurl + '/Action/ArrangeRack/', rack, httpOptions)
             .toPromise()
@@ -97,7 +99,7 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    swapTile(tiles: RestTilesSwap[]): Promise<Rack> {
+    swapTile(tiles: TileViewModel[]): Promise<Rack> {
         return this.https
             .post<RestBag>(backurl + '/Action/SwapTiles/', tiles, httpOptions)
             .toPromise()

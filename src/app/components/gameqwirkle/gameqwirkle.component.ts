@@ -17,7 +17,6 @@ import {
 import {
     getInsertTile,
     insertPosition,
-    PlayerTile,
     Tile,
     toNameImage,
     toPlate
@@ -29,7 +28,6 @@ import {
     ListUsersId,
     Player,
     Rack,
-    RestTilesPlay,
     RestTilesSwap
 } from '../../../domain/player';
 import { SignalRService } from '../../../infra/httpRequest/services/signal-r.service';
@@ -67,7 +65,7 @@ export class GameqwirkleComponent implements OnInit {
 
     playTile: TileViewModel[] = [];
 
-    swapTile: RestTilesSwap[] = [];
+    swapTile: TileViewModel[] = [];
 
     score: Rack = { code: 1, tilesPlayed: [], newRack: [], points: 0 };
 
@@ -110,11 +108,7 @@ export class GameqwirkleComponent implements OnInit {
 
     scale = this.getCssScale(this.panzoomConfig.initialZoomLevel);
 
-    private modelChangedSubscription!: Subscription;
-
     public panZoomAPI!: PanZoomAPI;
-
-    private apiSubscription!: Subscription;
 
     players: Player[] = [];
 
@@ -125,6 +119,10 @@ export class GameqwirkleComponent implements OnInit {
     winner = '';
 
     public users: ListUsersId = { listUsersId: [] };
+
+    private modelChangedSubscription!: Subscription;
+
+    private apiSubscription!: Subscription;
 
     constructor(
         private changeDetector: ChangeDetectorRef,
@@ -147,7 +145,6 @@ export class GameqwirkleComponent implements OnInit {
         this.signalRService.hubConnection.on(
             'ReceivePlayersInGame',
             (playersIds: any[]) => {
-                console.log('ReceivePlayersInGame:' + playersIds);
                 this.receivePlayersInGame(playersIds);
             }
         );
@@ -193,6 +190,7 @@ export class GameqwirkleComponent implements OnInit {
 
     ngAfterViewInit(): void {
         this.resetZoomToFit();
+
         this.changeDetector.detectChanges();
     }
 
@@ -219,7 +217,24 @@ export class GameqwirkleComponent implements OnInit {
         scoredPoints: number,
         tilesPlayed: any[]
     ) => {
-        this.game().then();
+        this.game().then(() => {
+            const test = !this.players.some((pl) => pl.pseudo === 'bot1')
+                ? 0
+                : this.players.find((pl) => pl.pseudo === 'bot1');
+            if (playerId === test && this.winner === '') {
+                this.serviceQwirkle.getWinners(this.gameId).then((response) => {
+                    this.winner = '';
+                    if (response !== null) {
+                        this.winner = this.players.find(
+                            (player) => player.id === response[0]
+                        )!.pseudo;
+                        this.nameToTurn = '';
+                    } else {
+                        this.Bot();
+                    }
+                });
+            }
+        });
     };
 
     receiveTilesSwapped = (playerId: number) => {
@@ -252,6 +267,323 @@ export class GameqwirkleComponent implements OnInit {
         this.panZoomAPI.zoomToFit(newRect);
 
         this.changeDetector.detectChanges();
+    }
+
+    getXmin() {
+        return Math.min(...this.board.map((tile) => tile.x));
+    }
+
+    getYmin(): number {
+        return Math.min(...this.board.map((tile) => tile.y));
+    }
+
+    getYmax(): number {
+        return Math.max(...this.board.map((tile) => tile.y));
+    }
+
+    getXmax(): number {
+        return Math.max(...this.board.map((tile) => tile.x));
+    }
+
+    getRackTileImage(tile: Tile): string {
+        return '../../assets/img/' + toNameImage(tile);
+    }
+
+    getLineStyle(line: Tile[], index: number): string {
+        if (line[0] !== undefined) {
+            return 'translate(' + 0 + 'px,' + index * 100 + 'px)';
+        }
+        return '';
+    }
+
+    drop(event: CdkDragDrop<Tile[], any>, index: number): void {
+        this.board = insertPosition(
+            this.board,
+            getInsertTile(
+                event.previousContainer.data[event.previousIndex],
+                this.plate[index][event.currentIndex].x,
+                this.plate[index][event.currentIndex].y
+            ),
+            this.plate[index][event.currentIndex].x
+        );
+
+        if (event.previousContainer !== event.container) {
+            this.rack = this.rack.filter(
+                (tile) => tile !== event.previousContainer.data[event.previousIndex]
+            );
+            this.bag = this.bag.filter(
+                (tile) => tile !== event.previousContainer.data[event.previousIndex]
+            );
+        }
+        this.plate = toPlate(this.board);
+        this.score = {
+            code: 1,
+            tilesPlayed: [],
+            newRack: [],
+            points: 0
+        };
+        this.playTileTempory = fromBoard(
+            this.board.filter((tile) => tile.disabled),
+            this.player.gameId
+        );
+        this.serviceQwirkle
+            .playTileSimulation(this.playTileTempory)
+            .then(async (resp) => {
+                this.score = resp;
+                this.autoZoom().then();
+            });
+    }
+
+    dropBot(tile: Tile): void {
+        this.board.push(tile);
+
+        for (const tilerack of this.rack) {
+            const index = this.rack.indexOf(tilerack);
+            if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
+                this.rack.splice(index, 1);
+                break;
+            }
+        }
+        for (const tilebag of this.bag) {
+            const index = this.rack.indexOf(tilebag);
+            if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
+                this.rack.splice(index, 1);
+                break;
+            }
+        }
+
+        this.plate = toPlate(this.board);
+        this.score = {
+            code: 1,
+            tilesPlayed: [],
+            newRack: [],
+            points: 0
+        };
+        this.playTileTempory = fromBoard(
+            this.board.filter((tileboard) => tileboard.disabled),
+            this.player.gameId
+        );
+        this.serviceQwirkle
+            .playTileSimulation(this.playTileTempory)
+            .then(async (resp) => {
+                this.score = resp;
+                this.autoZoom().then();
+            });
+    }
+
+    dropempty(event: CdkDragDrop<Tile[], any>): void {
+        this.board = insertPosition(
+            this.board,
+            getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),
+            0
+        );
+        if (event.previousContainer !== event.container) {
+            this.rack = this.rack.filter(
+                (tile) => tile !== event.previousContainer.data[event.previousIndex]
+            );
+        }
+
+        this.plate = toPlate(this.board);
+        this.autoZoom().then();
+    }
+
+    async game(): Promise<void> {
+        this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
+            this.nameToTurn = '';
+            if (this.winner === '') {
+                this.nameToTurn = response;
+            }
+        });
+
+        this.serviceQwirkle.getGame(this.gameId).then((board) => {
+            this.serviceQwirkle.getWinners(this.gameId).then((response) => {
+                this.winner = '';
+                if (response !== null) {
+                    this.winner = board.players.find(
+                        (player) => player.id === response[0]
+                    )!.pseudo;
+                    this.nameToTurn = '';
+                }
+            });
+            this.board = board.boards;
+            this.plate = toPlate(this.board);
+            board.players.sort((a, b) => a.id - b.id);
+            this.players = board.players;
+            this.player = board.players.find((player) => player.userId === this.userId)!;
+            this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+
+            this.rack = toRarrange(this.player.rack.tiles);
+            this.autoZoom().then();
+        });
+    }
+
+    async valid(): Promise<void> {
+        this.playTile = fromBoard(
+            this.board.filter((tile: Tile) => tile.disabled),
+            this.player.gameId
+        );
+        this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
+            this.score = resp;
+
+            this.getPlayerIdToPlay().then();
+
+            this.score = {
+                code: 1,
+                tilesPlayed: [],
+                newRack: [],
+                points: 0
+            };
+        });
+        this.game().then(() =>
+            this.signalRService.sendPlayerInGame(this.gameId, this.userId)
+        );
+    }
+
+    async swapTiles(): Promise<void> {
+        this.swapTile = fromBag(
+            this.bag.filter((tile) => tile.disabled),
+            this.gameId
+        );
+        this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
+            this.game().then();
+            this.getPlayerIdToPlay().then();
+            this.bag = [];
+        });
+    }
+
+    async skipTurn(): Promise<void> {
+        this.serviceQwirkle.skipTurn(this.player.id).then((resp) => {
+            this.game().then();
+            this.getPlayerIdToPlay().then();
+        });
+    }
+
+    dropResult(event: CdkDragDrop<Tile[]>): void {
+        if (event.previousContainer === event.container) {
+            moveItemInArray(
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex
+            );
+        } else {
+            this.board = this.board.filter(
+                (tile) => tile !== event.previousContainer.data[event.previousIndex]
+            );
+            transferArrayItem(
+                event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex
+            );
+            this.plate = toPlate(this.board);
+        }
+        this.rack = toRarrangeRack(event.container.data);
+        this.player.rack.tiles = toTiles(this.rack);
+
+        if (this.rack.length === 6) {
+            this.serviceQwirkle
+                .rackChangeOrder(toTileviewModel(this.player))
+                .then(async (rack) => {
+                    this.player.rack.tiles.sort(
+                        (a, b) => a.rackPosition - b.rackPosition
+                    );
+                    this.rack = toRarrange(this.player.rack.tiles);
+                    this.changeDetector.detectChanges();
+
+                });
+        }
+    }
+
+    gameChange(gameId: number): void {
+        this.gameId = gameId;
+
+        this.serviceQwirkle.getGame(this.gameId).then((board) => {
+            this.players = board.players;
+
+            this.serviceQwirkle.getWinners(this.gameId).then((response) => {
+                this.winner = '';
+                if (response !== null) {
+                    this.winner = board.players.find(
+                        (player) => player.id === response[0]
+                    )!.pseudo;
+                    this.nameToTurn = '';
+                }
+            });
+
+            this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+                this.player = result;
+                this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+
+                this.getPlayerIdToPlay().then();
+                this.nameToTurn = '';
+
+                this.game().then();
+                this.signalRService.sendPlayerInGame(gameId, this.userId);
+                this.rack = toRarrange(this.player.rack.tiles);
+                this.router.navigate(['game/' + gameId]).then();
+                this.changeDetector.detectChanges();
+            });
+        });
+    }
+
+    async countUserChange(event: number): Promise<void> {
+        this.userId = event;
+        this.serviceQwirkle.getGamesByUserId(this.userId).then((response) => {
+            this.games = response;
+            this.games.listGameId.sort((a, b) => a - b);
+        });
+
+        this.resetZoomToFit();
+    }
+
+    getPawStyle(index: number): string {
+        return 'translate(' + -index * 65 + 'px,' + index * 15 + 'px)';
+    }
+
+    NewGame(): void {
+        this.router.navigate(['opponents']).then();
+    }
+
+    async getPlayerIdToPlay(): Promise<void> {
+        this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
+            this.playerNameToPlay = response;
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.modelChangedSubscription.unsubscribe();
+        this.apiSubscription.unsubscribe();
+    }
+
+    getCssScale(zoomLevel: any): number {
+        return Math.pow(
+            this.panzoomConfig.scalePerZoomLevel,
+            zoomLevel - this.panzoomConfig.neutralZoomLevel
+        );
+    }
+
+    logOut() {
+        this.serviceQwirkle.LogoutUser().subscribe();
+        this.router.navigate(['/login']).then();
+    }
+
+    Bot() {
+        this.serviceQwirkle.getBot(this.gameId).then((res: any) => {
+            const tilesBots: Tile[] = [];
+            for (const tile of res) {
+                const tileBot: Tile = {
+                    shape: tile.shape,
+                    color: tile.color,
+                    x: tile.coordinates.x,
+                    y: tile.coordinates.y,
+                    disabled: true
+                };
+                tilesBots.push(tileBot);
+            }
+
+            for (const tile of tilesBots) this.dropBot(tile);
+            this.valid().then();
+        });
     }
 
     private newrect(
@@ -320,266 +652,5 @@ export class GameqwirkleComponent implements OnInit {
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000,
             height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height
         };
-    }
-
-    getXmin() {
-        return Math.min(...this.board.map((tile) => tile.x));
-    }
-
-    getYmin(): number {
-        return Math.min(...this.board.map((tile) => tile.y));
-    }
-
-    getYmax(): number {
-        return Math.max(...this.board.map((tile) => tile.y));
-    }
-
-    getXmax(): number {
-        return Math.max(...this.board.map((tile) => tile.x));
-    }
-
-    getRackTileImage(tile: Tile): string {
-        return '../../assets/img/' + toNameImage(tile);
-    }
-
-    getLineStyle(line: Tile[], index: number): string {
-        if (line[0] !== undefined) {
-            return 'translate(' + 0 + 'px,' + index * 100 + 'px)';
-        }
-        return '';
-    }
-
-    drop(event: CdkDragDrop<Tile[], any>, index: number): void {
-        this.board = insertPosition(
-            this.board,
-            getInsertTile(
-                event.previousContainer.data[event.previousIndex],
-                this.plate[index][event.currentIndex].x,
-                this.plate[index][event.currentIndex].y
-            ),
-            this.plate[index][event.currentIndex].x
-        );
-
-        if (event.previousContainer !== event.container) {
-            this.rack = this.rack.filter(
-                (tile) => tile !== event.previousContainer.data[event.previousIndex]
-            );
-            this.bag = this.bag.filter(
-                (tile) => tile !== event.previousContainer.data[event.previousIndex]
-            );
-        }
-        this.plate = toPlate(this.board);
-        this.score = {
-            code: 1,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
-        };
-        this.playTileTempory = fromBoard(
-            this.board.filter((tile) => tile.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
-            .then(async (resp) => {
-                this.score = resp;
-                this.autoZoom().then();
-            });
-    }
-
-    dropempty(event: CdkDragDrop<Tile[], any>): void {
-        this.board = insertPosition(
-            this.board,
-            getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),
-            0
-        );
-        if (event.previousContainer !== event.container) {
-            this.rack = this.rack.filter(
-                (tile) => tile !== event.previousContainer.data[event.previousIndex]
-            );
-        }
-
-        this.plate = toPlate(this.board);
-        this.autoZoom().then();
-    }
-
-    async game(): Promise<void> {
-        this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
-            this.nameToTurn = '';
-            if (this.winner === '') {
-                this.nameToTurn = response;
-            }
-        });
-
-        this.serviceQwirkle.getGame(this.gameId).then((board) => {
-            this.board = board.boards;
-            this.plate = toPlate(this.board);
-            board.players.sort((a, b) => a.id - b.id);
-            this.players = board.players;
-            this.player = board.players.find((player) => player.userId === this.userId)!;
-            this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
-
-            this.rack = toRarrange(this.player.rack.tiles);
-            this.autoZoom().then();
-        });
-    }
-
-    async valid(): Promise<void> {
-        this.playTile = fromBoard(
-            this.board.filter((tile: Tile) => tile.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
-            this.score = resp;
-
-            this.getPlayerIdToPlay().then();
-            this.game().then();
-            this.score = {
-                code: 1,
-                tilesPlayed: [],
-                newRack: [],
-                points: 0
-            };
-            this.signalRService.sendPlayerInGame(this.gameId, this.userId);
-        });
-    }
-
-    async swapTiles(): Promise<void> {
-        this.swapTile = fromBag(
-            this.bag.filter((tile) => tile.disabled),
-            this.player.id
-        );
-        this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
-            this.game().then();
-            this.getPlayerIdToPlay().then();
-            this.bag = [];
-        });
-    }
-
-    async skipTurn(): Promise<void> {
-        this.serviceQwirkle.skipTurn(this.player.id).then((resp) => {
-            this.game().then();
-            this.getPlayerIdToPlay().then();
-        });
-    }
-
-    dropResult(event: CdkDragDrop<Tile[]>): void {
-        if (event.previousContainer === event.container) {
-            moveItemInArray(
-                event.container.data,
-                event.previousIndex,
-                event.currentIndex
-            );
-        } else {
-            this.board = this.board.filter(
-                (tile) => tile !== event.previousContainer.data[event.previousIndex]
-            );
-            transferArrayItem(
-                event.previousContainer.data,
-                event.container.data,
-                event.previousIndex,
-                event.currentIndex
-            );
-            this.plate = toPlate(this.board);
-        }
-        this.rack = toRarrangeRack(event.container.data);
-        this.player.rack.tiles = toTiles(this.rack);
-
-        if (this.rack.length === 6) {
-            this.serviceQwirkle
-                .rackChangeOrder(toTileviewModel(this.player))
-                .then(async (rack) => {
-                    this.serviceQwirkle.getGame(this.gameId).then((board) => {
-                        this.players = board.players;
-                        this.player = this.players.find(
-                            (player) => player.id === this.player.id
-                        )!;
-                        this.player.rack.tiles.sort(
-                            (a, b) => a.rackPosition - b.rackPosition
-                        );
-                        this.rack = toRarrange(this.player.rack.tiles);
-                        console.log(this.player.rack.tiles);
-                        this.changeDetector.detectChanges();
-                    });
-                });
-        }
-    }
-
-    gameChange(gameId: number): void {
-        this.gameId = gameId;
-
-        this.serviceQwirkle.getGame(this.gameId).then((board) => {
-            this.players = board.players;
-
-            this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                this.winner = '';
-                if (response !== null) {
-                    this.winner = board.players.find(
-                        (player) => player.id === response[0]
-                    )!.pseudo;
-                    this.nameToTurn = '';
-                }
-            });
-
-            this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
-                this.player = result;
-                this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
-
-                console.log('playerId :' + this.userId);
-                this.getPlayerIdToPlay().then();
-                this.nameToTurn = '';
-
-                this.game().then();
-                this.signalRService.sendPlayerInGame(gameId, this.userId);
-                this.rack = toRarrange(this.player.rack.tiles);
-                this.router.navigate(['game/' + gameId]).then();
-                this.changeDetector.detectChanges();
-            });
-        });
-    }
-
-    async countUserChange(event: number): Promise<void> {
-        this.userId = event;
-        this.serviceQwirkle.getGamesByUserId(this.userId).then((response) => {
-            this.games = response;
-            this.games.listGameId.sort((a, b) => a - b);
-        });
-
-        this.resetZoomToFit();
-    }
-
-    getPawStyle(index: number): string {
-        return 'translate(' + -index * 65 + 'px,' + index * 15 + 'px)';
-    }
-
-    NewGame(): void {
-        this.router.navigate(['opponents']).then();
-    }
-
-    async getPlayerIdToPlay(): Promise<void> {
-        this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
-            this.playerNameToPlay = response;
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.modelChangedSubscription.unsubscribe();
-        this.apiSubscription.unsubscribe();
-    }
-
-    getCssScale(zoomLevel: any): number {
-        return Math.pow(
-            this.panzoomConfig.scalePerZoomLevel,
-            zoomLevel - this.panzoomConfig.neutralZoomLevel
-        );
-    }
-
-    logOut() {
-        this.serviceQwirkle.LogoutUser().subscribe();
-        this.router.navigate(['/login']).then();
-    }
-
-    Bot() {
-        this.serviceQwirkle.getBot(this.gameId).then();
     }
 }

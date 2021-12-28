@@ -2,6 +2,9 @@
   <div class="card">
     <h2>Login</h2>
     <form action="#">
+      <div *ngIf="badLogin" class="inputBox">
+      <span>erreur de  Login/password</span>
+    </div>
       <div class="inputBox">
         <input type="text" placeholder="Username" #ValueUserName (change)="changeUserName(ValueUserName)" [value]="this.login.pseudo">
       </div>
