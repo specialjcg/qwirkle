@@ -224,45 +224,33 @@ describe('GameqwirkleComponent', () => {
             };
             expect(toTileviewModel(player)).toEqual([
                 {
-                    X: 5,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 2,
-                    gameId: 3,
                     shape: 3
                 },
                 {
-                    X: 1,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 1,
-                    gameId: 3,
                     shape: 4
                 },
                 {
-                    X: 0,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 6,
-                    gameId: 3,
                     shape: 2
                 },
                 {
-                    X: 1,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 5,
-                    gameId: 3,
                     shape: 6
                 },
                 {
-                    X: 2,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 1,
-                    gameId: 3,
                     shape: 3
                 },
                 {
-                    X: 0,
-                    Y: 0,
+                    PlayerId: 3,
                     color: 2,
-                    gameId: 3,
                     shape: 6
                 }
             ]);
@@ -515,7 +503,7 @@ describe('GameqwirkleComponent', () => {
         it('should zoom in rect to fit height -100 isInLeft', () => {
             const appProto = Object.getPrototypeOf(app);
             expect(appProto.isInLeft(100, -100, 30, 10, -30, 10)).toEqual({
-                height: -766.6666666666666,
+                height: -766.666_666_666_666_6,
                 width: 200.1,
                 x: 250,
                 y: 100
