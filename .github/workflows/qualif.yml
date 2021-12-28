@@ -1,4 +1,4 @@
-name: CI
+name: QUALIF
 
 # Controls when the workflow will run
 on:
