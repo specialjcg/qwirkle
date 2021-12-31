@@ -22,34 +22,33 @@ export class LogInComponent implements OnInit {
     }
 
     getLogin() {
-
         this.service.LoginUser(this.login).subscribe(
             (response) => {
                 if (response) {
                     this.router.navigate(['/game']).then();
                 } else {
-                  this.badLogin = true;
+                    this.badLogin = true;
 
                     this.router.navigate(['/']).then();
                 }
             },
             (error) => {
                 this.service.LogoutUser().subscribe(() => {
-                  this.badLogin = true;
-                  console.log(error);
-                    this.router.navigate(['/']).then();
+                    this.badLogin = true;
+                    console.log(error);
+                    this.router.navigate(['/login']).then();
                 });
             }
         );
     }
 
     changeUserName(ValueUserName: HTMLInputElement) {
-      this.badLogin=false;
+        this.badLogin = false;
         this.login.pseudo = ValueUserName.value;
     }
 
     changePassword(ValuePassword: HTMLInputElement) {
-      this.badLogin=false;
+        this.badLogin = false;
         this.login.password = ValuePassword.value;
     }
 }

@@ -1,5 +1,5 @@
 import {
-    fromBag,
+    fromSwap,
     fromBoard,
     Player,
     RestBoard,
@@ -1051,7 +1051,7 @@ describe('player', () => {
         ];
         const playerId = 1;
 
-        expect(fromBag(result, playerId)).toEqual([
+        expect(fromSwap(result, playerId)).toEqual([
           {
             "X": 3,
             "Y": -1,

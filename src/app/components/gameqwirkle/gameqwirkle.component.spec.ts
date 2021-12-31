@@ -40,7 +40,7 @@ describe('GameqwirkleComponent', () => {
         it(`should have as title 'qwirkle'`, () => {
             expect(app.rack).toEqual([]);
 
-            expect(app.bag).toEqual([]);
+            expect(app.swap).toEqual([]);
             expect(app.plate).toEqual([[]]);
             expect(app.playerNameToPlay).toEqual('');
             expect(app.nameToTurn).toEqual('');

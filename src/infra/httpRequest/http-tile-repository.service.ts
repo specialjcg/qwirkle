@@ -106,10 +106,10 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    skipTurn(playerId: number): Promise<Rack> {
-        const player = { id: playerId };
+    skipTurn(GameId: number): Promise<Rack> {
+
         return this.https
-            .post<RestSkipTurn>(backurl + '/Action/SkipTurn/', player, httpOptions)
+            .post<RestSkipTurn>(backurl + '/Action/SkipTurn/', GameId, httpOptions)
             .toPromise()
             .then();
     }
@@ -118,19 +118,7 @@ export default class HttpTileRepositoryService {
         return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
 
-    getUsers(): Promise<ListUsersId> {
-        return this.https
-            .get<number[]>(backurl + '/Admin/AllUsersIds/', httpOptions)
-            .toPromise()
-            .then((response) => toListUsersId(response));
-    }
 
-    getGamesByUserId(userId: number): Promise<ListGamedId> {
-        return this.https
-            .post<number[]>(backurl + '/Game/GamesByUserId/' + userId, httpOptions)
-            .toPromise()
-            .then((response) => toListGamedId(response));
-    }
 
     newGame(players: string[]): Promise<string[]> {
         return this.https

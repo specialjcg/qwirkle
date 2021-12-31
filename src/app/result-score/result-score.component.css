@@ -38,3 +38,15 @@ button:hover {
   border-radius: 10px;
   text-decoration: none;
 }
+a{
+  font-size:15px;
+  font-weight:bold;
+  color: black;
+
+}
+span{
+  font-weight:bold;
+  font-size:10px;
+
+
+}

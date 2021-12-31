@@ -1,4 +1,10 @@
 a{
-  font-size:10px;
+  font-size:15px;
+  font-weight:bold;
+  color:#ffec1b;
 
+}
+span{
+  font-weight:bold;
+  font-size:10px;
 }

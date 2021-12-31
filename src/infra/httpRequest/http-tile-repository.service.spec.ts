@@ -69,17 +69,7 @@ describe('HttpTileRepositoryService', () => {
 
         request.flush(mockBoard);
     });
-    it('should give http response for get_player_by user Id', () => {
-        const mockListuserId = [1, 2];
-        service.getGamesByUserId(1).then((res) => {
-            expect(res).not.toBe('');
-            expect(res).toEqual({ listGameId: [1, 2] });
-        });
 
-        const request = httpMock.expectOne(backurl + '/Game/GamesByUserId/' + 1);
-
-        request.flush(mockListuserId);
-    });
     it('should give http response for get_games', () => {
         const mockListGameId = [1, 2];
         service.getGames().subscribe((res) => {
@@ -113,17 +103,7 @@ describe('HttpTileRepositoryService', () => {
 
         request.flush(mockListnewgame);
     });
-    it('should give http response for new user', () => {
-        const mockListUsersId = { listUsersId: [1, 2] };
-        service.getUsers().then((response) => {
-            expect(response).not.toBe(<ListUsersId>{});
-            expect(response).toEqual({ listUsersId: { listUsersId: [1, 2] } });
-        });
 
-        const request = httpMock.expectOne(backurl + '/Admin/AllUsersIds/');
-
-        request.flush(mockListUsersId);
-    });
     it('should give http response for getPlayer', () => {
         const mockPlayer: Player = {
             id: 3,
