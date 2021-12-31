@@ -108,7 +108,7 @@ export const fromBoard = (result: Tile[], gameId: number): TileViewModel[] => {
         Y: tile.y
     }));
 };
-export const fromBag = (result: Tile[], GameId: number): TileViewModel[] => {
+export const fromSwap = (result: Tile[], GameId: number): TileViewModel[] => {
     return result.map<TileViewModel>((tile) => ({
         gameId: GameId,
         color: tile.color,

@@ -12,11 +12,12 @@ export class TilePawnComponent {
 
     @Input() isDrag = false;
 
-    @Input() scale = 0;
+    @Input() scale = 1;
 
     isImg = () => this.image !== '../../assets/img/';
 
     getclassbox2dDrag(scale: number) {
+        if (Number.isNaN(scale)) scale = 1;
         return scale * 100 + 'px';
     }
 
