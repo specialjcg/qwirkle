@@ -106,10 +106,9 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    skipTurn(GameId: number): Promise<Rack> {
-
+    skipTurn(gameId: number): Promise<Rack> {
         return this.https
-            .post<RestSkipTurn>(backurl + '/Action/SkipTurn/', GameId, httpOptions)
+            .post<number>(backurl + '/Action/SkipTurn/' + gameId, httpOptions)
             .toPromise()
             .then();
     }
@@ -117,8 +116,6 @@ export default class HttpTileRepositoryService {
     getGames(): Observable<number[]> {
         return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
-
-
 
     newGame(players: string[]): Promise<string[]> {
         return this.https

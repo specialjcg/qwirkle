@@ -28,7 +28,8 @@ import {
     ListUsersId,
     Player,
     Rack,
-    RestTilesSwap
+    RestTilesSwap,
+    BoardGame
 } from '../../../domain/player';
 import { SignalRService } from '../../../infra/httpRequest/services/signal-r.service';
 import { HttpClient } from '@angular/common/http';
@@ -115,6 +116,8 @@ export class GameqwirkleComponent implements OnInit {
     games: ListGamedId = { listGameId: [] };
 
     playTileTempory: TileViewModel[] = [];
+
+    skipTurnUser: TileViewModel[] = [];
 
     winner = '';
 
@@ -210,7 +213,6 @@ export class GameqwirkleComponent implements OnInit {
         for (const player of players) {
             console.log('playerId ' + player.playerId + ' is in the game'); // TODO replace log
         }
-
     };
 
     receiveTilesPlayed = async (
@@ -414,15 +416,7 @@ export class GameqwirkleComponent implements OnInit {
             });
 
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
-                this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                    this.winner = '';
-                    if (response !== null) {
-                        this.winner = board.players.find(
-                            (player) => player.id === response[0]
-                        )!.pseudo;
-                        this.nameToTurn = '';
-                    }
-                });
+                this.Iswinner(board);
                 this.board = board.boards;
                 this.plate = toPlate(this.board);
                 board.players.sort((a, b) => a.id - b.id);
@@ -532,15 +526,7 @@ export class GameqwirkleComponent implements OnInit {
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
                 this.players = board.players;
 
-                this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                    this.winner = '';
-                    if (response !== null) {
-                        this.winner = board.players.find(
-                            (player) => player.id === response[0]
-                        )!.pseudo;
-                        this.nameToTurn = '';
-                    }
-                });
+                this.Iswinner(board);
 
                 this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
                 this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
@@ -562,6 +548,19 @@ export class GameqwirkleComponent implements OnInit {
                 });
             });
         }
+    }
+
+    private Iswinner(board: BoardGame) {
+        this.serviceQwirkle.getWinners(this.gameId).then((response) => {
+            this.winner = '';
+            if (response !== null) {
+                this.winner = board.players.find(
+                    (player) => player.id === response[0]
+                )!.pseudo;
+                this.nameToTurn = '';
+                this.game().then();
+            }
+        });
     }
 
     getPawStyle(index: number): string {
@@ -596,6 +595,7 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     Bot() {
+        this.gameChange(this.gameId);
         this.serviceQwirkle.getBot(this.gameId).then((res: any) => {
             if (res === 'swapRandom') {
                 this.swapTilesRandom().then();
