@@ -1,10 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Login } from '../../../domain/Tile';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
-import { ListUsersId } from '../../../domain/player';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Component({
     selector: 'app-log-in',
@@ -16,6 +13,8 @@ export class LogInComponent implements OnInit {
 
     login: Login = { pseudo: '', password: '', isRemember: true };
 
+    badLogin = false;
+
     constructor(public service: HttpTileRepositoryService, private router: Router) {}
 
     ngOnInit(): void {
@@ -25,27 +24,31 @@ export class LogInComponent implements OnInit {
     getLogin() {
         this.service.LoginUser(this.login).subscribe(
             (response) => {
-
                 if (response) {
                     this.router.navigate(['/game']).then();
                 } else {
+                    this.badLogin = true;
+
                     this.router.navigate(['/']).then();
                 }
             },
             (error) => {
-
-                this.service
-                    .LogoutUser()
-                    .subscribe(() => this.router.navigate(['/']).then());
+                this.service.LogoutUser().subscribe(() => {
+                    this.badLogin = true;
+                    console.log(error);
+                    this.router.navigate(['/login']).then();
+                });
             }
         );
     }
 
     changeUserName(ValueUserName: HTMLInputElement) {
+        this.badLogin = false;
         this.login.pseudo = ValueUserName.value;
     }
 
     changePassword(ValuePassword: HTMLInputElement) {
+        this.badLogin = false;
         this.login.password = ValuePassword.value;
     }
 }

@@ -22,7 +22,7 @@ describe('MyButtonComponent', () => {
         expect(component.image).toEqual('');
         expect(component.style).toEqual('');
         expect(component.isDrag).toEqual(false);
-        expect(component.scale).toEqual(0);
+        expect(component.scale).toEqual(1);
         expect(component).toBeTruthy();
     });
     it('should return true if   image is not empty', () => {

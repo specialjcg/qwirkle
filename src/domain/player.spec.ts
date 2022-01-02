@@ -1,5 +1,5 @@
 import {
-    fromBag,
+    fromSwap,
     fromBoard,
     Player,
     RestBoard,
@@ -1051,25 +1051,49 @@ describe('player', () => {
         ];
         const playerId = 1;
 
-        expect(fromBag(result, playerId)).toEqual([
-            {
-                playerId: 1
-            },
-            {
-                playerId: 1
-            },
-            {
-                playerId: 1
-            },
-            {
-                playerId: 1
-            },
-            {
-                playerId: 1
-            },
-            {
-                playerId: 1
-            }
+        expect(fromSwap(result, playerId)).toEqual([
+          {
+            "X": 3,
+            "Y": -1,
+            "color": 1,
+            "gameId": 1,
+            "shape": 2
+          },
+          {
+            "X": 4,
+            "Y": -1,
+            "color": 1,
+            "gameId": 1,
+            "shape": 5
+          },
+          {
+            "X": 7,
+            "Y": 3,
+            "color": 3,
+            "gameId": 1,
+            "shape": 4
+          },
+          {
+            "X": 2,
+            "Y": 0,
+            "color": 4,
+            "gameId": 1,
+            "shape": 1
+          },
+          {
+            "X": 1,
+            "Y": 0,
+            "color": 4,
+            "gameId": 1,
+            "shape": 3
+          },
+          {
+            "X": 3,
+            "Y": 2,
+            "color": 5,
+            "gameId": 1,
+            "shape": 6
+          }
         ]);
     });
 });

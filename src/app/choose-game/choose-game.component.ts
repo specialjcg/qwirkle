@@ -22,7 +22,6 @@ export class ChooseGameComponent {
     }
 
     async gameChoice(gameId: number): Promise<void> {
-        console.log('game selected : ' + gameId);
         this.gameSelectChange.emit(gameId);
     }
 }
