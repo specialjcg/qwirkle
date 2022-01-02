@@ -17,7 +17,8 @@ export class TilePawnComponent {
     isImg = () => this.image !== '../../assets/img/';
 
     getclassbox2dDrag(scale: number) {
-        if (Number.isNaN(scale)) scale = 1;
+
+        if (Number.isNaN(scale)|| scale===0) scale = 1;
         return scale * 100 + 'px';
     }
 
@@ -26,6 +27,7 @@ export class TilePawnComponent {
     }
 
     getclassbtn2dDrag(scale: number) {
+        if (Number.isNaN(scale)|| scale===0) scale = 1;
         return scale * 100 + 'px';
     }
 }
