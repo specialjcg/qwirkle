@@ -533,7 +533,8 @@ export class GameqwirkleComponent implements OnInit {
 
                 this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
 
-                this.serviceQwirkle.getPlayer(gameId, this.userId).then((result) => {
+
+                this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
                         this.player = result;
                         this.player.rack.tiles.sort(
