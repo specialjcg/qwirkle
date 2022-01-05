@@ -9,7 +9,12 @@
       <div class="inputBox">
         <input type="text" placeholder="Email" #ValueEmail (change)="changeEmail(ValueEmail)" [value]="this.register.email">
       </div>
-
+      <div class="inputBox">
+        <input type="text" placeholder="firstName" #firstName (change)="changefirstName(firstName)" [value]="this.register.firstName">
+      </div>
+      <div class="inputBox">
+        <input type="text" placeholder="lastName" #lastName (change)="changelastName(lastName)" [value]="this.register.lastName">
+      </div>
       <div class="inputBox">
         <input type="password" placeholder="Password" #Valuepassword (change)="changePassword(Valuepassword)" [value]="this.register.password">
       </div>

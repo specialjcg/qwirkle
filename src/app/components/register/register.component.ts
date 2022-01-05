@@ -23,8 +23,8 @@ export class RegisterComponent implements OnInit {
     ngOnInit() {
         this.register = {
             pseudo: '',
-            firstName: 'jean',
-            lastName: 'c',
+            firstName: '',
+            lastName: '',
             email: '',
             password: '',
             isRemember: true
@@ -47,5 +47,13 @@ export class RegisterComponent implements OnInit {
 
     changePassword(Valuepassword: HTMLInputElement) {
         this.register.password = Valuepassword.value;
+    }
+
+    changefirstName(firstName: HTMLInputElement) {
+        this.register.firstName = firstName.value;
+    }
+
+    changelastName(lastName: HTMLInputElement) {
+        this.register.lastName = lastName.value;
     }
 }
