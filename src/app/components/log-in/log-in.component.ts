@@ -32,10 +32,10 @@ export class LogInComponent implements OnInit {
                     this.router.navigate(['/']).then();
                 }
             },
-            (error) => {
-                this.service.LogoutUser().subscribe(() => {
+            () => {
+                this.service.LogoutUser().then(() => {
                     this.badLogin = true;
-                    console.log(error);
+
                     this.router.navigate(['/login']).then();
                 });
             }

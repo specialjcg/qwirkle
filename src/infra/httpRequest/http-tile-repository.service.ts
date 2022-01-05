@@ -51,8 +51,11 @@ export default class HttpTileRepositoryService {
         );
     }
 
-    LogoutUser(): Observable<boolean> {
-        return this.https.get<boolean>(backurl + '/User/Logout', httpOptions);
+    async LogoutUser(): Promise<boolean> {
+        return this.https
+            .get<boolean>(backurl + '/User/Logout', httpOptions)
+            .toPromise()
+            .then();
     }
 
     //todo : to remove
@@ -69,9 +72,9 @@ export default class HttpTileRepositoryService {
             });
     }
 
-    getPlayer(gameId: number, userId: number): Promise<Player> {
+    getPlayer(gameId: number): Promise<Player> {
         return this.https
-            .get<string>(backurl + '/Player/' + gameId + '/' + userId, httpOptions)
+            .get<string>(backurl + '/Player/' + gameId , httpOptions)
             .toPromise()
             .then();
     }
@@ -84,7 +87,7 @@ export default class HttpTileRepositoryService {
     }
 
     rackChangeOrder(
-        rack: { PlayerId: number; shape: Shape; color: Color }[]
+        rack:TileViewModel[]
     ): Promise<Rack> {
         return this.https
             .post<RestRack>(backurl + '/Action/ArrangeRack/', rack, httpOptions)

@@ -26,7 +26,7 @@ export const toRarrange = (rack: Tiles[]): Tile[] =>
             x: index,
             y: 0,
             color: tile.color,
-            shape: tile.shape,
+            shape: tile.shape
         };
     });
 export const toRarrangeRack = (rack: Tile[]): Tile[] =>
