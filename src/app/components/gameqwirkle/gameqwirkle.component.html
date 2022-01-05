@@ -52,7 +52,7 @@
     </div>
     <div *ngIf="this.plate.length===0">
       <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="voidTile" class="scenevide"
-           (cdkDropListDropped)="dropempty($event)">
+           (cdkDropListDropped)="dropEmpty($event)">
         <div cdkDrag></div>
       </div>
     </div>

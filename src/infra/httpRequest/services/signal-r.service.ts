@@ -8,13 +8,10 @@ import { backurl } from '../http-tile-repository.service';
 export class SignalRService {
     hubConnection!: HubConnection;
 
-    public startConnection = () => {
+     public startConnection = () => {
         const builder = new HubConnectionBuilder();
         this.hubConnection = builder.withUrl(backurl + '/hubGame').build();
-        this.hubConnection
-            .start()
-            .then(() => console.log('Connection started'))
-            .catch((error) => console.log('Error while starting connection: ' + error));
+
     };
 
     public sendPlayerInGame = (gameId: number, playerId: number) => {

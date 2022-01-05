@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GameqwirkleComponent } from './gameqwirkle.component';
 import { toRarrange } from '../../../domain/SetPositionTile';
 import { Player, RestTilesPlay } from '../../../domain/player';
-import { toTileviewModel } from '../../../domain/tiles';
+
 import { PanZoomModel } from 'ngx-panzoom';
 import { Tile } from '../../../domain/Tile';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
@@ -177,83 +177,7 @@ describe('GameqwirkleComponent', () => {
                     y: 0
                 }
             ]);
-            const player: Player = {
-                id: 3,
-                pseudo: 'Thomas',
-                userId: 3,
-                gameId: 3,
-                gamePosition: 1,
-                points: 17,
-                lastTurnPoints: 0,
-                rack: {
-                    tiles: [
-                        {
-                            rackPosition: 5,
-                            color: 2,
-                            shape: 3
-                        },
-                        {
-                            rackPosition: 1,
-                            color: 1,
-                            shape: 4
-                        },
-                        {
-                            rackPosition: 0,
-                            color: 6,
-                            shape: 2
-                        },
-                        {
-                            rackPosition: 1,
-                            color: 5,
-                            shape: 6
-                        },
-                        {
-                            rackPosition: 2,
-                            color: 1,
-                            shape: 3
-                        },
-                        {
-                            rackPosition: 0,
-                            color: 2,
-                            shape: 6
-                        }
-                    ]
-                },
 
-                isTurn: true
-            };
-            expect(toTileviewModel(player)).toEqual([
-                {
-                    PlayerId: 3,
-                    color: 2,
-                    shape: 3
-                },
-                {
-                    PlayerId: 3,
-                    color: 1,
-                    shape: 4
-                },
-                {
-                    PlayerId: 3,
-                    color: 6,
-                    shape: 2
-                },
-                {
-                    PlayerId: 3,
-                    color: 5,
-                    shape: 6
-                },
-                {
-                    PlayerId: 3,
-                    color: 1,
-                    shape: 3
-                },
-                {
-                    PlayerId: 3,
-                    color: 2,
-                    shape: 6
-                }
-            ]);
         });
         it('should give the style of line style', () => {
             expect(app.getPawStyle(1)).toEqual('translate(-65px,15px)');

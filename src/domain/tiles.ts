@@ -16,9 +16,3 @@ export interface TileViewModel {
     X: number;
     Y: number;
 }
-export const toTileviewModel = (player: Player) =>
-    player.rack.tiles.map((tile) => ({
-        PlayerId: player.id,
-        shape: tile.shape,
-        color: tile.color
-    }));

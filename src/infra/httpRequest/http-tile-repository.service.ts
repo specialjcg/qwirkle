@@ -18,9 +18,7 @@ import { Observable } from 'rxjs';
 import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
-import { toListGamedId } from '../../domain/games';
-import { Shape } from '../../domain/Shape';
-import { Color } from '../../domain/Color';
+
 
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
@@ -29,9 +27,7 @@ const headers = new HttpHeaders()
 
 const httpOptions = { headers: headers, withCredentials: true };
 
-const toListUsersId = (response: number[]): ListUsersId => {
-    return { listUsersId: response };
-};
+
 
 @Injectable({
     providedIn: 'root'
@@ -51,8 +47,11 @@ export default class HttpTileRepositoryService {
         );
     }
 
-    LogoutUser(): Observable<boolean> {
-        return this.https.get<boolean>(backurl + '/User/Logout', httpOptions);
+    async LogoutUser(): Promise<boolean> {
+        return this.https
+            .get<boolean>(backurl + '/User/Logout', httpOptions)
+            .toPromise()
+            .then();
     }
 
     //todo : to remove
@@ -69,9 +68,9 @@ export default class HttpTileRepositoryService {
             });
     }
 
-    getPlayer(gameId: number, userId: number): Promise<Player> {
+    getPlayer(gameId: number): Promise<Player> {
         return this.https
-            .get<string>(backurl + '/Player/' + gameId + '/' + userId, httpOptions)
+            .get<string>(backurl + '/Player/ByGameId/' + gameId, httpOptions)
             .toPromise()
             .then();
     }
@@ -84,7 +83,7 @@ export default class HttpTileRepositoryService {
     }
 
     rackChangeOrder(
-        rack: { PlayerId: number; shape: Shape; color: Color }[]
+        rack:TileViewModel[]
     ): Promise<Rack> {
         return this.https
             .post<RestRack>(backurl + '/Action/ArrangeRack/', rack, httpOptions)
@@ -136,9 +135,9 @@ export default class HttpTileRepositoryService {
         );
     }
 
-    getWinners(gameId: number): Promise<never> {
+    getWinners(gameId: number): Promise<number[]> {
         return this.https
-            .get<never>(backurl + '/Player/Winners/' + gameId, httpOptions)
+            .get<number[]>(backurl + '/Player/Winners/' + gameId, httpOptions)
             .toPromise()
             .then();
     }
