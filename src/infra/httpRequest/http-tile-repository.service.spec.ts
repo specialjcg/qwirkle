@@ -155,7 +155,7 @@ describe('HttpTileRepositoryService', () => {
             expect(response).toEqual(mockPlayer);
         });
 
-        const request = httpMock.expectOne(backurl + '/Player/' + 1 );
+        const request = httpMock.expectOne(backurl + '/Player/ByGameId/' + 1);
 
         request.flush(mockPlayer);
     });
