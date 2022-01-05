@@ -74,7 +74,7 @@ export default class HttpTileRepositoryService {
 
     getPlayer(gameId: number): Promise<Player> {
         return this.https
-            .get<string>(backurl + '/Player/' + gameId , httpOptions)
+            .get<string>(backurl + '/Player/ByGameId/' + gameId , httpOptions)
             .toPromise()
             .then();
     }
