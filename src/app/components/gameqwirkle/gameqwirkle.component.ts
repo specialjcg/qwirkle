@@ -517,16 +517,9 @@ export class GameqwirkleComponent implements OnInit {
 
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
                 this.players = board.players;
-                // this.bagLength =
-                //     108 -
-                //     board.boards.length -
-                //     this.players.reduce(
-                //         (accumulator, player) => accumulator + player.rack.tiles.length,
-                //         0
-                //     );
 
                 this.Iswinner();
-
+                this.bagLength = board.bag.tiles.length;
                 this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
                         this.player = result;
@@ -622,11 +615,6 @@ export class GameqwirkleComponent implements OnInit {
                     });
                 }
                 for (const tile of tilesBots) this.dropBot(tile);
-                // if (this.board.length > 0) {
-                //
-                // } else {
-                //     for (const tile of tilesBots) this.dropBotempty(tile);
-                // }
 
                 this.Iswinner();
                 this.valid().then();
