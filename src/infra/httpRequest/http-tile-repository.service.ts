@@ -107,7 +107,7 @@ export default class HttpTileRepositoryService {
 
     skipTurn(gameId: number): Promise<Rack> {
         return this.https
-            .post<number>(backurl + '/Action/SkipTurn/' + gameId, httpOptions)
+            .get<number>(backurl + '/Action/SkipTurn/' + gameId)
             .toPromise()
             .then();
     }

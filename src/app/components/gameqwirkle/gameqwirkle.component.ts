@@ -440,8 +440,9 @@ export class GameqwirkleComponent implements OnInit {
                 newRack: [],
                 points: 0
             };
+            this.game().then();
         });
-        this.game().then();
+
     }
 
     async swapTiles(): Promise<void> {
