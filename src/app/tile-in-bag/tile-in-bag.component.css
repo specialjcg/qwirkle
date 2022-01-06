@@ -1,0 +1,66 @@
+.box {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  height: 80px;
+  gap: 10px;
+top: 2vh;
+  left: 65vw;
+}
+.player{
+  position: absolute;
+  top: 8vh;
+  left:-18vw;
+}
+a{
+  font-size:15px;
+  font-weight:bold;
+  color: black;
+
+}
+span{
+  font-weight:bold;
+  font-size:10px;
+
+
+}
+.card-group {
+
+
+  /*position: absolute;*/
+  top: 50%;
+  left: 5%;
+  transform: translate(-50%, -50%);
+}
+.colorTurnOff{
+  background: linear-gradient(to left, #283593, #1976d2);
+}
+.colorTurnOn{
+  background: linear-gradient(to left, green, greenyellow);
+}
+.card {
+  height: 40px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(30px);  /* This will produce the blur */
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  flex: 1 1 auto;
+  width: 100px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 30px;
+  justify-content: center;
+  /* align-self: center; */
+  align-items: center;
+}
+
+.name
+{
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+

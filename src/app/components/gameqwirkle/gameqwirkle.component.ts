@@ -122,6 +122,8 @@ export class GameqwirkleComponent implements OnInit {
 
     winner = '';
 
+    bagLength = 108;
+
     public users: ListUsersId = { listUsersId: [] };
 
     private modelChangedSubscription!: Subscription;
@@ -139,7 +141,6 @@ export class GameqwirkleComponent implements OnInit {
         this.serviceQwirkle
             .getGames()
             .subscribe((games) => (this.games = toListGamedId(games)));
-        this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
     }
 
     ngOnInit(): void {
@@ -442,7 +443,6 @@ export class GameqwirkleComponent implements OnInit {
             };
             this.game().then();
         });
-
     }
 
     async swapTiles(): Promise<void> {
@@ -517,10 +517,15 @@ export class GameqwirkleComponent implements OnInit {
 
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
                 this.players = board.players;
+                // this.bagLength =
+                //     108 -
+                //     board.boards.length -
+                //     this.players.reduce(
+                //         (accumulator, player) => accumulator + player.rack.tiles.length,
+                //         0
+                //     );
 
                 this.Iswinner();
-
-                this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
 
                 this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
@@ -531,7 +536,9 @@ export class GameqwirkleComponent implements OnInit {
 
                         this.getPlayerIdToPlay().then();
                         this.nameToTurn = '';
-
+                        this.serviceQwirkle
+                            .whoAmI()
+                            .subscribe((id) => (this.userId = id));
                         this.game().then();
                         this.signalRService.hubConnection
                             .start()
