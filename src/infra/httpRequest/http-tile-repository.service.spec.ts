@@ -15,7 +15,7 @@ import {
     HttpClientTestingModule,
     HttpTestingController
 } from '@angular/common/http/testing';
-import { BoardGame, ListGamedId, ListUsersId, Player } from '../../domain/player';
+import {BoardGame, ListGamedId, ListUsersId, Player, TilesOnBag} from '../../domain/player';
 
 describe('HttpTileRepositoryService', () => {
     let service: HttpTileRepositoryService;
@@ -48,7 +48,7 @@ describe('HttpTileRepositoryService', () => {
         expect(service).toBeTruthy();
     });
     it('should give http response for getGame', () => {
-        const mockBoard: BoardGame = { boards: [], players: [] };
+        const mockBoard: BoardGame = { boards: [], players: [], bag: { tiles: [] } };
         service.getGame(1).then((res) => {
             expect(res).not.toBe(<BoardGame>{});
             expect(res).toEqual({ boards: [], players: [] });

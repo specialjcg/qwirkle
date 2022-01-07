@@ -122,6 +122,8 @@ export class GameqwirkleComponent implements OnInit {
 
     winner = '';
 
+    bagLength = 108;
+
     public users: ListUsersId = { listUsersId: [] };
 
     private modelChangedSubscription!: Subscription;
@@ -139,7 +141,6 @@ export class GameqwirkleComponent implements OnInit {
         this.serviceQwirkle
             .getGames()
             .subscribe((games) => (this.games = toListGamedId(games)));
-        this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
     }
 
     ngOnInit(): void {
@@ -347,20 +348,8 @@ export class GameqwirkleComponent implements OnInit {
     dropBot(tile: Tile): void {
         this.board.push(tile);
 
-        for (const tilerack of this.rack) {
-            const index = this.rack.indexOf(tilerack);
-            if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
-                this.rack.splice(index, 1);
-                break;
-            }
-        }
-        for (const tilebag of this.swap) {
-            const index = this.rack.indexOf(tilebag);
-            if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
-                this.rack.splice(index, 1);
-                break;
-            }
-        }
+        this.removeTileInRack(tile);
+        this.swapTileFromBag(tile);
 
         this.plate = toPlate(this.board);
         this.score = {
@@ -382,7 +371,27 @@ export class GameqwirkleComponent implements OnInit {
         this.autoZoom().then();
     }
 
-    dropEmpty(event: CdkDragDrop<Tile[], any>): void {
+  private swapTileFromBag(tile: Tile) {
+    for (const tilebag of this.swap) {
+      const index = this.rack.indexOf(tilebag);
+      if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
+        this.rack.splice(index, 1);
+        break;
+      }
+    }
+  }
+
+  private removeTileInRack(tile: Tile) {
+    for (const tilerack of this.rack) {
+      const index = this.rack.indexOf(tilerack);
+      if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
+        this.rack.splice(index, 1);
+        break;
+      }
+    }
+  }
+
+  dropEmpty(event: CdkDragDrop<Tile[], any>): void {
         this.board = insertPosition(
             this.board,
             getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),
@@ -410,6 +419,7 @@ export class GameqwirkleComponent implements OnInit {
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
                 this.Iswinner();
                 this.board = board.boards;
+                this.bagLength = board.bag.tiles.length;
                 this.plate = toPlate(this.board);
                 board.players.sort((a, b) => a.id - b.id);
                 this.players = board.players;
@@ -442,7 +452,6 @@ export class GameqwirkleComponent implements OnInit {
             };
             this.game().then();
         });
-
     }
 
     async swapTiles(): Promise<void> {
@@ -520,8 +529,6 @@ export class GameqwirkleComponent implements OnInit {
 
                 this.Iswinner();
 
-                this.serviceQwirkle.whoAmI().subscribe((id) => (this.userId = id));
-
                 this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
                         this.player = result;
@@ -531,7 +538,9 @@ export class GameqwirkleComponent implements OnInit {
 
                         this.getPlayerIdToPlay().then();
                         this.nameToTurn = '';
-
+                        this.serviceQwirkle
+                            .whoAmI()
+                            .subscribe((id) => (this.userId = id));
                         this.game().then();
                         this.signalRService.hubConnection
                             .start()
@@ -615,11 +624,6 @@ export class GameqwirkleComponent implements OnInit {
                     });
                 }
                 for (const tile of tilesBots) this.dropBot(tile);
-                // if (this.board.length > 0) {
-                //
-                // } else {
-                //     for (const tile of tilesBots) this.dropBotempty(tile);
-                // }
 
                 this.Iswinner();
                 this.valid().then();
