@@ -47,7 +47,7 @@ export interface TilesOnBag {
 export interface RestBoard {
     board: { tiles: TilesOnBoard[] };
     players: Player[];
-  bag: { tiles: TilesOnBag[] };
+    bag: { tiles: TilesOnBag[] };
 }
 export interface RestRack {
     code: number;
@@ -72,7 +72,7 @@ export interface RestTilesPlay {
 export interface BoardGame {
     boards: Tile[];
     players: Player[];
-     bag: { tiles: TilesOnBag[] };
+    bag: { tiles: TilesOnBag[] };
 }
 export interface RestTilesSwap {
     playerId: number;

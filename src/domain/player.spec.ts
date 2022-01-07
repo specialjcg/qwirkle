@@ -1,13 +1,13 @@
 import {
-    fromSwap,
-    fromBoard,
-    Player,
-    RestBoard,
-    RestRack,
-    toBoard,
-    toChangeRack,
-    toPlayers,
-    toWebPlayer
+  fromSwap,
+  fromBoard,
+  Player,
+  RestBoard,
+  RestRack,
+  toBoard,
+  toChangeRack,
+  toPlayers,
+  toWebPlayer, TilesOnBag
 } from './player';
 import { Tile } from './Tile';
 
@@ -43,6 +43,7 @@ describe('player', () => {
     });
     it('should return players with restboard ', () => {
         const restboard: RestBoard = {
+            bag: { tiles: [] },
             board: {
                 tiles: [
                     {
@@ -391,6 +392,7 @@ describe('player', () => {
     });
     it("should return Boargame with mock restboard'", () => {
         const restboard: RestBoard = {
+            bag: { tiles: [] },
             board: {
                 tiles: [
                     {
