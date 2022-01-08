@@ -227,18 +227,23 @@ export class GameqwirkleComponent implements OnInit {
             const test = !this.players.some((pl) => pl.pseudo === 'bot1')
                 ? 0
                 : this.players.find((pl) => pl.pseudo === 'bot1')!.id;
-            if (playerId === test && this.winner === '') {
-                this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                    this.winner = '';
-                    if (response.length > 0) {
-                        this.winner = this.players.find(
-                            (player) => player.id === response[0]
-                        )!.pseudo;
-                        this.nameToTurn = '';
-                    } else {
-                        this.Bot();
-                    }
-                });
+            if (
+                playerId === test &&
+                this.winner === '' &&
+                this.player.pseudo === 'jc11'
+            ) {
+                this.Bot();
+                // this.serviceQwirkle.getWinners(this.gameId).then((response) => {
+                //     this.winner = '';
+                //     if (response.length > 0) {
+                //         this.winner = this.players.find(
+                //             (player) => player.id === response[0]
+                //         )!.pseudo;
+                //         this.nameToTurn = '';
+                //     } else {
+                //
+                //     }
+                // });
             }
         });
     };
@@ -371,27 +376,27 @@ export class GameqwirkleComponent implements OnInit {
         this.autoZoom().then();
     }
 
-  private swapTileFromBag(tile: Tile) {
-    for (const tilebag of this.swap) {
-      const index = this.rack.indexOf(tilebag);
-      if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
-        this.rack.splice(index, 1);
-        break;
-      }
+    private swapTileFromBag(tile: Tile) {
+        for (const tilebag of this.swap) {
+            const index = this.rack.indexOf(tilebag);
+            if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
+                this.rack.splice(index, 1);
+                break;
+            }
+        }
     }
-  }
 
-  private removeTileInRack(tile: Tile) {
-    for (const tilerack of this.rack) {
-      const index = this.rack.indexOf(tilerack);
-      if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
-        this.rack.splice(index, 1);
-        break;
-      }
+    private removeTileInRack(tile: Tile) {
+        for (const tilerack of this.rack) {
+            const index = this.rack.indexOf(tilerack);
+            if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
+                this.rack.splice(index, 1);
+                break;
+            }
+        }
     }
-  }
 
-  dropEmpty(event: CdkDragDrop<Tile[], any>): void {
+    dropEmpty(event: CdkDragDrop<Tile[], any>): void {
         this.board = insertPosition(
             this.board,
             getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),
@@ -421,8 +426,10 @@ export class GameqwirkleComponent implements OnInit {
                 this.board = board.boards;
                 this.bagLength = board.bag.tiles.length;
                 this.plate = toPlate(this.board);
-                board.players.sort((a, b) => a.id - b.id);
-                this.players = board.players;
+
+                this.players = board.players.sort(
+                    (a, b) => a.gamePosition - b.gamePosition
+                );
                 this.player = board.players.find(
                     (player) => player.userId === this.userId
                 )!;
@@ -525,9 +532,9 @@ export class GameqwirkleComponent implements OnInit {
             this.gameId = gameId;
 
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
-                this.players = board.players;
-
-                this.Iswinner();
+                this.players = board.players.sort(
+                    (a, b) => a.gamePosition - b.gamePosition
+                );
 
                 this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
