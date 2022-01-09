@@ -8,8 +8,8 @@
 <app-tile-in-bag [Bag]="this.bagLength"></app-tile-in-bag>
 <app-winner [winner]="this.winner"></app-winner>
 <button *ngIf="swap.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()">Jouer</button>
-<button *ngIf="swap.length!==0" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
-<button *ngIf="swap.length===0 && this.rack.length===6" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
+<button *ngIf="swap.length!==0 && this.player.isTurn" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
+<button *ngIf="swap.length===0 && this.rack.length===6 && this.player.isTurn" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
 <button class="positionLogOut" (click)="logOut()">Logout</button>
 <button class="positionNewGame" (click)="NewGame()">Opponents</button>
 <button class="positionBot" (click)="Bot()">Bot</button>

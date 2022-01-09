@@ -8,8 +8,6 @@ import { Router } from '@angular/router';
     styleUrls: ['./choose-opponent-to-player.component.css']
 })
 export class ChooseOpponentToPlayerComponent implements OnInit {
-
-
     pseudo3 = '';
 
     pseudo2 = '';
@@ -24,8 +22,8 @@ export class ChooseOpponentToPlayerComponent implements OnInit {
     ngOnInit(): void {}
 
     NewGame(): void {
-        this.serviceQwirkle.newGame([this.pseudo1, this.pseudo2, this.pseudo3]).then();
-
-        this.router.navigate(['/game']).then();
+        this.serviceQwirkle
+            .newGame([this.pseudo1, this.pseudo2, this.pseudo3])
+            .then(() => this.router.navigate(['/game']).then());
     }
 }
