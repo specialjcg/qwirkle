@@ -9,6 +9,7 @@ import {
     RestBag,
     RestBoard,
     RestRack,
+    SkipTurnViewModel,
     toBoard,
     toChangeRack
 } from '../../domain/player';
@@ -100,8 +101,9 @@ export default class HttpTileRepositoryService {
     }
 
     skipTurn(gameId: number): Promise<Rack> {
+        let skipTurnViewModel = { gameId: gameId };
         return this.https
-            .get<number>(backurl + '/Action/SkipTurn/' + gameId)
+            .post<SkipTurnViewModel>(backurl + '/Action/SkipTurn/', skipTurnViewModel, httpOptions)
             .toPromise()
             .then();
     }
