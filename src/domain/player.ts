@@ -47,6 +47,7 @@ export interface TilesOnBag {
 export interface RestBoard {
     board: { tiles: TilesOnBoard[] };
     players: Player[];
+    bag: { tiles: TilesOnBag[] };
 }
 export interface RestRack {
     code: number;
@@ -57,6 +58,10 @@ export interface RestRack {
 export interface RestBag {
     bag: { tiles: TilesOnBag[] };
     players: Player[];
+}
+
+export interface SkipTurnViewModel {
+  gameId: number;
 }
 
 export interface RestSkipTurn {
@@ -71,6 +76,7 @@ export interface RestTilesPlay {
 export interface BoardGame {
     boards: Tile[];
     players: Player[];
+    bag: { tiles: TilesOnBag[] };
 }
 export interface RestTilesSwap {
     playerId: number;
@@ -85,7 +91,8 @@ export const toBoard = (result: RestBoard): BoardGame => {
             color: tile1.color,
             disabled: false
         })),
-        players: result.players
+        players: result.players,
+        bag: result.bag
     };
 };
 export const toPlayers = (result: RestBoard): Player[] => {

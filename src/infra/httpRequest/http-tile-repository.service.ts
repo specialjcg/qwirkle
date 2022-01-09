@@ -9,7 +9,7 @@ import {
     RestBag,
     RestBoard,
     RestRack,
-    RestSkipTurn,
+    SkipTurnViewModel,
     toBoard,
     toChangeRack
 } from '../../domain/player';
@@ -19,15 +19,12 @@ import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
 
-
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
     .set('Access-Control-Allow-Origin', '*')
     .set('Content-Type', 'application/json; charset=utf-8');
 
 const httpOptions = { headers: headers, withCredentials: true };
-
-
 
 @Injectable({
     providedIn: 'root'
@@ -82,9 +79,7 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    rackChangeOrder(
-        rack:TileViewModel[]
-    ): Promise<Rack> {
+    rackChangeOrder(rack: TileViewModel[]): Promise<Rack> {
         return this.https
             .post<RestRack>(backurl + '/Action/ArrangeRack/', rack, httpOptions)
             .toPromise()
@@ -106,8 +101,13 @@ export default class HttpTileRepositoryService {
     }
 
     skipTurn(gameId: number): Promise<Rack> {
+        const skipTurnViewModel = { gameId: gameId };
         return this.https
-            .post<number>(backurl + '/Action/SkipTurn/' + gameId, httpOptions)
+            .post<SkipTurnViewModel>(
+                backurl + '/Action/SkipTurn/',
+                skipTurnViewModel,
+                httpOptions
+            )
             .toPromise()
             .then();
     }

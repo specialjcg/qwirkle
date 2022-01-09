@@ -7,7 +7,8 @@ import {
     toBoard,
     toChangeRack,
     toPlayers,
-    toWebPlayer
+    toWebPlayer,
+    TilesOnBag
 } from './player';
 import { Tile } from './Tile';
 
@@ -43,6 +44,7 @@ describe('player', () => {
     });
     it('should return players with restboard ', () => {
         const restboard: RestBoard = {
+            bag: { tiles: [] },
             board: {
                 tiles: [
                     {
@@ -391,6 +393,7 @@ describe('player', () => {
     });
     it("should return Boargame with mock restboard'", () => {
         const restboard: RestBoard = {
+            bag: { tiles: [] },
             board: {
                 tiles: [
                     {
@@ -648,6 +651,9 @@ describe('player', () => {
             ]
         };
         expect(toBoard(restboard)).toEqual({
+            bag: {
+                tiles: []
+            },
             boards: [
                 {
                     color: 1,
@@ -1052,48 +1058,48 @@ describe('player', () => {
         const playerId = 1;
 
         expect(fromSwap(result, playerId)).toEqual([
-          {
-            "X": 3,
-            "Y": -1,
-            "color": 1,
-            "gameId": 1,
-            "shape": 2
-          },
-          {
-            "X": 4,
-            "Y": -1,
-            "color": 1,
-            "gameId": 1,
-            "shape": 5
-          },
-          {
-            "X": 7,
-            "Y": 3,
-            "color": 3,
-            "gameId": 1,
-            "shape": 4
-          },
-          {
-            "X": 2,
-            "Y": 0,
-            "color": 4,
-            "gameId": 1,
-            "shape": 1
-          },
-          {
-            "X": 1,
-            "Y": 0,
-            "color": 4,
-            "gameId": 1,
-            "shape": 3
-          },
-          {
-            "X": 3,
-            "Y": 2,
-            "color": 5,
-            "gameId": 1,
-            "shape": 6
-          }
+            {
+                X: 3,
+                Y: -1,
+                color: 1,
+                gameId: 1,
+                shape: 2
+            },
+            {
+                X: 4,
+                Y: -1,
+                color: 1,
+                gameId: 1,
+                shape: 5
+            },
+            {
+                X: 7,
+                Y: 3,
+                color: 3,
+                gameId: 1,
+                shape: 4
+            },
+            {
+                X: 2,
+                Y: 0,
+                color: 4,
+                gameId: 1,
+                shape: 1
+            },
+            {
+                X: 1,
+                Y: 0,
+                color: 4,
+                gameId: 1,
+                shape: 3
+            },
+            {
+                X: 3,
+                Y: 2,
+                color: 5,
+                gameId: 1,
+                shape: 6
+            }
         ]);
     });
 });

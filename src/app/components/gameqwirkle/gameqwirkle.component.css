@@ -8,16 +8,7 @@
 }
 
 
-/*.plate-container {*/
 
-/*  width: 1200px;*/
-/*  max-width: 100%;*/
-/*  margin: 0 25px 25px 0;*/
-/*  display: inline-block;*/
-/*  vertical-align: top;*/
-/*  background-color: aquamarine;*/
-/*  height: 200px;*/
-/*}*/
 .position-firstPlayer{
   position: relative;
   top:85vh;
@@ -174,12 +165,7 @@
 
   padding-left:65px;
   padding-right: 60px;
-  /* padding-top:0px;*/
-  /*padding-bottom:0px;*/
-  /*padding-left:25px;*/
-  /* padding-right: 20px;*/
-  /* padding-top:20px;*/
-  /*padding-bottom:25px;*/
+
 
   cursor: move;
 
@@ -199,14 +185,6 @@
   align-items: center;
   justify-content: space-between;
 
-  /*padding-left:65px;*/
-  /*padding-right: 60px;*/
-  /* padding-top:0px;*/
-  /*padding-bottom:0px;*/
-  /*padding-left:25px;*/
-  /* padding-right: 20px;*/
-  /* padding-top:20px;*/
-  /*padding-bottom:25px;*/
   width:100px;
   cursor: move;
 
@@ -215,14 +193,7 @@
 }
 
 
-/*.cdk-drag-preview {*/
 
-/*  box-sizing: border-box;*/
-/*  border-radius: 4px;*/
-/*  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),*/
-/*  0 8px 10px 1px rgba(0, 0, 0, 0.14),*/
-/*  0 3px 14px 2px rgba(0, 0, 0, 0.12);*/
-/*}*/
 .cdk-drag-placeholder {
   opacity: 0;
 }

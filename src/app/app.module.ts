@@ -19,6 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MatInputModule } from '@angular/material/input';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/choose-opponent-to-player.component';
+import { TileInBagComponent } from './tile-in-bag/tile-in-bag.component';
 
 export class MyAppModule {}
 
@@ -37,7 +38,8 @@ export class MyAppModule {}
         LogInComponent,
         RegisterComponent,
         GameqwirkleComponent,
-        ChooseOpponentToPlayerComponent
+        ChooseOpponentToPlayerComponent,
+        TileInBagComponent
     ],
     imports: [
         BrowserAnimationsModule,
