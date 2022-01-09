@@ -124,6 +124,8 @@ export class GameqwirkleComponent implements OnInit {
 
     bagLength = 108;
 
+    playerIdTurn = 0;
+
     public users: ListUsersId = { listUsersId: [] };
 
     private modelChangedSubscription!: Subscription;
@@ -230,7 +232,7 @@ export class GameqwirkleComponent implements OnInit {
             if (
                 playerId === test &&
                 this.winner === '' &&
-                this.player.pseudo === 'jc11'
+                this.player.pseudo === 'jc12'
             ) {
                 this.Bot();
                 // this.serviceQwirkle.getWinners(this.gameId).then((response) => {
@@ -253,6 +255,7 @@ export class GameqwirkleComponent implements OnInit {
     };
 
     receivePlayerIdTurn = (playerId: number) => {
+        this.playerIdTurn = playerId;
         this.game().then();
     };
 
@@ -431,7 +434,7 @@ export class GameqwirkleComponent implements OnInit {
                     (a, b) => a.gamePosition - b.gamePosition
                 );
                 this.player = board.players.find(
-                    (player) => player.userId === this.userId
+                    (player) => player.userId === this.player.userId
                 )!;
                 this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
 
@@ -462,10 +465,8 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     async swapTiles(): Promise<void> {
-        this.swapTile = fromSwap(
-            this.swap.filter((tile) => tile.disabled),
-            this.gameId
-        );
+        this.swap = this.swap.filter((tile) => tile.disabled);
+        this.swapTile = fromSwap(this.swap, this.gameId);
         this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
             this.game().then();
             this.getPlayerIdToPlay().then();
@@ -474,10 +475,7 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     async swapTilesRandom(): Promise<void> {
-        this.swapTile = fromSwap(
-            this.rack.filter((tile) => tile),
-            this.gameId
-        );
+        this.swapTile = fromSwap(this.rack, this.gameId);
         this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
             this.game().then();
             this.getPlayerIdToPlay().then();
@@ -545,17 +543,16 @@ export class GameqwirkleComponent implements OnInit {
 
                         this.getPlayerIdToPlay().then();
                         this.nameToTurn = '';
-                        this.serviceQwirkle
-                            .whoAmI()
-                            .subscribe((id) => (this.userId = id));
+
                         this.game().then();
+                        console.log(this.player);
                         this.signalRService.hubConnection
                             .start()
                             .then(() => {
                                 console.log('Connection started');
                                 this.signalRService.sendPlayerInGame(
                                     this.gameId,
-                                    this.userId
+                                    this.player.id
                                 );
                             })
                             .catch((error) =>

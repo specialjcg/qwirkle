@@ -101,9 +101,13 @@ export default class HttpTileRepositoryService {
     }
 
     skipTurn(gameId: number): Promise<Rack> {
-        let skipTurnViewModel = { gameId: gameId };
+        const skipTurnViewModel = { gameId: gameId };
         return this.https
-            .post<SkipTurnViewModel>(backurl + '/Action/SkipTurn/', skipTurnViewModel, httpOptions)
+            .post<SkipTurnViewModel>(
+                backurl + '/Action/SkipTurn/',
+                skipTurnViewModel,
+                httpOptions
+            )
             .toPromise()
             .then();
     }
