@@ -60,6 +60,10 @@ export interface RestBag {
     players: Player[];
 }
 
+export interface SkipTurnViewModel {
+  gameId: number;
+}
+
 export interface RestSkipTurn {
     playerId: number;
 }
