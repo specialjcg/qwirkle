@@ -1,11 +1,107 @@
-.box {
-  display: flex;
-  justify-content: center;
-  height: 80px;
-  gap: 10px;
+mat-label {
+  font-size: 20px;
 }
-.game{
-  position: absolute;
-  top: 8vh;
-  left:-18vw;
+h3{
+  font-size: 20px;
+}
+mat-form-field{
+  font-size: 20px;
+  width: 80%;
+  height: 80%;
+}
+/* default styles here for older browsers.
+      I tend to go for a 600px - 960px width max but using percentages
+   */
+@media only screen and (min-width: 960px) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
+}
+@media only screen and (min-width: 1440px) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
+}
+@media only screen and (min-width: 2000px) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
+}
+@media only screen and (max-device-width: 480px) {
+  mat-label {
+    font-size: 10px;
+  }
+  h3{
+    font-size: 10px;
+  }
+  mat-form-field{
+    font-size: 10px;
+    width: 80%;
+    height: 80%;
+  }
+}
+@media only screen and (device-width: 768px) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
+}
+/* different techniques for iPad screening */
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
+}
+
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+  mat-label {
+    font-size: 20px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  mat-form-field{
+    font-size: 20px;
+    width: 80%;
+    height: 80%;
+  }
 }

@@ -436,9 +436,13 @@ export class GameqwirkleComponent implements OnInit {
                 this.player = board.players.find(
                     (player) => player.userId === this.player.userId
                 )!;
-                this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+                if (this.player.rack.tiles !== null) {
+                    this.player.rack.tiles.sort(
+                        (a, b) => a.rackPosition - b.rackPosition
+                    );
 
-                this.rack = toRarrange(this.player.rack.tiles);
+                    this.rack = toRarrange(this.player.rack.tiles);
+                }
                 this.autoZoom().then();
             });
         }
@@ -468,19 +472,18 @@ export class GameqwirkleComponent implements OnInit {
         this.swap = this.swap.filter((tile) => tile.disabled);
         this.swapTile = fromSwap(this.swap, this.gameId);
         this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
+            this.swap = [];
+            this.swapTile = [];
             this.game().then();
             this.getPlayerIdToPlay().then();
-            this.swap = [];
         });
     }
 
     async swapTilesRandom(): Promise<void> {
-        this.swapTile = fromSwap(this.rack, this.gameId);
-        this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
-            this.game().then();
-            this.getPlayerIdToPlay().then();
-            this.swap = [];
-        });
+        this.swap = this.rack;
+        this.rack = [];
+
+        this.swapTiles().then();
     }
 
     async skipTurn(): Promise<void> {

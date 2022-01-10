@@ -1,9 +1,13 @@
 <div class="box" >
 <mat-card [ngClass]="playerToTurnClass(name.pseudo)" *ngFor="let name of this.players;let i=index"  >
+
+  <a *ngIf="isNameTurn(name.pseudo)">{{this.nameToTurn}} &nbsp; round</a>
   <mat-card-title-group class="card"   >
+
     <mat-card-title class="name">  {{name.pseudo}} </mat-card-title>
 
   </mat-card-title-group>
+
   <mat-card-content *ngIf="this.players.length!==0">
     <app-total-score  [totalScore]="this.players[i].points"></app-total-score>&nbsp;
     <app-result-score  [score]="this.players[i].lastTurnPoints"></app-result-score>
@@ -12,7 +16,4 @@
 
 
 </div>
-<div *ngIf="isNameTurn()" class="playerToTurn">
-  Is {{this.nameToTurn}} to Play
 
-</div>

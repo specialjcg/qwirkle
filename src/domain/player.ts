@@ -61,7 +61,7 @@ export interface RestBag {
 }
 
 export interface SkipTurnViewModel {
-  gameId: number;
+    gameId: number;
 }
 
 export interface RestSkipTurn {

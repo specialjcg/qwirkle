@@ -4,15 +4,17 @@
                  (gameSelectChange)="gameChange($event)" (click)="listChange()" [games]="this.games"></app-choose-game>
 <app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"
                    [players]="this.players"></app-choose-player>
-<app-give-tempory-score [score]="this.score"></app-give-tempory-score>
+
 <app-tile-in-bag [Bag]="this.bagLength"></app-tile-in-bag>
 <app-winner [winner]="this.winner"></app-winner>
-<button *ngIf="swap.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()">Jouer</button>
-<button *ngIf="swap.length!==0 && this.player.isTurn" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
+
+  <app-give-tempory-score  [score]="this.score" *ngIf="swap.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()"></app-give-tempory-score>
+
+<button  class="positionSwapTiles" (click)="swapTilesRandom()">swapTiles</button>
 <button *ngIf="swap.length===0 && this.rack.length===6 && this.player.isTurn" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
 <button class="positionLogOut" (click)="logOut()">Logout</button>
-<button class="positionNewGame" (click)="NewGame()">Opponents</button>
-<button class="positionBot" (click)="Bot()">Bot</button>
+<button *ngIf="this.board.length===0" class="positionNewGame" (click)="NewGame()">Opponents</button>
+<button class="positionBot" *ngIf="this.player.pseudo==='jc12'" (click)="Bot()">Bot</button>
 <div cdkDropListGroup>
   <div *ngIf="this.winner === ''" class="position-firstPlayer">
     <div class="example-container">
