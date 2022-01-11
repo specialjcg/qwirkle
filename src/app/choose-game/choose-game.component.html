@@ -1,14 +1,14 @@
 
 
-  <div>
-  <h3>Choose game</h3>
+
+
   <mat-form-field appearance="fill">
-    <mat-label>GameId</mat-label>
+    <mat-label>Choose GameId</mat-label>
     <mat-select [(value)]="this.gameId" >
       <mat-option *ngFor="let game of this.games.listGameId;let i=index" [value]="game" (click)="gameChoice(this.games.listGameId[i])">
         {{this.games.listGameId[i]}}
       </mat-option>
     </mat-select>
-  </mat-form-field></div>
+  </mat-form-field>
 
 

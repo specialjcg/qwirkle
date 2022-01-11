@@ -50,6 +50,7 @@ a{
 mat-card-content{
   position:absolute;
   top:60px;
+  left:2px;
 }
 .name
 {

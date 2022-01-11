@@ -335,22 +335,7 @@ export class GameqwirkleComponent implements OnInit {
             );
         }
         this.plate = toPlate(this.board);
-        this.score = {
-            code: 1,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
-        };
-        this.playTileTempory = fromBoard(
-            this.board.filter((tile) => tile.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
-            .then(async (resp) => {
-                this.score = resp;
-                this.autoZoom().then();
-            });
+        this.setTemporyScore();
     }
 
     dropBot(tile: Tile): void {
@@ -360,23 +345,7 @@ export class GameqwirkleComponent implements OnInit {
         this.swapTileFromBag(tile);
 
         this.plate = toPlate(this.board);
-        this.score = {
-            code: 1,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
-        };
-        this.playTileTempory = fromBoard(
-            this.board.filter((tileboard) => tileboard.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
-            .then(async (resp) => {
-                this.score = resp;
-                this.game().then();
-            });
-        this.autoZoom().then();
+        this.setTemporyScore();
     }
 
     private swapTileFromBag(tile: Tile) {
@@ -412,7 +381,27 @@ export class GameqwirkleComponent implements OnInit {
         }
 
         this.plate = toPlate(this.board);
-        this.autoZoom().then();
+        this.setTemporyScore();
+    }
+
+    private setTemporyScore() {
+        this.score = {
+            code: 1,
+            tilesPlayed: [],
+            newRack: [],
+            points: 0
+        };
+        this.playTileTempory = fromBoard(
+            this.board.filter((tile) => tile.disabled),
+            this.player.gameId
+        );
+
+        this.serviceQwirkle
+            .playTileSimulation(this.playTileTempory)
+            .then(async (resp) => {
+                this.score = resp;
+                this.autoZoom().then();
+            });
     }
 
     async game(): Promise<void> {

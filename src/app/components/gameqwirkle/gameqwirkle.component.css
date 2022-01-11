@@ -97,7 +97,7 @@
 /* TODO remove when same button do valid and skipturn and swaptiles */
 .positionSwapTiles{
   position: absolute;
-  top:65vh;
+  top:25vh;
   left:2vw;
 
 }
