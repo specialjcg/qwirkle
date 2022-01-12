@@ -16,6 +16,8 @@ export class PickComponent {
 
     @Input() bag: Tile[] = [];
 
+    @Input() bagLength: number = 108;
+
     getPawStyle(index: number): string {
         return 'translate(' + -index * 65 + 'px,' + index * 15 + 'px)';
     }

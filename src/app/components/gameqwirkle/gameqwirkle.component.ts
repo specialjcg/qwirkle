@@ -235,17 +235,6 @@ export class GameqwirkleComponent implements OnInit {
                 this.player.pseudo === 'jc12'
             ) {
                 this.Bot();
-                // this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                //     this.winner = '';
-                //     if (response.length > 0) {
-                //         this.winner = this.players.find(
-                //             (player) => player.id === response[0]
-                //         )!.pseudo;
-                //         this.nameToTurn = '';
-                //     } else {
-                //
-                //     }
-                // });
             }
         });
     };

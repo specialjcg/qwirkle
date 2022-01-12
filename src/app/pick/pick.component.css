@@ -9,19 +9,18 @@
 
 .position-pick{
   position: absolute;
-  top:2vh;
-  left :50vw;
+  top:25vh;
+  left :2vw;
   z-index: 0;
-  width:600px;
 }
 
 .scenevide2 {
   position: absolute;
-  top:2vh;
-  left :50vw;
+  top:25vh;
+  left :2vw;
   z-index: 0;
-  width:600px;
-  height:100px;
+  width:120px;
+  height:600px;
   max-width: 100%;
   border: solid 1px #ccc;
   display: flex;
@@ -41,7 +40,7 @@
   width:135%;
   max-width: 150%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   border-radius: 4px;
   overflow: hidden;
   background-color:transparent!important;

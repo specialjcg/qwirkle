@@ -2,16 +2,12 @@
   position: absolute;
   display: flex;
   justify-content: center;
-  height: 80px;
+  height: 700px;
   gap: 10px;
-top: 2vh;
+top: 15vh;
   left: 5vw;
 }
-.player{
-  position: absolute;
-  top: 8vh;
-  left:-18vw;
-}
+
 a{
   font-size:15px;
   font-weight:bold;

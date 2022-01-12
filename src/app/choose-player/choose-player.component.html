@@ -1,6 +1,6 @@
 <div class="box" >
 <mat-card [ngClass]="playerToTurnClass(name.pseudo)" *ngFor="let name of this.players;let i=index"  >
-
+  <app-winner *ngIf="this.winner ===name.pseudo" [winner]="this.winner"></app-winner>
   <a *ngIf="isNameTurn(name.pseudo)">{{this.nameToTurn}} &nbsp; round</a>
   <mat-card-title-group class="card"   >
 

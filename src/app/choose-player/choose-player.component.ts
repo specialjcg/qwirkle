@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Player, Rack } from '../../domain/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
-
+const SPACE = '';
 @Component({
     selector: 'app-choose-player',
     templateUrl: './choose-player.component.html',
@@ -18,7 +18,7 @@ export class ChoosePlayerComponent {
 
     @Input() players: Player[] = [];
 
-
+    @Input() winner: string = SPACE;
 
     nameToPlay = '';
 

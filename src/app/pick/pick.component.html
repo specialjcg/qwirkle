@@ -1,8 +1,13 @@
+<app-tile-in-bag [Bag]="this.bagLength"></app-tile-in-bag>
 <div *ngIf="this.bag.length>0" class="position-pick">
+
   <div class="example-container">
+
     <div>
       <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.bag" class="example-list2d"
+
            (cdkDropListDropped)="dropResult($event)">
+
         <div *ngFor="let tile of this.bag;let i=index">
           <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
                          cdkDrag></app-tile-pawn>
@@ -11,10 +16,13 @@
     </div>
   </div>
 </div>
+
 <div *ngIf="this.bag.length===0">
 
   <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.bag" class="scenevide2"
        (cdkDropListDropped)="dropempty($event)">
-    <div cdkDrag><span>Pioche</span></div>
+    <div cdkDrag></div>
   </div>
 </div>
+
+

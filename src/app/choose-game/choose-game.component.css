@@ -1,46 +1,46 @@
 mat-label {
-  font-size: 20px;
+  font-size: 15px;
 }
 
 mat-form-field{
   top:2vh;
-  font-size: 20px;
+  font-size: 15px;
   width: 80%;
-  height: 80%;
+  height: 50%;
 }
 /* default styles here for older browsers.
       I tend to go for a 600px - 960px width max but using percentages
    */
 @media only screen and (min-width: 960px) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
     top:2vh;
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }
 }
 @media only screen and (min-width: 1440px) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }
 }
 @media only screen and (min-width: 2000px) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }
@@ -59,11 +59,11 @@ mat-form-field{
 }
 @media only screen and (device-width: 768px) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }
@@ -71,11 +71,11 @@ mat-form-field{
 /* different techniques for iPad screening */
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }
@@ -83,11 +83,11 @@ mat-form-field{
 
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
   mat-label {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   mat-form-field{
-    font-size: 20px;
+    font-size: 15px;
     width: 80%;
     height: 80%;
   }

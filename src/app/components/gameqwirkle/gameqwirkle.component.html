@@ -2,19 +2,14 @@
 
 <app-choose-game class="positionSelectGame" [gameId]="this.gameId"
                  (gameSelectChange)="gameChange($event)" (click)="listChange()" [games]="this.games"></app-choose-game>
-<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"
+<app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"  [winner]="this.winner"
                    [players]="this.players"></app-choose-player>
 
-<app-tile-in-bag [Bag]="this.bagLength"></app-tile-in-bag>
-<app-winner [winner]="this.winner"></app-winner>
 
-  <app-give-tempory-score  [score]="this.score" *ngIf="swap.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()"></app-give-tempory-score>
 
-<button  *ngIf="swap.length!==0 && this.player.isTurn" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
-<button *ngIf="swap.length===0 && this.rack.length===6 && this.player.isTurn" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
-<button class="positionLogOut" (click)="logOut()">Logout</button>
-<button *ngIf="this.board.length===0" class="positionNewGame" (click)="NewGame()">Opponents</button>
-<button class="positionBot" *ngIf="this.player.pseudo==='jc12'" (click)="Bot()">Bot</button>
+
+
+
 <div cdkDropListGroup>
   <div *ngIf="this.winner === ''" class="position-firstPlayer">
     <div class="example-container">
@@ -31,7 +26,12 @@
       </div>
     </div>
   </div>
-
+  <app-give-tempory-score  [score]="this.score" *ngIf="swap.length===0 && this.rack.length!==6" class="positionValid" (click)="valid()"></app-give-tempory-score>
+  <button  *ngIf="swap.length!==0 && this.player.isTurn" class="positionSwapTiles" (click)="swapTiles()">swapTiles</button>
+  <button *ngIf="swap.length===0 && this.rack.length===6 && this.player.isTurn" class="positionSkipTurn" (click)="skipTurn()">SkipTurn</button>
+  <button class="positionLogOut" (click)="logOut()">Logout</button>
+  <button *ngIf="this.board.length===0" class="positionNewGame" (click)="NewGame()">Opponents</button>
+  <button class="positionBot" *ngIf="this.player.pseudo==='jc12'" (click)="Bot()">Bot</button>
   <mat-card class="container">
     <div #scene id="scene" *ngIf="this.plate.length!==0">
       <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
@@ -59,5 +59,5 @@
       </div>
     </div>
   </mat-card>
-  <app-pick [plate]="plate" [board]="board" [bag]="swap"></app-pick>
+  <app-pick [plate]="plate" [board]="board" [bag]="swap" [bagLength]="bagLength"></app-pick>
 </div>
