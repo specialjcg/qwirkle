@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Tile} from "../../domain/Tile";
 
 @Component({
     selector: 'app-tile-in-bag',
@@ -6,9 +7,17 @@ import { Component, Input, OnInit } from '@angular/core';
     styleUrls: ['./tile-in-bag.component.css']
 })
 export class TileInBagComponent implements OnInit {
-    @Input() Bag: number = 108;
+    @Input() Bag = 108;
+
+    @Input() swap: Tile[] = [];
+
+    @Output() swapEvent = new EventEmitter();
 
     constructor() {}
 
     ngOnInit(): void {}
+
+    Swap() {
+        this.swapEvent.emit();
+    }
 }

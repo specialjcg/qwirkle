@@ -1,25 +1,25 @@
-<app-tile-in-bag [Bag]="this.bagLength"></app-tile-in-bag>
-<div *ngIf="this.bag.length>0" class="position-pick">
+<app-tile-in-bag [Bag]="this.bagLength" [swap]="this.swap" (swapEvent)="swapchange()"></app-tile-in-bag>
+<div *ngIf="this.swap.length>0" class="position-pick">
 
-  <div class="example-container">
+  <div [ngClass]="getPawStyle(this.swap.length)">
 
-    <div>
-      <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.bag" class="example-list2d"
+
+      <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.swap" class="example-list2d"
 
            (cdkDropListDropped)="dropResult($event)">
 
-        <div *ngFor="let tile of this.bag;let i=index">
+        <div *ngFor="let tile of this.swap;let i=index">
           <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
                          cdkDrag></app-tile-pawn>
         </div>
       </div>
-    </div>
+
   </div>
 </div>
 
-<div *ngIf="this.bag.length===0">
+<div *ngIf="this.swap.length===0">
 
-  <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.bag" class="scenevide2"
+  <div cdkDropList cdkDropListOrientation="vertical" [cdkDropListData]="this.swap" class="scenevide2"
        (cdkDropListDropped)="dropempty($event)">
     <div cdkDrag></div>
   </div>

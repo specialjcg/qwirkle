@@ -20,6 +20,8 @@ import { MatInputModule } from '@angular/material/input';
 import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository.service';
 import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/choose-opponent-to-player.component';
 import { TileInBagComponent } from './tile-in-bag/tile-in-bag.component';
+import { MenuComponent } from './menu/menu.component';
+import {MatMenuModule} from "@angular/material/menu";
 
 export class MyAppModule {}
 
@@ -39,13 +41,15 @@ export class MyAppModule {}
         RegisterComponent,
         GameqwirkleComponent,
         ChooseOpponentToPlayerComponent,
-        TileInBagComponent
+        TileInBagComponent,
+        MenuComponent
     ],
     imports: [
         BrowserAnimationsModule,
         AngularMaterialModule,
         AppRoutingModule,
-        MatInputModule
+        MatInputModule,
+        MatMenuModule
     ],
     providers: [HttpTileRepositoryService],
     bootstrap: [AppComponent],

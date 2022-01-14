@@ -36,7 +36,6 @@ import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repo
 import { toRarrange, toRarrangeRack, toTiles } from '../../../domain/SetPositionTile';
 import { TileViewModel } from '../../../domain/tiles';
 import { ActivatedRoute, Router } from '@angular/router';
-import { toListGamedId } from '../../../domain/games';
 
 interface Rect {
     x: number; // the x0 (top left) coordinate
@@ -112,7 +111,7 @@ export class GameqwirkleComponent implements OnInit {
 
     players: Player[] = [];
 
-    games: ListGamedId = { listGameId: [] };
+
 
     playTileTempory: TileViewModel[] = [];
 
@@ -139,11 +138,7 @@ export class GameqwirkleComponent implements OnInit {
         private serviceQwirkle: HttpTileRepositoryService,
         private router: Router,
         private route: ActivatedRoute
-    ) {
-        this.serviceQwirkle
-            .getGames()
-            .subscribe((games) => (this.games = toListGamedId(games)));
-    }
+    ) {}
 
     ngOnInit(): void {
         this.gameId = Number(this.route.snapshot.paramMap.get('id'));
@@ -565,10 +560,6 @@ export class GameqwirkleComponent implements OnInit {
         return 'translate(' + -index * 65 + 'px,' + index * 15 + 'px)';
     }
 
-    NewGame(): void {
-        this.router.navigate(['opponents']).then();
-    }
-
     async getPlayerIdToPlay(): Promise<void> {
         this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
             this.playerNameToPlay = response;
@@ -585,12 +576,6 @@ export class GameqwirkleComponent implements OnInit {
             this.panzoomConfig.scalePerZoomLevel,
             zoomLevel - this.panzoomConfig.neutralZoomLevel
         );
-    }
-
-    async logOut() {
-        this.serviceQwirkle
-            .LogoutUser()
-            .then(() => this.router.navigate(['/login']).then());
     }
 
     Bot() {
@@ -682,11 +667,5 @@ export class GameqwirkleComponent implements OnInit {
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000,
             height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height
         };
-    }
-
-    listChange(): void {
-        this.serviceQwirkle
-            .getGames()
-            .subscribe((games) => (this.games = toListGamedId(games)));
     }
 }
