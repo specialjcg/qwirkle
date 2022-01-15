@@ -1,17 +1,7 @@
-  <div *ngIf="score.code===1" class="playerToTurn" >
-
-     Score temporaire
-
-
-    {{score.points}}
-
-  </div>
-  <div *ngIf="score.code!==1" class="playerToTurn" >
-
-    cout non jouable!!
-
-
-
-
-  </div>
+  <button *ngIf="score.code===1" >
+    Play :{{score.points}}
+  </button>
+  <button *ngIf="score.code!==1" >
+     unplayable!!
+  </button>
 

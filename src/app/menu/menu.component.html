@@ -1,0 +1,18 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+  <mat-icon>menu</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink='/chooseGame'>
+    <mat-icon>dialpad</mat-icon>
+    <span>ChooseGame</span>
+  </button>
+  <button mat-menu-item (click)="logOut()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Logout</span>
+  </button>
+  <button *ngIf="boardLength===0" mat-menu-item routerLink='/opponents' >
+    <mat-icon>person_pin</mat-icon>
+    <span>opponents</span>
+  </button>
+</mat-menu>
+

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Player } from '../../domain/player';
+import { Player, Rack } from '../../domain/player';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
-
+const SPACE = '';
 @Component({
     selector: 'app-choose-player',
     templateUrl: './choose-player.component.html',
@@ -18,6 +18,8 @@ export class ChoosePlayerComponent {
 
     @Input() players: Player[] = [];
 
+    @Input() winner: string = SPACE;
+
     nameToPlay = '';
 
     constructor(public service: HttpTileRepositoryService) {}
@@ -28,7 +30,7 @@ export class ChoosePlayerComponent {
             : 'card-group colorTurnOff';
     }
 
-    isNameTurn(): boolean {
-        return this.nameToTurn !== '';
+    isNameTurn(name: string): boolean {
+        return this.nameToTurn === name;
     }
 }

@@ -5,6 +5,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './auth/auth.guard';
 import { GameqwirkleComponent } from './components/gameqwirkle/gameqwirkle.component';
 import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/choose-opponent-to-player.component';
+import { ChooseGameComponent } from './choose-game/choose-game.component';
 
 const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'game' },
@@ -27,6 +28,12 @@ const routes: Routes = [
         canLoad: [AuthGuard],
         canActivate: [AuthGuard],
         component: ChooseOpponentToPlayerComponent
+    },
+    {
+        path: 'chooseGame',
+        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
+        component: ChooseGameComponent
     },
     { path: '**', pathMatch: 'full', redirectTo: 'login' }
 ];

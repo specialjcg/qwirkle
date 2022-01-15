@@ -62,11 +62,11 @@ describe('ChoosePlayerComponent', () => {
     it('should true if name turn ', () => {
         component.nameToTurn = 'jean phi';
 
-        expect(component.isNameTurn()).toBeTruthy();
+        expect(component.isNameTurn('jean phi')).toBeTruthy();
     });
     it('should false if name no turn ', () => {
         component.nameToTurn = '';
 
-        expect(component.isNameTurn()).toBeFalsy();
+        expect(component.isNameTurn('jean phi')).toBeFalsy();
     });
 });
