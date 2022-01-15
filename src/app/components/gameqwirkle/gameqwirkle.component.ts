@@ -36,7 +36,6 @@ import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repo
 import { toRarrange, toRarrangeRack, toTiles } from '../../../domain/SetPositionTile';
 import { TileViewModel } from '../../../domain/tiles';
 import { ActivatedRoute, Router } from '@angular/router';
-import { toListGamedId } from '../../../domain/games';
 
 interface Rect {
     x: number; // the x0 (top left) coordinate
@@ -112,7 +111,7 @@ export class GameqwirkleComponent implements OnInit {
 
     players: Player[] = [];
 
-    games: ListGamedId = { listGameId: [] };
+
 
     playTileTempory: TileViewModel[] = [];
 
@@ -139,11 +138,7 @@ export class GameqwirkleComponent implements OnInit {
         private serviceQwirkle: HttpTileRepositoryService,
         private router: Router,
         private route: ActivatedRoute
-    ) {
-        this.serviceQwirkle
-            .getGames()
-            .subscribe((games) => (this.games = toListGamedId(games)));
-    }
+    ) {}
 
     ngOnInit(): void {
         this.gameId = Number(this.route.snapshot.paramMap.get('id'));
@@ -235,17 +230,6 @@ export class GameqwirkleComponent implements OnInit {
                 this.player.pseudo === 'jc12'
             ) {
                 this.Bot();
-                // this.serviceQwirkle.getWinners(this.gameId).then((response) => {
-                //     this.winner = '';
-                //     if (response.length > 0) {
-                //         this.winner = this.players.find(
-                //             (player) => player.id === response[0]
-                //         )!.pseudo;
-                //         this.nameToTurn = '';
-                //     } else {
-                //
-                //     }
-                // });
             }
         });
     };
@@ -335,22 +319,7 @@ export class GameqwirkleComponent implements OnInit {
             );
         }
         this.plate = toPlate(this.board);
-        this.score = {
-            code: 1,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
-        };
-        this.playTileTempory = fromBoard(
-            this.board.filter((tile) => tile.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
-            .then(async (resp) => {
-                this.score = resp;
-                this.autoZoom().then();
-            });
+        this.setTemporyScore();
     }
 
     dropBot(tile: Tile): void {
@@ -360,23 +329,7 @@ export class GameqwirkleComponent implements OnInit {
         this.swapTileFromBag(tile);
 
         this.plate = toPlate(this.board);
-        this.score = {
-            code: 1,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
-        };
-        this.playTileTempory = fromBoard(
-            this.board.filter((tileboard) => tileboard.disabled),
-            this.player.gameId
-        );
-        this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
-            .then(async (resp) => {
-                this.score = resp;
-                this.game().then();
-            });
-        this.autoZoom().then();
+        this.setTemporyScore();
     }
 
     private swapTileFromBag(tile: Tile) {
@@ -412,7 +365,27 @@ export class GameqwirkleComponent implements OnInit {
         }
 
         this.plate = toPlate(this.board);
-        this.autoZoom().then();
+        this.setTemporyScore();
+    }
+
+    private setTemporyScore() {
+        this.score = {
+            code: 1,
+            tilesPlayed: [],
+            newRack: [],
+            points: 0
+        };
+        this.playTileTempory = fromBoard(
+            this.board.filter((tile) => tile.disabled),
+            this.player.gameId
+        );
+
+        this.serviceQwirkle
+            .playTileSimulation(this.playTileTempory)
+            .then(async (resp) => {
+                this.score = resp;
+                this.autoZoom().then();
+            });
     }
 
     async game(): Promise<void> {
@@ -436,9 +409,13 @@ export class GameqwirkleComponent implements OnInit {
                 this.player = board.players.find(
                     (player) => player.userId === this.player.userId
                 )!;
-                this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
+                if (this.player.rack.tiles !== null) {
+                    this.player.rack.tiles.sort(
+                        (a, b) => a.rackPosition - b.rackPosition
+                    );
 
-                this.rack = toRarrange(this.player.rack.tiles);
+                    this.rack = toRarrange(this.player.rack.tiles);
+                }
                 this.autoZoom().then();
             });
         }
@@ -468,19 +445,18 @@ export class GameqwirkleComponent implements OnInit {
         this.swap = this.swap.filter((tile) => tile.disabled);
         this.swapTile = fromSwap(this.swap, this.gameId);
         this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
+            this.swap = [];
+            this.swapTile = [];
             this.game().then();
             this.getPlayerIdToPlay().then();
-            this.swap = [];
         });
     }
 
     async swapTilesRandom(): Promise<void> {
-        this.swapTile = fromSwap(this.rack, this.gameId);
-        this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
-            this.game().then();
-            this.getPlayerIdToPlay().then();
-            this.swap = [];
-        });
+        this.swap = this.rack;
+        this.rack = [];
+
+        this.swapTiles().then();
     }
 
     async skipTurn(): Promise<void> {
@@ -584,10 +560,6 @@ export class GameqwirkleComponent implements OnInit {
         return 'translate(' + -index * 65 + 'px,' + index * 15 + 'px)';
     }
 
-    NewGame(): void {
-        this.router.navigate(['opponents']).then();
-    }
-
     async getPlayerIdToPlay(): Promise<void> {
         this.serviceQwirkle.getPlayerNameTurn(this.gameId).subscribe((response) => {
             this.playerNameToPlay = response;
@@ -604,12 +576,6 @@ export class GameqwirkleComponent implements OnInit {
             this.panzoomConfig.scalePerZoomLevel,
             zoomLevel - this.panzoomConfig.neutralZoomLevel
         );
-    }
-
-    async logOut() {
-        this.serviceQwirkle
-            .LogoutUser()
-            .then(() => this.router.navigate(['/login']).then());
     }
 
     Bot() {
@@ -701,11 +667,5 @@ export class GameqwirkleComponent implements OnInit {
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000,
             height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height
         };
-    }
-
-    listChange(): void {
-        this.serviceQwirkle
-            .getGames()
-            .subscribe((games) => (this.games = toListGamedId(games)));
     }
 }

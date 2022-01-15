@@ -1,15 +1,25 @@
-<div class="box" >
 
-  <div class="player">
-  <h4>Choose game</h4>
-  <mat-form-field appearance="fill">
-    <mat-label>GameId</mat-label>
-    <mat-select [(value)]="this.gameId" >
-      <mat-option *ngFor="let game of this.games.listGameId;let i=index" [value]="game" (click)="gameChoice(this.games.listGameId[i])">
-        {{this.games.listGameId[i]}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field></div>
 
+<div class="container">
+<mat-card class="card" *ngFor="let game of this.games.listGameId;let i=index"  (click)="gameChoice(this.games.listGameId[i])">
+  <mat-card-title-group class="card__header">
+
+
+      <img src="https://source.unsplash.com/600x400/?computer" alt="card__image" class="card__image" width="600">
+
+  </mat-card-title-group>
+  <mat-card-content >
+    {{this.games.listGameId[i]}}
+  </mat-card-content>
+</mat-card>
 </div>
+<!--  <mat-form-field appearance="fill">-->
+<!--    <mat-label>Choose GameId</mat-label>-->
+<!--    <mat-select [(value)]="this.gameId" >-->
+<!--      <mat-option *ngFor="let game of this.games.listGameId;let i=index" [value]="game" (click)="gameChoice(this.games.listGameId[i])">-->
+<!--        {{this.games.listGameId[i]}}-->
+<!--      </mat-option>-->
+<!--    </mat-select>-->
+<!--  </mat-form-field>-->
+
 

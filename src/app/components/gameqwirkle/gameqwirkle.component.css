@@ -64,40 +64,40 @@
 
 .positionNewGame{
   position: absolute;
-  top:50vh;
-  left:2vw;
+  top:90vh;
+  left:60vw;
 
 }
 .positionBot{
   position: absolute;
-  top:60vh;
-  left:2vw;
+  top:2vh;
+  left:50vw;
 
 }
 .positionLogOut{
   position: absolute;
-  top:40vh;
-  left:2vw;
+  top:90vh;
+  left:70vw;
 
 }
 .positionValid{
   position: absolute;
-  top:25vh;
-  left:2vw;
+  top:90vh;
+  left:80vw;
 
 }
 
 /* TODO remove when same button do valid and skipturn and swaptiles */
 .positionSkipTurn{
   position: absolute;
-  top:25vh;
+  top:90vh;
   left:2vw;
 
 }
 /* TODO remove when same button do valid and skipturn and swaptiles */
 .positionSwapTiles{
   position: absolute;
-  top:25vh;
+  top:90vh;
   left:2vw;
 
 }
@@ -216,7 +216,7 @@
 }
 .positionSelectGame{
   position: absolute;
-  top: 10vh;
+  top: 2vh;
   left: 2vw;
 }
 
@@ -224,7 +224,7 @@ button {
   position: absolute;
   left: 2vw;
   top: 20vh;
-  background: #3D94F6;
+  background: linear-gradient(to left, #283593, #1976d2);
   background-image: -webkit-linear-gradient(top, #3D94F6, #1E62D0);
   background-image: -moz-linear-gradient(top, #3D94F6, #1E62D0);
   background-image: -ms-linear-gradient(top, #3D94F6, #1E62D0);
