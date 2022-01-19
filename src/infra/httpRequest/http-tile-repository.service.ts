@@ -116,9 +116,9 @@ export default class HttpTileRepositoryService {
         return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
 
-    newGame(players: string[]): Promise<string[]> {
+    newGame(players: any): Promise<any> {
         return this.https
-            .post<string[]>(backurl + '/Game/New/', players, httpOptions)
+            .post<any>(backurl + '/Game/New/', players, httpOptions)
             .toPromise()
             .then();
     }

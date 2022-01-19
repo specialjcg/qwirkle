@@ -21,14 +21,14 @@
 .position-pick{
   position: absolute;
   top:88vh;
-  left :57vw;
+  left :80%;
   z-index: 0;
 }
 
 .scenevide2 {
   position: absolute;
   top:89vh;
-  left :57vw;
+  left :80%;
   z-index: 0;
   width:150px;
   height:100px;
