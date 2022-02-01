@@ -3,6 +3,7 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
 import { Router } from '@angular/router';
 import { ListGamedId } from '../../domain/player';
 import { toListGamedId } from '../../domain/games';
+import { HttpInstantGameService } from '../../infra/httpRequest/http-instant-game.service';
 
 @Component({
     selector: 'app-menu',
@@ -19,6 +20,7 @@ export class MenuComponent implements OnInit {
     @Output() gameIdChanged = new EventEmitter<number>();
 
     constructor(
+        private instantGameService: HttpInstantGameService,
         private serviceQwirkle: HttpTileRepositoryService,
         private router: Router
     ) {
@@ -35,9 +37,17 @@ export class MenuComponent implements OnInit {
             .then(() => this.router.navigate(['/login']).then());
     }
 
-
-
     gameChange($event: number) {
         this.gameIdChanged.emit($event);
+    }
+
+    instantGameTwoPlayer() {
+        this.instantGameService.instantGame(2).subscribe((result) => {
+            if (result.startsWith('waiting for ')) {
+                console.log('toto');
+            } else {
+                this.router.navigate(['/game/' + JSON.parse(result)[0].gameId]).then();
+            }
+        });
     }
 }

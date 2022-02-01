@@ -22,13 +22,13 @@ import {
     toPlate
 } from '../../../domain/Tile';
 import {
-    fromSwap,
-    fromBoard,
-    ListGamedId,
-    ListUsersId,
-    Player,
-    Rack,
-    TilesOnBoard
+  fromSwap,
+  fromBoard,
+  ListGamedId,
+  ListUsersId,
+  Player,
+  Rack,
+  TilesOnBoard, toChangeRack
 } from '../../../domain/player';
 import { SignalRService } from '../../../infra/httpRequest/services/signal-r.service';
 import { HttpClient } from '@angular/common/http';
@@ -110,8 +110,6 @@ export class GameqwirkleComponent implements OnInit {
     public panZoomAPI!: PanZoomAPI;
 
     players: Player[] = [];
-
-
 
     playTileTempory: TileViewModel[] = [];
 
@@ -383,7 +381,8 @@ export class GameqwirkleComponent implements OnInit {
         this.serviceQwirkle
             .playTileSimulation(this.playTileTempory)
             .then(async (resp) => {
-                this.score = resp;
+                console.log(resp);
+                this.score = toChangeRack(resp);
                 this.autoZoom().then();
             });
     }
@@ -580,6 +579,7 @@ export class GameqwirkleComponent implements OnInit {
 
     Bot() {
         this.serviceQwirkle.getBot(this.gameId).then((result: TilesOnBoard[]) => {
+            console.log(result);
             if (result === null) {
                 this.swapTilesRandom().then();
             } else {

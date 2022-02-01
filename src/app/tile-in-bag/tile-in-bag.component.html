@@ -1,13 +1,19 @@
 
   <mat-card class="card-group colorTurnOn" >
     <mat-card-title-group class="card"   >
-      <mat-card-title class="name">Bag</mat-card-title>
+      <mat-card-title class="name" *ngIf="this.swap.length===0">
+        <span class="bag">Bag</span>
+      </mat-card-title>
+      <mat-card-title class="name" *ngIf="this.swap.length!==0">
 
+        <mat-icon (click)="Swap()" class="swap-icon">swap_horiz</mat-icon>
+          <span class="swap">Swap</span>
+      </mat-card-title>
     </mat-card-title-group>
     <mat-card-content *ngIf="this.Bag!==0">
-      <span>Reste:<a>{{this.Bag}}</a></span>
+      <a class="reste">Reste:<a>{{this.Bag}}</a></a>
 
-      <span><mat-icon (click)="Swap()"  *ngIf="this.swap.length!==0">swap_horiz</mat-icon></span>
+
 
     </mat-card-content>
 
