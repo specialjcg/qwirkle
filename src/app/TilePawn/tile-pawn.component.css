@@ -202,7 +202,7 @@
   width: 100px;
   height: 100px;
   border: none;
-  background-color: black;
+  background-color: transparent!important;
   color: #fff;
   font-size: 1.25rem;
   letter-spacing: 2px;
