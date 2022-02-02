@@ -22,13 +22,14 @@ import {
     toPlate
 } from '../../../domain/Tile';
 import {
-  fromSwap,
-  fromBoard,
-  ListGamedId,
-  ListUsersId,
-  Player,
-  Rack,
-  TilesOnBoard, toChangeRack
+    fromSwap,
+    fromBoard,
+    ListGamedId,
+    ListUsersId,
+    Player,
+    Rack,
+    TilesOnBoard,
+    toChangeRack
 } from '../../../domain/player';
 import { SignalRService } from '../../../infra/httpRequest/services/signal-r.service';
 import { HttpClient } from '@angular/common/http';
@@ -147,6 +148,12 @@ export class GameqwirkleComponent implements OnInit {
             'ReceivePlayersInGame',
             (playersIds: any[]) => {
                 this.receivePlayersInGame(playersIds);
+            }
+        );
+        this.signalRService.hubConnection.on(
+            'ReceiveInstantGameStarted',
+            (playerNumberForStartGame: number, gameId: number) => {
+                this.router.navigate(['/game/' + gameId]).then();
             }
         );
         this.signalRService.hubConnection.on(
