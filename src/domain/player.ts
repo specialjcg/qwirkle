@@ -51,9 +51,13 @@ export interface RestBoard {
 }
 export interface RestRack {
     code: number;
-    tilesPlayed: [];
+    gameId: number;
+    move: {
+        tilesPlayed: [];
+
+        points: number;
+    };
     newRack: [];
-    points: number;
 }
 export interface RestBag {
     bag: { tiles: TilesOnBag[] };
@@ -101,9 +105,9 @@ export const toPlayers = (result: RestBoard): Player[] => {
 export const toChangeRack = (rack: RestRack): Rack => {
     return {
         code: rack.code,
-        tilesPlayed: rack.tilesPlayed,
+        tilesPlayed: rack.move.tilesPlayed,
         newRack: rack.newRack,
-        points: rack.points
+        points: rack.move.points
     };
 };
 export const fromBoard = (result: Tile[], gameId: number): TileViewModel[] => {

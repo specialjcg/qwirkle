@@ -106,6 +106,7 @@
 .img2d {
   max-width: 100%;
   max-height: 100%;
+
 }
 
 .cub-1 .face {
@@ -202,11 +203,12 @@
   width: 100px;
   height: 100px;
   border: none;
-  background-color: black;
+  background-color: transparent!important;
   color: #fff;
   font-size: 1.25rem;
   letter-spacing: 2px;
   outline: none;
+
 }
 .btnempty2d {
   position: relative;

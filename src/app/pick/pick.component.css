@@ -24,14 +24,16 @@
   left :80%;
   z-index: 0;
 }
-
 .scenevide2 {
+
+
+
   position: absolute;
-  top:89vh;
+  top:90vh;
   left :80%;
   z-index: 0;
   width:150px;
-  height:100px;
+  height:87px;
   max-width: 100%;
   border: solid 1px #ccc;
   display: flex;
@@ -60,7 +62,11 @@
   flex-wrap: wrap;
 
 }
+span{
+  font-size: 15px;
+  color:red;
 
+}
 .example-box2d {
 
 
