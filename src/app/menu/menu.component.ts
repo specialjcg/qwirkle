@@ -43,20 +43,20 @@ export class MenuComponent implements OnInit {
         this.gameIdChanged.emit($event);
     }
 
-    instantGameTwoPlayer() {
-        this.instantGameService.instantGame(2).subscribe((result) => {
+    instantGameTwoPlayer(playersNumber : number) {
+        this.instantGameService.instantGame(playersNumber).subscribe((result) => {
             if (result.startsWith('waiting for ')) {
                 this.signalRService.hubConnection
                     .start()
                     .then(() => {
                         console.log('Connection started');
-                        this.signalRService.sendUserWaitingInstantGame(2, 'toto');
+                        this.signalRService.sendUserWaitingInstantGame(playersNumber, 'playerName'); //todo playerName
                     })
                     .catch((error) =>
                         console.log('Error instant game starting connection: ' + error)
                     );
             } else {
-                this.router.navigate(['/game/' + JSON.parse(result)[0].gameId]).then();
+                this.router.navigate(['/game/' + result]).then();
             }
         });
     }
