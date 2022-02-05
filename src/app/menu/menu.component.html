@@ -16,10 +16,9 @@
   </button>
   <button mat-menu-item [matMenuTriggerFor]="players">instantGame</button>
   <mat-menu #players="matMenu">
-    <button mat-menu-item (click)="instantGameTwoPlayer()">2</button>
-    <button mat-menu-item routerLink='/opponents'>3</button>
-    <button mat-menu-item routerLink='/opponents'>4</button>
-
+    <button mat-menu-item (click)="instantGameTwoPlayer(2)">2</button>
+    <button mat-menu-item (click)="instantGameTwoPlayer(3)">3</button>
+    <button mat-menu-item (click)="instantGameTwoPlayer(4)">4</button>
   </mat-menu>
 </mat-menu>
 
