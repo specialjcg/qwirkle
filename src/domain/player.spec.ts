@@ -907,9 +907,13 @@ describe('player', () => {
     it('should return Rack with restRack', () => {
         const rack: RestRack = {
             code: 0,
-            tilesPlayed: [],
-            newRack: [],
-            points: 0
+            gameId: 0,
+            move: {
+                tilesPlayed: [],
+
+                points: 0
+            },
+            newRack: []
         };
         expect(toChangeRack(rack)).toEqual({
             code: 0,
