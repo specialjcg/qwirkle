@@ -3,6 +3,8 @@ import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-reposit
 import { Router } from '@angular/router';
 import { ListGamedId } from '../../domain/player';
 import { toListGamedId } from '../../domain/games';
+import { HttpInstantGameService } from '../../infra/httpRequest/http-instant-game.service';
+import { SignalRService } from '../../infra/httpRequest/services/signal-r.service';
 
 @Component({
     selector: 'app-menu',
@@ -19,7 +21,9 @@ export class MenuComponent implements OnInit {
     @Output() gameIdChanged = new EventEmitter<number>();
 
     constructor(
+        private instantGameService: HttpInstantGameService,
         private serviceQwirkle: HttpTileRepositoryService,
+        public signalRService: SignalRService,
         private router: Router
     ) {
         this.serviceQwirkle
@@ -35,9 +39,25 @@ export class MenuComponent implements OnInit {
             .then(() => this.router.navigate(['/login']).then());
     }
 
-
-
     gameChange($event: number) {
         this.gameIdChanged.emit($event);
+    }
+
+    instantGameTwoPlayer(playersNumber : number) {
+        this.instantGameService.instantGame(playersNumber).subscribe((result) => {
+            if (result.startsWith('waiting for ')) {
+                this.signalRService.hubConnection
+                    .start()
+                    .then(() => {
+                        console.log('Connection started');
+                        this.signalRService.sendUserWaitingInstantGame(playersNumber, 'playerName'); //todo playerName
+                    })
+                    .catch((error) =>
+                        console.log('Error instant game starting connection: ' + error)
+                    );
+            } else {
+                this.router.navigate(['/game/' + result]).then();
+            }
+        });
     }
 }

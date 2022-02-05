@@ -30,7 +30,7 @@ describe('PickComponent', () => {
         expect(component.plate).toEqual([]);
         expect(component.board).toEqual([]);
         expect(component.voidTile).toEqual([
-            { disabled: false,  shape: 0, color: 0, y: 0, x: 0 }
+            { disabled: false, shape: 0, color: 0, y: 0, x: 0 }
         ]);
         expect(component.swap).toEqual([]);
         expect(component).toBeTruthy();

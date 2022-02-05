@@ -10,9 +10,15 @@
     <mat-icon>exit_to_app</mat-icon>
     <span>Logout</span>
   </button>
-  <button *ngIf="boardLength===0" mat-menu-item routerLink='/opponents' >
+  <button  mat-menu-item routerLink='/opponents' >
     <mat-icon>person_pin</mat-icon>
-    <span>opponents</span>
+    <span>New Game</span>
   </button>
+  <button mat-menu-item [matMenuTriggerFor]="players">instantGame</button>
+  <mat-menu #players="matMenu">
+    <button mat-menu-item (click)="instantGameTwoPlayer(2)">2</button>
+    <button mat-menu-item (click)="instantGameTwoPlayer(3)">3</button>
+    <button mat-menu-item (click)="instantGameTwoPlayer(4)">4</button>
+  </mat-menu>
 </mat-menu>
 

@@ -22,6 +22,7 @@ import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/cho
 import { TileInBagComponent } from './tile-in-bag/tile-in-bag.component';
 import { MenuComponent } from './menu/menu.component';
 import {MatMenuModule} from "@angular/material/menu";
+import { RackSupportComponent } from './rack-support/rack-support.component';
 
 export class MyAppModule {}
 
@@ -42,7 +43,8 @@ export class MyAppModule {}
         GameqwirkleComponent,
         ChooseOpponentToPlayerComponent,
         TileInBagComponent,
-        MenuComponent
+        MenuComponent,
+        RackSupportComponent
     ],
     imports: [
         BrowserAnimationsModule,
