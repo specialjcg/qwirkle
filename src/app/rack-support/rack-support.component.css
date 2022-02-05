@@ -1,0 +1,17 @@
+.example-list2d {
+position: absolute;
+  top :89vh;
+  left:25vw;
+z-index:-1;
+  width:600px;
+  max-width: 150%;
+
+  border-radius: 4px;
+  overflow: hidden;
+  background:linear-gradient(to left, #283593, #1976d2);
+  /*background-color:transparent!important;*/
+  -webkit-box-shadow: 5px 5px 15px 5px #000000;
+  box-shadow: 5px 5px 15px 5px #000000;
+height: 100px;
+
+}

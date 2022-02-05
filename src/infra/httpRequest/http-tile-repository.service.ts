@@ -86,9 +86,9 @@ export default class HttpTileRepositoryService {
             .then((response) => toChangeRack(response));
     }
 
-    playTileSimulation(tiles: TileViewModel[]): Promise<Rack> {
+    playTileSimulation(tiles: TileViewModel[]): Promise<RestRack> {
         return this.https
-            .post<RestBoard>(backurl + '/Action/PlayTilesSimulation/', tiles, httpOptions)
+            .post<RestRack>(backurl + '/Action/PlayTilesSimulation/', tiles, httpOptions)
             .toPromise()
             .then();
     }
@@ -116,9 +116,9 @@ export default class HttpTileRepositoryService {
         return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
 
-    newGame(players: string[]): Promise<string[]> {
+    newGame(players: any): Promise<any> {
         return this.https
-            .post<string[]>(backurl + '/Game/New/', players, httpOptions)
+            .post<any>(backurl + '/Game/New/', players, httpOptions)
             .toPromise()
             .then();
     }

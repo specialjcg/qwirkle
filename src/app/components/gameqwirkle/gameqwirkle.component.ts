@@ -28,7 +28,8 @@ import {
     ListUsersId,
     Player,
     Rack,
-    TilesOnBoard
+    TilesOnBoard,
+    toChangeRack
 } from '../../../domain/player';
 import { SignalRService } from '../../../infra/httpRequest/services/signal-r.service';
 import { HttpClient } from '@angular/common/http';
@@ -111,8 +112,6 @@ export class GameqwirkleComponent implements OnInit {
 
     players: Player[] = [];
 
-
-
     playTileTempory: TileViewModel[] = [];
 
     rackTile: TileViewModel[] = [];
@@ -149,6 +148,12 @@ export class GameqwirkleComponent implements OnInit {
             'ReceivePlayersInGame',
             (playersIds: any[]) => {
                 this.receivePlayersInGame(playersIds);
+            }
+        );
+        this.signalRService.hubConnection.on(
+            'ReceiveInstantGameStarted',
+            (playerNumberForStartGame: number, gameId: number) => {
+                this.router.navigate(['/game/' + gameId]).then();
             }
         );
         this.signalRService.hubConnection.on(
@@ -383,7 +388,8 @@ export class GameqwirkleComponent implements OnInit {
         this.serviceQwirkle
             .playTileSimulation(this.playTileTempory)
             .then(async (resp) => {
-                this.score = resp;
+                console.log(resp);
+                this.score = toChangeRack(resp);
                 this.autoZoom().then();
             });
     }
@@ -580,6 +586,7 @@ export class GameqwirkleComponent implements OnInit {
 
     Bot() {
         this.serviceQwirkle.getBot(this.gameId).then((result: TilesOnBoard[]) => {
+            console.log(result);
             if (result === null) {
                 this.swapTilesRandom().then();
             } else {

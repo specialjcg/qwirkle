@@ -1,17 +1,35 @@
 
 
-a{
+.reste{
   font-size:12px;
   font-weight:bold;
   color: black;
 
 }
-span{
-  font-weight:bold;
-  font-size:10px;
+.bag{
 
+  font-weight:bold;
+  font-size:20px;
+}
+.swap{
+  position: relative;
+  top: 1px;
+  padding-right: -20px; /* optional */
+  font-weight:bold;
+  font-size:20px;
+  margin-right: 20px;
+}
+
+.swap-icon{
+  position: relative;
+  top: -2px;
+  left: -5px;
+  padding-left: -25px; /* optional */
+  font-weight:bold;
+  font-size:30px;
 
 }
+
 .card-group {
   position: absolute;
   display: flex;
@@ -19,7 +37,7 @@ span{
 
   gap: 10px;
   top: 84vh;
-  left: 57vw;
+  left :80%;
 width: 150px;
 height: 120px;
 
@@ -31,8 +49,10 @@ height: 120px;
 .colorTurnOn{
   background: linear-gradient(to left, #283593, #1976d2);
 }
-.card {
-  height: 25px;
+:host .mat-card-title-group {
+  position: relative;
+top: -10px;
+  height: 35px;
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(30px);  /* This will produce the blur */
@@ -40,20 +60,24 @@ height: 120px;
   box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   flex: 0 1 auto;
-  text-align: center;
+  text-align: left;
   line-height: 20px;
   font-size: 10px;
-
-  padding-left:10px;
-  padding-right:10px;
+  padding-top:5px;
+  padding-left:5px;
+  padding-right:5px;
 }
 
 .name
 {
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: 2px;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
-
+padding-top: 2px;
+padding-bottom: 2px;
+  padding-left:-5px;
+  display: flex;
+  align-items: center;
 }
 

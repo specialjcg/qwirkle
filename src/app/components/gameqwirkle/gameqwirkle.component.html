@@ -21,6 +21,11 @@
                                                      *cdkDragPreview></app-tile-pawn></app-tile-pawn>
 
           </div>
+
+        </div>
+        <div *ngIf="this.rack.length===0" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.rack" class="example-list2d"
+             (cdkDropListDropped)="dropResult($event)">
+          <app-tile-pawn></app-tile-pawn>
         </div>
       </div>
     </div>
@@ -30,6 +35,7 @@
 
 
   <button class="positionBot" *ngIf="this.player.pseudo==='jc12'" (click)="Bot()">Bot</button>
+  <app-rack-support></app-rack-support>
   <mat-card class="container">
     <div #scene id="scene" *ngIf="this.plate.length!==0">
       <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
@@ -38,6 +44,7 @@
                [style.transform]="getLineStyle(line,i)">
             <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d"
                  (cdkDropListDropped)="drop($event,i)">
+
               <div *ngFor="let tile of line;let j=index" cdkDrag class="example-box2d"
                    [cdkDragDisabled]="!tile.disabled">
                 <app-tile-pawn [image]="getRackTileImage(tile)" [isDrag]="false" >
@@ -57,5 +64,7 @@
       </div>
     </div>
   </mat-card>
+
   <app-pick *ngIf="this.player.isTurn" [plate]="plate" [board]="board" [swap]="swap" [bagLength]="bagLength"  (swapClick)="swapTiles()"></app-pick>
 </div>
+

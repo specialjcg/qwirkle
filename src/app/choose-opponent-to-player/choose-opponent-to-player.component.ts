@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 import { Router } from '@angular/router';
 
@@ -24,6 +24,8 @@ export class ChooseOpponentToPlayerComponent implements OnInit {
     NewGame(): void {
         this.serviceQwirkle
             .newGame([this.pseudo1, this.pseudo2, this.pseudo3])
-            .then(() => this.router.navigate(['/game']).then());
+            .then((result) => {
+                this.router.navigate(['/game/' + result[0].gameId]).then();
+            });
     }
 }
