@@ -24,8 +24,6 @@ export class ChooseOpponentToPlayerComponent implements OnInit {
     NewGame(): void {
         this.serviceQwirkle
             .newGame([this.pseudo1, this.pseudo2, this.pseudo3])
-            .then((result) => {
-                this.router.navigate(['/game/' + result[0].gameId]).then();
-            });
+            .then((gameId) => this.router.navigate(['/game/' + gameId]).then());
     }
 }
