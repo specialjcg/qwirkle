@@ -4,7 +4,7 @@
   <a *ngIf="isNameTurn(name.pseudo)">{{this.nameToTurn}} &nbsp; round</a>
   <mat-card-title-group class="card"   >
 
-    <mat-card-title class="name">  {{name.pseudo}} </mat-card-title>
+    <mat-card-title class="name" [ngClass]="playerTypoToTurnClass(name.pseudo)">  {{name.pseudo}} </mat-card-title>
 
   </mat-card-title-group>
 

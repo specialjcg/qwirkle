@@ -1,15 +1,18 @@
 
-<app-menu [boardLength]="this.board.length" [gameId]="gameId" (gameIdChanged)="gameChange($event)"></app-menu>
-
+<app-menu [(waitingPlayer)]="waitingPlayer" [boardLength]="this.board.length" [gameId]="gameId" (gameIdChanged)="gameChange($event)" [(userName)]="userName" ></app-menu>
+<app-waiting-player [userName]="userName" *ngIf="waitingPlayer"></app-waiting-player>
 <app-choose-player *ngIf="this.gameId!==0" class="positionPlayer" [gameId]="gameId" [nameToTurn]="this.nameToTurn"  [winner]="this.winner"
-                   [players]="this.players"></app-choose-player>
+                   [players]="this.players">
+
+</app-choose-player>
+
+<mat-card *ngIf="this.gameId===0" class="container"></mat-card>
 
 
 
 
 
-
-<div cdkDropListGroup>
+<div *ngIf="this.gameId!==0" cdkDropListGroup>
   <div *ngIf="this.winner === ''" class="position-firstPlayer">
     <div class="example-container">
       <div>

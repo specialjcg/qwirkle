@@ -19,6 +19,9 @@ export class HttpInstantGameService {
     constructor(private https: HttpClient) {}
 
     instantGame(playersNumber: number): Observable<string> {
-        return this.https.get<string>(backurl + '/InstantGame/Join/' + playersNumber, httpNameTurnoptions);
+        return this.https.get<string>(
+            backurl + '/InstantGame/Join/' + playersNumber,
+            httpNameTurnoptions
+        );
     }
 }

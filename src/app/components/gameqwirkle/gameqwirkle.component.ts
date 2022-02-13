@@ -24,7 +24,6 @@ import {
 import {
     fromSwap,
     fromBoard,
-    ListGamedId,
     ListUsersId,
     Player,
     Rack,
@@ -128,6 +127,10 @@ export class GameqwirkleComponent implements OnInit {
 
     private modelChangedSubscription!: Subscription;
 
+    userName: string[] = [];
+
+    waitingPlayer = false;
+
     private apiSubscription!: Subscription;
 
     constructor(
@@ -141,7 +144,7 @@ export class GameqwirkleComponent implements OnInit {
 
     ngOnInit(): void {
         this.gameId = Number(this.route.snapshot.paramMap.get('id'));
-
+        this.userName.push(this.serviceQwirkle.getUserName());
         this.signalRService.startConnection();
 
         this.signalRService.hubConnection.on(
@@ -154,6 +157,14 @@ export class GameqwirkleComponent implements OnInit {
             'ReceiveInstantGameStarted',
             (playerNumberForStartGame: number, gameId: number) => {
                 this.router.navigate(['/game/' + gameId]).then();
+            }
+        );
+        this.signalRService.hubConnection.on(
+            'ReceiveInstantGameExpected',
+            (userName: string) => {
+                this.userName.push(userName);
+                console.log(this.userName);
+                this.changeDetector.detectChanges();
             }
         );
         this.signalRService.hubConnection.on(
