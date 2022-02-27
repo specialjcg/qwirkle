@@ -16,8 +16,19 @@
 .colorTurnOff{
   background: linear-gradient(to left, #283593, #1976d2);
 }
+.colorTextTurnOff{
+  color: black;
+
+}
 .colorTurnOn{
+
   background: linear-gradient(to left, red, rosybrown);
+}
+
+.colorTextTurnOn{
+  color: rgba(255, 255, 255, 0.8);
+
+
 }
 .card {
   height: 25px;
@@ -55,7 +66,6 @@ mat-card-content{
 .name
 {
   padding-top: 9px;
-  color: rgba(255, 255, 255, 0.8);
   font-weight: 400;
   letter-spacing: 2px;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);

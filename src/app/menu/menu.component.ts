@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output
+} from '@angular/core';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 import { Router } from '@angular/router';
 import { ListGamedId } from '../../domain/player';
@@ -20,11 +27,21 @@ export class MenuComponent implements OnInit {
 
     @Output() gameIdChanged = new EventEmitter<number>();
 
+    @Input() userName: string[] = [];
+
+    @Output() userNameChange = new EventEmitter<string[]>();
+
+    @Input() waitingPlayer = false;
+
+    @Output() waitingPlayerChange = new EventEmitter<boolean>();
+
     constructor(
         private instantGameService: HttpInstantGameService,
         private serviceQwirkle: HttpTileRepositoryService,
         public signalRService: SignalRService,
-        private router: Router
+        private router: Router,
+        private login: HttpTileRepositoryService,
+        private changeDetector: ChangeDetectorRef
     ) {
         this.serviceQwirkle
             .getGames()
@@ -43,14 +60,22 @@ export class MenuComponent implements OnInit {
         this.gameIdChanged.emit($event);
     }
 
-    instantGameTwoPlayer(playersNumber : number) {
+    instantGamePlayer(playersNumber: number) {
+        const username = this.login.getUserName();
         this.instantGameService.instantGame(playersNumber).subscribe((result) => {
             if (result.startsWith('waiting for ')) {
                 this.signalRService.hubConnection
                     .start()
                     .then(() => {
-                        console.log('Connection started');
-                        this.signalRService.sendUserWaitingInstantGame(playersNumber, 'playerName'); //todo playerName
+                        console.log('Connection started' + username);
+                        this.signalRService.sendUserWaitingInstantGame(
+                            playersNumber,
+                            username
+                        );
+                        this.waitingPlayer = true;
+                        this.waitingPlayerChange.emit(true);
+                        this.changeDetector.detectChanges();
+                        //todo si le joueur sort gérer la fille d'attente
                     })
                     .catch((error) =>
                         console.log('Error instant game starting connection: ' + error)

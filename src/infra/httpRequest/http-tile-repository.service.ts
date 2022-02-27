@@ -30,10 +30,17 @@ const httpOptions = { headers: headers, withCredentials: true };
     providedIn: 'root'
 })
 export default class HttpTileRepositoryService {
+    private loginusername = '';
+
     constructor(private https: HttpClient) {}
 
     LoginUser(login: Login): Observable<boolean> {
+        this.loginusername = login.pseudo;
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
+    }
+
+    getUserName(): string {
+        return this.loginusername;
     }
 
     setRegister(register: Register): Observable<boolean> {
