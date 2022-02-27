@@ -46,7 +46,7 @@
 
 
    border-radius: 10px;
-  background: linear-gradient(-45deg, #9BF8F4, #8CCEF5, #7EA5F6, #6F7BF7);
+  background: linear-gradient(-45deg, #69ffa5, #8cf5bd, #7ef68e, rgb(173, 233, 139));
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
   transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
@@ -81,7 +81,7 @@
   /*background: -webkit-linear-gradient(90deg, hsla(177, 87%, 79%, 1) 0%, hsla(235, 89%, 70%, 1) 100%);*/
 
   border-radius: 10px;
-  background: linear-gradient(-45deg, #9BF8F4, #8CCEF5, #7EA5F6, #6F7BF7);
+  background: linear-gradient(-45deg, #69ffa5, #8cf5bd, #7ef68e, rgb(173, 233, 139));
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 

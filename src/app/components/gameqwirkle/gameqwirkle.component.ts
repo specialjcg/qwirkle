@@ -8,6 +8,7 @@ import {
 } from 'ngx-panzoom';
 import { Subscription } from 'rxjs';
 import {
+    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -47,7 +48,8 @@ interface Rect {
 @Component({
     selector: 'app-gameqwirkle',
     templateUrl: './gameqwirkle.component.html',
-    styleUrls: ['./gameqwirkle.component.css']
+    styleUrls: ['./gameqwirkle.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameqwirkleComponent implements OnInit {
     @ViewChild('scene', { static: false }) scene!: ElementRef;
@@ -207,14 +209,9 @@ export class GameqwirkleComponent implements OnInit {
         this.changeDetector.detectChanges();
     }
 
-    ngAfterViewInit(): void {
-        this.resetZoomToFit();
-
-        this.changeDetector.detectChanges();
-    }
-
     resetZoomToFit(): void {
         const shelveDisplay = document.querySelector('.container') as HTMLElement;
+
         const height = shelveDisplay.clientHeight;
         const width = shelveDisplay.clientWidth;
         this.panzoomConfig.initialZoomToFit = {
@@ -538,7 +535,7 @@ export class GameqwirkleComponent implements OnInit {
                         this.nameToTurn = '';
 
                         this.game().then();
-                        console.log(this.player);
+                        console.log(this.player.isTurn);
                         this.signalRService.hubConnection
                             .start()
                             .then(() => {
