@@ -30,6 +30,10 @@ export class ChoosePlayerComponent {
             : 'card-group colorTurnOff';
     }
 
+    playerTypoToTurnClass(name: string): string {
+        return name === this.nameToTurn ? 'colorTextTurnOn' : 'colorTextTurnOff';
+    }
+
     isNameTurn(name: string): boolean {
         return this.nameToTurn === name;
     }

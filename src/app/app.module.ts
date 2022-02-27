@@ -23,6 +23,8 @@ import { TileInBagComponent } from './tile-in-bag/tile-in-bag.component';
 import { MenuComponent } from './menu/menu.component';
 import {MatMenuModule} from "@angular/material/menu";
 import { RackSupportComponent } from './rack-support/rack-support.component';
+import { WaitingPlayerComponent } from './waiting-player/waiting-player.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 export class MyAppModule {}
 
@@ -44,14 +46,16 @@ export class MyAppModule {}
         ChooseOpponentToPlayerComponent,
         TileInBagComponent,
         MenuComponent,
-        RackSupportComponent
+        RackSupportComponent,
+        WaitingPlayerComponent
     ],
     imports: [
         BrowserAnimationsModule,
         AngularMaterialModule,
         AppRoutingModule,
         MatInputModule,
-        MatMenuModule
+        MatMenuModule,
+        MatProgressSpinnerModule
     ],
     providers: [HttpTileRepositoryService],
     bootstrap: [AppComponent],

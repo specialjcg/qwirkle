@@ -8,6 +8,7 @@ import {
 } from 'ngx-panzoom';
 import { Subscription } from 'rxjs';
 import {
+    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -24,7 +25,6 @@ import {
 import {
     fromSwap,
     fromBoard,
-    ListGamedId,
     ListUsersId,
     Player,
     Rack,
@@ -48,7 +48,8 @@ interface Rect {
 @Component({
     selector: 'app-gameqwirkle',
     templateUrl: './gameqwirkle.component.html',
-    styleUrls: ['./gameqwirkle.component.css']
+    styleUrls: ['./gameqwirkle.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameqwirkleComponent implements OnInit {
     @ViewChild('scene', { static: false }) scene!: ElementRef;
@@ -128,6 +129,10 @@ export class GameqwirkleComponent implements OnInit {
 
     private modelChangedSubscription!: Subscription;
 
+    userName: string[] = [];
+
+    waitingPlayer = false;
+
     private apiSubscription!: Subscription;
 
     constructor(
@@ -141,7 +146,7 @@ export class GameqwirkleComponent implements OnInit {
 
     ngOnInit(): void {
         this.gameId = Number(this.route.snapshot.paramMap.get('id'));
-
+        this.userName.push(this.serviceQwirkle.getUserName());
         this.signalRService.startConnection();
 
         this.signalRService.hubConnection.on(
@@ -154,6 +159,14 @@ export class GameqwirkleComponent implements OnInit {
             'ReceiveInstantGameStarted',
             (playerNumberForStartGame: number, gameId: number) => {
                 this.router.navigate(['/game/' + gameId]).then();
+            }
+        );
+        this.signalRService.hubConnection.on(
+            'ReceiveInstantGameExpected',
+            (userName: string) => {
+                this.userName.push(userName);
+                console.log(this.userName);
+                this.changeDetector.detectChanges();
             }
         );
         this.signalRService.hubConnection.on(
@@ -196,14 +209,9 @@ export class GameqwirkleComponent implements OnInit {
         this.changeDetector.detectChanges();
     }
 
-    ngAfterViewInit(): void {
-        this.resetZoomToFit();
-
-        this.changeDetector.detectChanges();
-    }
-
     resetZoomToFit(): void {
         const shelveDisplay = document.querySelector('.container') as HTMLElement;
+
         const height = shelveDisplay.clientHeight;
         const width = shelveDisplay.clientWidth;
         this.panzoomConfig.initialZoomToFit = {
@@ -527,7 +535,7 @@ export class GameqwirkleComponent implements OnInit {
                         this.nameToTurn = '';
 
                         this.game().then();
-                        console.log(this.player);
+                        console.log(this.player.isTurn);
                         this.signalRService.hubConnection
                             .start()
                             .then(() => {
