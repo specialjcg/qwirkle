@@ -920,7 +920,9 @@ describe('create tiles list', () => {
                     color: 4,
                     disabled: false
                 }
-            ].sort((a, b) => a.x - b.x).sort((a, b) => a.y - b.y)
+            ]
+                .sort((a, b) => a.x - b.x)
+                .sort((a, b) => a.y - b.y)
         );
     });
     it('should insert a tile from line  in board in other line tile ', () => {

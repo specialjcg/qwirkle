@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import HttpTileRepositoryService from '../../infra/httpRequest/http-tile-repository.service';
 import { ListGamedId, Player } from '../../domain/player';
 import { toListGamedId } from '../../domain/games';
-import {Router} from "@angular/router";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-choose-game',
@@ -16,13 +16,13 @@ export class ChooseGameComponent {
 
     @Input() gameId = 0;
 
-    constructor(public service: HttpTileRepositoryService,  private router: Router) {}
+    constructor(public service: HttpTileRepositoryService, private router: Router) {}
 
     async ngOnInit(): Promise<void> {
         this.service.getGames().subscribe((games) => (this.games = toListGamedId(games)));
     }
 
     async gameChoice(gameId: number): Promise<void> {
-        this.router.navigate(['/game/' +  gameId ]).then();
+        this.router.navigate(['/game/' + gameId]).then();
     }
 }
