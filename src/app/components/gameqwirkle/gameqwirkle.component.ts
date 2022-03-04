@@ -416,6 +416,7 @@ export class GameqwirkleComponent implements OnInit {
                 this.board = board.boards;
                 this.bagLength = board.bag.tiles.length;
                 this.plate = toPlate(this.board);
+                console.log(this.plate);
 
                 this.players = board.players.sort(
                     (a, b) => a.gamePosition - b.gamePosition
@@ -535,7 +536,6 @@ export class GameqwirkleComponent implements OnInit {
                         this.nameToTurn = '';
 
                         this.game().then();
-                        console.log(this.player.isTurn);
                         this.signalRService.hubConnection
                             .start()
                             .then(() => {
