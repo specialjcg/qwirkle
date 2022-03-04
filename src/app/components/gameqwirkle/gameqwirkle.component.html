@@ -45,7 +45,7 @@
         <pan-zoom [config]="panzoomConfig">
           <div class="position-secondPlayer" *ngFor="let line of plate;let i=index"
                [style.transform]="getLineStyle(line,i)">
-            <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2d"
+            <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="line" class="example-list2dboard"
                  (cdkDropListDropped)="drop($event,i)">
 
               <div *ngFor="let tile of line;let j=index" cdkDrag class="example-box2d"

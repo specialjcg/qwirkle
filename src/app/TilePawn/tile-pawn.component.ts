@@ -27,7 +27,7 @@ export class TilePawnComponent {
     }
 
     getclassbtn2dDrag(scale: number) {
-        if (Number.isNaN(scale)|| scale===0) scale = 1;
+        if (Number.isNaN(scale) || scale === 0) scale = 1;
         return scale * 100 + 'px';
     }
 }
