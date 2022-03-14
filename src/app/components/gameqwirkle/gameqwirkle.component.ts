@@ -37,6 +37,9 @@ import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repo
 import { toRarrange, toRarrangeRack, toTiles } from '../../../domain/SetPositionTile';
 import { TileViewModel } from '../../../domain/tiles';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ReturnCode } from '../../../domain/code-return';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogCodeComponent } from '../../dialog-code/dialog-code.component';
 
 interface Rect {
     x: number; // the x0 (top left) coordinate
@@ -92,6 +95,8 @@ export class GameqwirkleComponent implements OnInit {
 
     playerNameToPlay = '';
 
+    tilesLastPlayer: Tile[] = [];
+
     nameToTurn = '';
 
     panzoomModel!: PanZoomModel;
@@ -141,7 +146,8 @@ export class GameqwirkleComponent implements OnInit {
         private http: HttpClient,
         private serviceQwirkle: HttpTileRepositoryService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        public dialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -165,13 +171,12 @@ export class GameqwirkleComponent implements OnInit {
             'ReceiveInstantGameExpected',
             (userName: string) => {
                 this.userName.push(userName);
-                console.log(this.userName);
                 this.changeDetector.detectChanges();
             }
         );
         this.signalRService.hubConnection.on(
             'ReceiveTilesPlayed',
-            (playerId: number, scoredPoints: number, tilesPlayed: any[]) => {
+            (playerId: number, scoredPoints: number, tilesPlayed: never[]) => {
                 this.receiveTilesPlayed(playerId, scoredPoints, tilesPlayed).then();
             }
         );
@@ -233,10 +238,11 @@ export class GameqwirkleComponent implements OnInit {
         scoredPoints: number,
         tilesPlayed: any[]
     ) => {
+        this.setTilesLastPlayed(tilesPlayed);
         this.game().then(() => {
             const test = !this.players.some((pl) => pl.pseudo === 'bot1')
                 ? 0
-                : this.players.find((pl) => pl.pseudo === 'bot1')!.id;
+                : this.players.find((pl) => pl.pseudo === 'bot1')?.id;
             if (
                 playerId === test &&
                 this.winner === '' &&
@@ -246,6 +252,20 @@ export class GameqwirkleComponent implements OnInit {
             }
         });
     };
+
+    private setTilesLastPlayed(tilesPlayed: any[]) {
+        this.tilesLastPlayer = [];
+        for (const tile of tilesPlayed) {
+            const newTile = {
+                disabled: false,
+                shape: tile.shape,
+                color: tile.color,
+                y: tile.coordinates.y,
+                x: tile.coordinates.x
+            };
+            this.tilesLastPlayer.push(newTile);
+        }
+    }
 
     receiveTilesSwapped = (playerId: number) => {
         console.log('player ' + playerId + 'has swapped some tiles'); // TODO replace log
@@ -396,7 +416,6 @@ export class GameqwirkleComponent implements OnInit {
         this.serviceQwirkle
             .playTileSimulation(this.playTileTempory)
             .then(async (resp) => {
-                console.log(resp);
                 this.score = toChangeRack(resp);
                 this.autoZoom().then();
             });
@@ -416,11 +435,8 @@ export class GameqwirkleComponent implements OnInit {
                 this.board = board.boards;
                 this.bagLength = board.bag.tiles.length;
                 this.plate = toPlate(this.board);
-                console.log(this.plate);
-
-                this.players = board.players.sort(
-                    (a, b) => a.gamePosition - b.gamePosition
-                );
+                board.players.sort((a, b) => a.gamePosition - b.gamePosition);
+                this.players = board.players;
                 this.player = board.players.find(
                     (player) => player.userId === this.player.userId
                 )!;
@@ -443,7 +459,11 @@ export class GameqwirkleComponent implements OnInit {
         );
         this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
             this.score = resp;
-
+            if (resp.code !== 1) {
+                this.dialog.open(DialogCodeComponent, {
+                    data: { name: ReturnCode[resp.code].toString() }
+                });
+            }
             this.getPlayerIdToPlay().then();
 
             this.score = {
@@ -521,10 +541,8 @@ export class GameqwirkleComponent implements OnInit {
             this.gameId = gameId;
 
             this.serviceQwirkle.getGame(this.gameId).then((board) => {
-                this.players = board.players.sort(
-                    (a, b) => a.gamePosition - b.gamePosition
-                );
-
+                board.players.sort((a, b) => a.gamePosition - b.gamePosition);
+                this.players = board.players;
                 this.serviceQwirkle.getPlayer(gameId).then((result) => {
                     if (result !== null) {
                         this.player = result;
@@ -594,26 +612,30 @@ export class GameqwirkleComponent implements OnInit {
 
     Bot() {
         this.serviceQwirkle.getBot(this.gameId).then((result: TilesOnBoard[]) => {
-            console.log(result);
             if (result === null) {
                 this.swapTilesRandom().then();
             } else {
-                const tilesBots: Tile[] = [];
-                for (const tile of result) {
-                    tilesBots.push({
-                        shape: tile.shape,
-                        color: tile.color,
-                        x: tile.coordinates.x,
-                        y: tile.coordinates.y,
-                        disabled: true
-                    });
-                }
+                const tilesBots = GameqwirkleComponent.setTilesBotProposal(result);
                 for (const tile of tilesBots) this.dropBot(tile);
 
                 this.Iswinner();
                 this.valid().then();
             }
         });
+    }
+
+    private static setTilesBotProposal(result: TilesOnBoard[]) {
+        const tilesBots: Tile[] = [];
+        for (const tile of result) {
+            tilesBots.push({
+                shape: tile.shape,
+                color: tile.color,
+                x: tile.coordinates.x,
+                y: tile.coordinates.y,
+                disabled: true
+            });
+        }
+        return tilesBots;
     }
 
     private newrect(
@@ -682,5 +704,14 @@ export class GameqwirkleComponent implements OnInit {
             width: (width * (Math.abs(xmax - xmin) * 100)) / 1000,
             height: (height * (Math.abs(ymax - ymin) * 100)) / 600 + height
         };
+    }
+
+    lastPlayer(tileDisplay: Tile): boolean {
+        let accumulator = false;
+        for (const tiles of this.tilesLastPlayer)
+            accumulator =
+                accumulator || (tiles.x === tileDisplay.x && tiles.y === tileDisplay.y);
+
+        return accumulator;
     }
 }

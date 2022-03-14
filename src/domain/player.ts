@@ -93,7 +93,8 @@ export const toBoard = (result: RestBoard): BoardGame => {
             y: tile1.coordinates.y,
             shape: tile1.shape,
             color: tile1.color,
-            disabled: false
+            disabled: false,
+            tilesPlayed: false
         })),
         players: result.players,
         bag: result.bag
