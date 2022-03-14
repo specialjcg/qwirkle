@@ -21,10 +21,12 @@ import HttpTileRepositoryService from '../infra/httpRequest/http-tile-repository
 import { ChooseOpponentToPlayerComponent } from './choose-opponent-to-player/choose-opponent-to-player.component';
 import { TileInBagComponent } from './tile-in-bag/tile-in-bag.component';
 import { MenuComponent } from './menu/menu.component';
-import {MatMenuModule} from "@angular/material/menu";
+import { MatMenuModule } from '@angular/material/menu';
 import { RackSupportComponent } from './rack-support/rack-support.component';
 import { WaitingPlayerComponent } from './waiting-player/waiting-player.component';
-import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DialogCodeComponent } from './dialog-code/dialog-code.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export class MyAppModule {}
 
@@ -47,7 +49,8 @@ export class MyAppModule {}
         TileInBagComponent,
         MenuComponent,
         RackSupportComponent,
-        WaitingPlayerComponent
+        WaitingPlayerComponent,
+        DialogCodeComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -55,7 +58,8 @@ export class MyAppModule {}
         AppRoutingModule,
         MatInputModule,
         MatMenuModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatDialogModule
     ],
     providers: [HttpTileRepositoryService],
     bootstrap: [AppComponent],

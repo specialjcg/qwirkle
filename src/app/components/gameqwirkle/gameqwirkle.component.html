@@ -19,7 +19,7 @@
         <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="this.rack" class="example-list2d"
              (cdkDropListDropped)="dropResult($event)">
           <div *ngFor="let tile of this.rack;let i=index">
-            <app-tile-pawn [isDrag]="false" [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
+            <app-tile-pawn  [isDrag]="false" [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
                            cdkDrag > <app-tile-pawn  [image]="getRackTileImage(tile)" [isDrag]="true" [scale]=getCssScale(this.panzoomModel.zoomLevel)
                                                      *cdkDragPreview></app-tile-pawn></app-tile-pawn>
 
@@ -50,7 +50,7 @@
 
               <div *ngFor="let tile of line;let j=index" cdkDrag class="example-box2d"
                    [cdkDragDisabled]="!tile.disabled">
-                <app-tile-pawn [image]="getRackTileImage(tile)" [isDrag]="false" >
+                <app-tile-pawn [image]="getRackTileImage(tile)" [isDrag]="false" [isLastPlayer]="lastPlayer(tile)">
                   <app-tile-pawn  [image]="getRackTileImage(tile)" [isDrag]="true" [scale]=getCssScale(this.panzoomModel.zoomLevel)
                                   *cdkDragPreview></app-tile-pawn></app-tile-pawn>
 

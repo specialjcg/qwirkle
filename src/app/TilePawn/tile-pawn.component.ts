@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Tile } from '../../domain/Tile';
 
 @Component({
     selector: 'app-tile-pawn',
@@ -16,9 +17,10 @@ export class TilePawnComponent {
 
     isImg = () => this.image !== '../../assets/img/';
 
-    getclassbox2dDrag(scale: number) {
+    @Input() isLastPlayer = false;
 
-        if (Number.isNaN(scale)|| scale===0) scale = 1;
+    getclassbox2dDrag(scale: number) {
+        if (Number.isNaN(scale) || scale === 0) scale = 1;
         return scale * 100 + 'px';
     }
 
@@ -29,5 +31,9 @@ export class TilePawnComponent {
     getclassbtn2dDrag(scale: number) {
         if (Number.isNaN(scale) || scale === 0) scale = 1;
         return scale * 100 + 'px';
+    }
+
+    border(isLastPlayer: boolean): string {
+        return isLastPlayer ? 'img2d borderTilePlayed' : 'img2d';
     }
 }

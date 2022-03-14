@@ -1,0 +1,28 @@
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 200px;
+  width: 300px;
+  background: linear-gradient(110deg, #fdcd3b 60%, #ffed4b 60%);
+  border-radius: 10px;
+  text-align: center;
+  line-height: 100px;
+}
+h1 {
+  line-height: 100px;
+
+}
+#demoFont {
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 25px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #000000;
+  font-weight: normal;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
