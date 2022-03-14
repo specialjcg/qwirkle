@@ -27,6 +27,10 @@ export class PickComponent {
         return 'example-container2';
     }
 
+    getPawStyletest(number: number): string {
+        return 'example-container3';
+    }
+
     getRackTileImage(tile: Tile): string {
         return '../../assets/img/' + toNameImage(tile);
     }

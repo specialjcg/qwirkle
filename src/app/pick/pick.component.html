@@ -9,7 +9,7 @@
            (cdkDropListDropped)="dropResult($event)">
 
         <div *ngFor="let tile of this.swap;let i=index">
-          <app-tile-pawn [image]="getRackTileImage(tile)" [style.transform]="getPawStyle(0)" class="example-box2d"
+          <app-tile-pawn [image]="getRackTileImage(tile)" class="example-box2d"
                          cdkDrag></app-tile-pawn>
         </div>
       </div>
