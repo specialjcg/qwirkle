@@ -10,14 +10,15 @@ import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repo
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthGuard } from '../../auth/auth.guard';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 describe('GameqwirkleComponent', () => {
     let app: GameqwirkleComponent;
     let fixture: ComponentFixture<GameqwirkleComponent>;
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, RouterTestingModule],
-            providers: [HttpTileRepositoryService, AuthGuard]
+            imports: [HttpClientTestingModule, RouterTestingModule, MatDialogModule],
+            providers: [HttpTileRepositoryService, AuthGuard, MatDialog]
         }).compileComponents();
     });
 
