@@ -2,7 +2,7 @@
   <mat-icon>menu</mat-icon>
 </button>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item routerLink='/chooseGame'>
+  <button *ngIf=testguest() mat-menu-item routerLink='/chooseGame'>
     <mat-icon>dialpad</mat-icon>
     <span>ChooseGame</span>
   </button>
@@ -10,15 +10,19 @@
     <mat-icon>exit_to_app</mat-icon>
     <span>Logout</span>
   </button>
-  <button  mat-menu-item routerLink='/opponents' >
+  <button  *ngIf=testguest() mat-menu-item routerLink='/opponents' >
     <mat-icon>person_pin</mat-icon>
     <span>New Game</span>
   </button>
+  <button  *ngIf=!testguest() mat-menu-item (click)="guestBotGame()" >
+    <mat-icon>memory</mat-icon>
+    <span>Bot</span>
+  </button>
   <button mat-menu-item [matMenuTriggerFor]="players">instantGame</button>
   <mat-menu #players="matMenu">
-    <button mat-menu-item (click)="instantGamePlayer(2)" >2</button>
-    <button mat-menu-item (click)="instantGamePlayer(3)" >3</button>
-    <button mat-menu-item (click)="instantGamePlayer(4)"  >4</button>
+    <button mat-menu-item (click)="instantGamePlayer(2)" >2 players</button>
+    <button mat-menu-item (click)="instantGamePlayer(3)" >3 players</button>
+    <button mat-menu-item (click)="instantGamePlayer(4)"  >4 players</button>
   </mat-menu>
 </mat-menu>
 

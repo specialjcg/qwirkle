@@ -51,6 +51,12 @@ export class MenuComponent {
         this.gameIdChanged.emit($event);
     }
 
+    guestBotGame(): void {
+        this.serviceQwirkle
+            .newGame(['bot1', '', ''])
+            .then((gameId) => this.router.navigate(['/game/' + gameId]).then());
+    }
+
     instantGamePlayer(playersNumber: number) {
         const username = this.login.getUserName();
         this.instantGameService.instantGame(playersNumber).subscribe((result) => {
@@ -76,5 +82,10 @@ export class MenuComponent {
                 this.router.navigate(['/game/' + result]).then();
             }
         });
+    }
+
+    testguest(): boolean {
+        console.log(this.userName);
+        return this.userName[0] !== '';
     }
 }

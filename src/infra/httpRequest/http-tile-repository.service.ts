@@ -39,6 +39,10 @@ export default class HttpTileRepositoryService {
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
     }
 
+    LogGuest(): Observable<boolean> {
+        return this.https.get<boolean>(backurl + '/User/RegisterGuest/', httpOptions);
+    }
+
     getUserName(): string {
         return this.loginusername;
     }
