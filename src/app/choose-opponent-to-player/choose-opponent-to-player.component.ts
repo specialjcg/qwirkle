@@ -26,4 +26,10 @@ export class ChooseOpponentToPlayerComponent implements OnInit {
             .newGame([this.pseudo1, this.pseudo2, this.pseudo3])
             .then((gameId) => this.router.navigate(['/game/' + gameId]).then());
     }
+
+    bot(pseudo: string) {
+        if (pseudo === 'pseudo1') this.pseudo1 = 'bot1';
+        if (pseudo === 'pseudo2') this.pseudo2 = 'bot2';
+        if (pseudo === 'pseudo3') this.pseudo3 = 'bot3';
+    }
 }
