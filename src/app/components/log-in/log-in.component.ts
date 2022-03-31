@@ -11,17 +11,18 @@ import { Router } from '@angular/router';
 export class LogInComponent implements OnInit {
     @Output() userChange = new EventEmitter<number>();
 
-    login: Login = { pseudo: '', password: '', isRemember: true };
+    login: Login = { pseudo: '', password: '', isRemember: false };
 
     badLogin = false;
 
     constructor(public service: HttpTileRepositoryService, private router: Router) {}
 
     ngOnInit(): void {
-        this.login = { pseudo: '', password: '', isRemember: true };
+        this.login = { pseudo: '', password: '', isRemember: false };
     }
 
     getLogin() {
+        console.log(this.login);
         this.service.LoginUser(this.login).subscribe(
             (response) => {
                 if (response) {
@@ -54,5 +55,9 @@ export class LogInComponent implements OnInit {
 
     getGuess() {
         this.service.LogGuest().subscribe(() => this.router.navigate(['/game']).then());
+    }
+
+    isremenber() {
+        this.login.isRemember = !this.login.isRemember;
     }
 }

@@ -27,6 +27,7 @@ import { WaitingPlayerComponent } from './waiting-player/waiting-player.componen
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DialogCodeComponent } from './dialog-code/dialog-code.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 export class MyAppModule {}
 
@@ -59,7 +60,8 @@ export class MyAppModule {}
         MatInputModule,
         MatMenuModule,
         MatProgressSpinnerModule,
-        MatDialogModule
+        MatDialogModule,
+        MatCheckboxModule
     ],
     providers: [HttpTileRepositoryService],
     bootstrap: [AppComponent],

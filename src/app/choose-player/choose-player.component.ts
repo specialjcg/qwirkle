@@ -22,7 +22,9 @@ export class ChoosePlayerComponent {
 
     nameToPlay = '';
 
-    constructor(public service: HttpTileRepositoryService) {}
+    constructor(public service: HttpTileRepositoryService) {
+
+    }
 
     playerToTurnClass(name: string): string {
         return name === this.nameToTurn
