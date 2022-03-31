@@ -222,7 +222,7 @@
   font-size: 1.25rem;
   letter-spacing: 2px;
 
-  animation: blink .5s step-end infinite alternate;
+  animation: blink .5s step-end 6 alternate;
   outline-offset: 0px;
 }
 @keyframes blink {
