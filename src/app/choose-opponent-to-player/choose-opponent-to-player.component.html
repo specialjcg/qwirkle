@@ -3,6 +3,7 @@
   <mat-form-field appearance="fill">
     <mat-label>Pseudo 1</mat-label>
     <input matInput [value]="pseudo1" [(ngModel)]="pseudo1" >
+
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Pseudo 2</mat-label>
@@ -12,8 +13,11 @@
     <mat-label>Pseudo 3</mat-label>
     <input matInput [value]="pseudo3" [(ngModel)]="pseudo3">
   </mat-form-field>
-  <button class="btn btn-1" (click)="NewGame()">Valid NewGame</button>
-</mat-card>
 
+</mat-card>
+<button class="bot1 bot-1" (click)="bot('pseudo1')">choose bot</button>
+<button class="bot2 bot-1" (click)="bot('pseudo2')">choose bot</button>
+<button class="bot3 bot-1" (click)="bot('pseudo3')">choose bot</button>
+<button class="btn btn-1" (click)="NewGame()">Valid NewGame</button>
 
 

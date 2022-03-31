@@ -51,4 +51,8 @@ export class LogInComponent implements OnInit {
         this.badLogin = false;
         this.login.password = ValuePassword.value;
     }
+
+    getGuess() {
+        this.service.LogGuest().subscribe(() => this.router.navigate(['/game']).then());
+    }
 }
