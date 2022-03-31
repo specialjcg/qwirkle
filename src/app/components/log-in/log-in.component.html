@@ -11,6 +11,9 @@
       <div class="inputBox">
         <input type="password" placeholder="Password" #ValuePassword (change)="changePassword(ValuePassword)" [value]="this.login.password">
       </div>
+      <section class="example-section">
+        <mat-checkbox class="example-margin" (change)="isremenber()" [checked]="this.login.isRemember">remember me!</mat-checkbox>
+      </section>
       <div class="inputBox">
         <button class="btn btn-3" (click)="getLogin()">Login</button>
         <button class="btn btn-3" routerLink="/register" routerLinkActive="active">Register</button>

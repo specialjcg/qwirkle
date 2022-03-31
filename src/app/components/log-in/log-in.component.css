@@ -19,7 +19,9 @@
   background: -moz-linear-gradient(top left, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
   background: linear-gradient(to bottom right, rgba(106, 183, 222, 1.0), rgba(226, 233, 139, 1.0));
 }
-
+.example-section {
+  margin: 12px 0;
+}
 .card {
   height: 300px;
   width: 500px;

@@ -42,6 +42,7 @@ export class MenuComponent {
     }
 
     async logOut() {
+        localStorage.removeItem('loginusername');
         this.serviceQwirkle
             .LogoutUser()
             .then(() => this.router.navigate(['/login']).then());
@@ -85,7 +86,6 @@ export class MenuComponent {
     }
 
     testguest(): boolean {
-        console.log(this.userName);
-        return this.userName[0] !== '';
+        return this.userName[0] !== null;
     }
 }

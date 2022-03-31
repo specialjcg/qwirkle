@@ -35,6 +35,7 @@ export default class HttpTileRepositoryService {
     constructor(private https: HttpClient) {}
 
     LoginUser(login: Login): Observable<boolean> {
+        localStorage.setItem('loginusername', login.pseudo);
         this.loginusername = login.pseudo;
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
     }
@@ -44,7 +45,7 @@ export default class HttpTileRepositoryService {
     }
 
     getUserName(): string {
-        return this.loginusername;
+        return <string>localStorage.getItem('loginusername');
     }
 
     setRegister(register: Register): Observable<boolean> {
