@@ -6,13 +6,13 @@
       <span>erreur de  Login/password</span>
     </div>
       <div class="inputBox">
-        <input type="text" placeholder="Username" #ValueUserName (change)="changeUserName(ValueUserName)" [value]="this.login.pseudo">
+        <input type="text" placeholder="Username" #ValueUserName (change)="changeUserName(ValueUserName)" [value]="this.login.userName">
       </div>
       <div class="inputBox">
         <input type="password" placeholder="Password" #ValuePassword (change)="changePassword(ValuePassword)" [value]="this.login.password">
       </div>
       <section class="example-section">
-        <mat-checkbox class="example-margin" (change)="isremenber()" [checked]="this.login.isRemember">remember me!</mat-checkbox>
+        <mat-checkbox class="example-margin" (change)="isremenber()" [checked]="this.login.RememberMe">remember me!</mat-checkbox>
       </section>
       <div class="inputBox">
         <button class="btn btn-3" (click)="getLogin()">Login</button>

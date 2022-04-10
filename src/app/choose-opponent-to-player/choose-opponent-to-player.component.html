@@ -1,9 +1,26 @@
+<Div class="back">
+<mat-icon class="heart1" matTooltip="add favorite gamer" (click)="addFavorite(pseudo1)">favorite</mat-icon>
+<mat-icon class="heart2" matTooltip="add favorite gamer" (click)="addFavorite(pseudo2)">favorite</mat-icon>
+<mat-icon class="heart3" matTooltip="add favorite gamer" (click)="addFavorite(pseudo3)">favorite</mat-icon>
+
+
 <mat-card class="cardNetwork">
-  <mat-card-title id="demoFont">Pseudo</mat-card-title>
+  <mat-card-title id="demoFont">Players</mat-card-title>
   <mat-form-field appearance="fill">
     <mat-label>Pseudo 1</mat-label>
-    <input matInput [value]="pseudo1" [(ngModel)]="pseudo1" >
-
+    <input type="text"
+           placeholder="Pick one"
+           aria-label="Number"
+           matInput
+           [formControl]="myControl"
+           [matAutocomplete]="auto"
+           [value]="pseudo1"
+           [(ngModel)]="pseudo1">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let option of favories" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Pseudo 2</mat-label>
@@ -15,9 +32,8 @@
   </mat-form-field>
 
 </mat-card>
-<button class="bot1 bot-1" (click)="bot('pseudo1')">choose bot</button>
-<button class="bot2 bot-1" (click)="bot('pseudo2')">choose bot</button>
-<button class="bot3 bot-1" (click)="bot('pseudo3')">choose bot</button>
-<button class="btn btn-1" (click)="NewGame()">Valid NewGame</button>
-
-
+  <svg-icon class="bot1 bot-1" src="assets/img/1538298822.svg" [svgStyle]="{ 'width.px':40,'height.px':40,'font-weight': 900 }" (click)="bot('pseudo1')"></svg-icon>
+  <svg-icon class="bot2 bot-1" src="assets/img/1538298822.svg" [svgStyle]="{ 'width.px':40,'height.px':40,'font-weight': 900 }" (click)="bot('pseudo2')"></svg-icon>
+  <svg-icon class="bot3 bot-1" src="assets/img/1538298822.svg" [svgStyle]="{ 'width.px':40,'height.px':40,'font-weight': 900 }" (click)="bot('pseudo3')"></svg-icon>
+<button class="btn btn-1" (click)="NewGame()">NewGame</button>
+</Div>

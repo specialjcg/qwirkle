@@ -14,6 +14,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {AngularSvgIconModule} from "angular-svg-icon";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 const materialModules = [
     BrowserModule,
@@ -29,10 +31,10 @@ const materialModules = [
     RouterTestingModule,
     FlexLayoutModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
 ];
 @NgModule({
-    imports: [CommonModule, ...materialModules],
+    imports: [CommonModule, ...materialModules,AngularSvgIconModule.forRoot(),],
     exports: [...materialModules]
 })
 export class AngularMaterialModule {}

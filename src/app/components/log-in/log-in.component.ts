@@ -11,14 +11,14 @@ import { Router } from '@angular/router';
 export class LogInComponent implements OnInit {
     @Output() userChange = new EventEmitter<number>();
 
-    login: Login = { pseudo: '', password: '', isRemember: false };
+    login: Login = { userName: '', password: '', RememberMe: false };
 
     badLogin = false;
 
     constructor(public service: HttpTileRepositoryService, private router: Router) {}
 
     ngOnInit(): void {
-        this.login = { pseudo: '', password: '', isRemember: false };
+        this.login = { userName: '', password: '', RememberMe: false };
     }
 
     getLogin() {
@@ -45,7 +45,7 @@ export class LogInComponent implements OnInit {
 
     changeUserName(ValueUserName: HTMLInputElement) {
         this.badLogin = false;
-        this.login.pseudo = ValueUserName.value;
+        this.login.userName = ValueUserName.value;
     }
 
     changePassword(ValuePassword: HTMLInputElement) {
@@ -58,6 +58,6 @@ export class LogInComponent implements OnInit {
     }
 
     isremenber() {
-        this.login.isRemember = !this.login.isRemember;
+        this.login.RememberMe = !this.login.RememberMe;
     }
 }

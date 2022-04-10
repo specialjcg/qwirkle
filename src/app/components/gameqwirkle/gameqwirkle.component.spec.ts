@@ -5,7 +5,7 @@ import { toRarrange } from '../../../domain/SetPositionTile';
 import { RestTilesPlay } from '../../../domain/player';
 
 import { PanZoomModel } from 'ngx-panzoom';
-import { Tile } from '../../../domain/Tile';
+import { TileFront } from '../../../domain/Tile';
 import HttpTileRepositoryService from '../../../infra/httpRequest/http-tile-repository.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -75,6 +75,8 @@ describe('GameqwirkleComponent', () => {
                 pseudo: '',
                 rack: {
                     tiles: []
+                ,
+                tilesNumber: 0
                 },
                 userId: 0
             });
@@ -360,7 +362,7 @@ describe('GameqwirkleComponent', () => {
             });
         });
         it('should give the image of tile', () => {
-            const tile: Tile = {
+            const tile: TileFront = {
                 color: 5,
                 disabled: false,
                 shape: 6,
@@ -372,7 +374,7 @@ describe('GameqwirkleComponent', () => {
             );
         });
         it('should  give the line style with tile', () => {
-            const tile: Tile[] = [
+            const tile: TileFront[] = [
                 {
                     color: 5,
                     disabled: false,
@@ -384,7 +386,7 @@ describe('GameqwirkleComponent', () => {
             expect(app.getLineStyle(tile, 1)).toEqual('translate(0px,100px)');
         });
         it('should  give the line style with tile empty', () => {
-            const tile: Tile[] = [];
+            const tile: TileFront[] = [];
             expect(app.getLineStyle(tile, 0)).toEqual('');
         });
         it('should zoom in rect to fit height -100 right bottom', () => {

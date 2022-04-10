@@ -3,7 +3,7 @@ import {
     insertPosition,
     onRight,
     otherTileInRow,
-    Tile,
+    TileFront,
     toNameImage,
     toPlate
 } from './Tile';
@@ -14,7 +14,7 @@ import { Shape } from './Shape';
 
 describe('create tiles list', () => {
     it('should create a tile shape', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
@@ -24,7 +24,7 @@ describe('create tiles list', () => {
         expect(tile.shape).toEqual(Shape.Circle);
     });
     it('should create a tile color', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
@@ -34,7 +34,7 @@ describe('create tiles list', () => {
         expect(tile.color).toEqual(Color.Purple);
     });
     it('should get image name from Tile', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
@@ -44,7 +44,7 @@ describe('create tiles list', () => {
         expect(toNameImage(tile)).toEqual('PurpleCircle.svg');
     });
     it('should not get image name from Tile when no shape', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             shape: 0,
             color: Color.Purple,
             x: 0,
@@ -55,7 +55,7 @@ describe('create tiles list', () => {
     });
 
     it('should add tile in row at position x=0 and y=0', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
@@ -73,21 +73,21 @@ describe('create tiles list', () => {
         ]);
     });
     it('should add tile in row at position x=1 and y=0', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Square,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([], tileOne);
+        const rowTile: TileFront[] = setPositionTile([], tileOne);
         const newRowTile = setPositionTile(rowTile, tileTwo);
         expect(newRowTile).toEqual([
             {
@@ -100,21 +100,21 @@ describe('create tiles list', () => {
         ]);
     });
     it('should add tile in row at position x=1 and y=0', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: 1,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         expect(rowTile).toEqual([
             {
                 shape: Shape.Circle,
@@ -127,21 +127,21 @@ describe('create tiles list', () => {
         ]);
     });
     it('should add tile in row at position x=-1 and y=0 ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         expect(rowTile).toEqual([
             { shape: Shape.Circle, color: Color.Red, x: -1, y: 0, disabled: true },
             {
@@ -154,21 +154,21 @@ describe('create tiles list', () => {
         ]);
     });
     it('should not add tile in row at position x=-1 and tileinsert y !== row ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: -1,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         expect(rowTile).toEqual([
             {
                 color: 4,
@@ -189,23 +189,23 @@ describe('create tiles list', () => {
         ]);
     });
     it('should inverse position of  two tile in row ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
 
-        const newRowTile: Tile[] = insertPosition(
+        const newRowTile: TileFront[] = insertPosition(
             rowTile,
             getInsertTile(
                 {
@@ -231,29 +231,29 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile between  two tile in row ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
         expect(newRowTile).toEqual([
             { shape: Shape.Circle, color: Color.Red, x: -1, y: 0, disabled: true },
             { shape: Shape.Square, color: Color.Red, x: 0, y: 0, disabled: true },
@@ -267,29 +267,29 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile on two tile in row  and after to up the row', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: false
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
         expect(newRowTile).toEqual([
             {
                 color: 4,
@@ -316,7 +316,7 @@ describe('create tiles list', () => {
                 y: 0
             }
         ]);
-        const newRowTile2: Tile[] = insertPosition(
+        const newRowTile2: TileFront[] = insertPosition(
             newRowTile,
             getInsertTile(
                 {
@@ -358,41 +358,41 @@ describe('create tiles list', () => {
         ]);
     });
     it('should not insert a tile between  two tile in row if disabled to false', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 1,
             y: 0,
             disabled: false
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
         expect(newRowTile).toEqual(rowTile);
     });
 
     it('should not insert a tile between  two tile in row if y not   the same ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 1,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: 2,
@@ -403,14 +403,14 @@ describe('create tiles list', () => {
         expect(newRowTile).toEqual(false);
     });
     it('should not insert a tile between  two tile in row if shape and color is the same', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 1,
             y: 0,
             disabled: true
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 2,
@@ -421,38 +421,38 @@ describe('create tiles list', () => {
         expect(newRowTile).toEqual(false);
     });
     it('should insert a tile in first when 3 tiles are disable to false ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: false
         };
-        const tiletree: Tile = {
+        const tiletree: TileFront = {
             shape: Shape.EightPointStar,
             color: Color.Red,
             x: -2,
             y: 0,
             disabled: false
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-        const overrowTile: Tile[] = setPositionTile(rowTile, tiletree);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
+        const overrowTile: TileFront[] = setPositionTile(rowTile, tiletree);
 
-        const newRowTile: Tile[] = insertPosition(overrowTile, tileinsert, -1);
+        const newRowTile: TileFront[] = insertPosition(overrowTile, tileinsert, -1);
         expect(newRowTile).toEqual([
             { shape: Shape.Square, color: Color.Red, x: -3, y: 0, disabled: true },
             {
@@ -480,38 +480,38 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile in last when 3 tiles are disable to false ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: false
         };
-        const tiletree: Tile = {
+        const tiletree: TileFront = {
             shape: Shape.EightPointStar,
             color: Color.Red,
             x: -2,
             y: 0,
             disabled: false
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
-        const overrowTile: Tile[] = setPositionTile(rowTile, tiletree);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
+        const overrowTile: TileFront[] = setPositionTile(rowTile, tiletree);
 
-        const newRowTile: Tile[] = insertPosition(overrowTile, tileinsert, 0);
+        const newRowTile: TileFront[] = insertPosition(overrowTile, tileinsert, 0);
         expect(newRowTile).toEqual([
             {
                 shape: Shape.EightPointStar,
@@ -539,46 +539,46 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile in board  ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: false
         };
-        const tiletree: Tile = {
+        const tiletree: TileFront = {
             shape: Shape.EightPointStar,
             color: Color.Red,
             x: 1,
             y: -1,
             disabled: false
         };
-        const tilefour: Tile = {
+        const tilefour: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: -1,
             disabled: false
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Clover,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        let rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        let rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         rowTile = setPositionTile(rowTile, tiletree);
         rowTile = setPositionTile(rowTile, tilefour);
 
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
 
         expect(newRowTile).toEqual([
             {
@@ -614,30 +614,30 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile in board before tile disabled  ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Clover,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        const rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
 
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
 
         expect(newRowTile).toEqual([
             { shape: Shape.Circle, color: Color.Red, x: -2, y: 0, disabled: true },
@@ -652,14 +652,14 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile in board in board real   ', () => {
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Clover,
             color: Color.Red,
             x: 0,
             y: 0,
             disabled: true
         };
-        const rowTile: Tile[] = [
+        const rowTile: TileFront[] = [
             {
                 x: -1,
                 y: 2,
@@ -718,7 +718,7 @@ describe('create tiles list', () => {
             }
         ];
 
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
 
         expect(newRowTile).toEqual([
             {
@@ -787,14 +787,14 @@ describe('create tiles list', () => {
         ]);
     });
     it('should insert a tile in board with same color and shape   ', () => {
-        const tileinsert: Tile = {
+        const tileinsert: TileFront = {
             shape: Shape.Clover,
             color: Color.Red,
             x: 0,
             y: 2,
             disabled: true
         };
-        const rowTile: Tile[] = [
+        const rowTile: TileFront[] = [
             {
                 x: -1,
                 y: 2,
@@ -853,7 +853,7 @@ describe('create tiles list', () => {
             }
         ];
 
-        const newRowTile: Tile[] = insertPosition(rowTile, tileinsert, 0);
+        const newRowTile: TileFront[] = insertPosition(rowTile, tileinsert, 0);
 
         expect(newRowTile.sort((a, b) => a.x - b.x).sort((a, b) => a.y - b.y)).toEqual(
             [
@@ -926,28 +926,28 @@ describe('create tiles list', () => {
         );
     });
     it('should insert a tile from line  in board in other line tile ', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: true
         };
-        const tileTree: Tile = {
+        const tileTree: TileFront = {
             shape: Shape.Square,
             color: Color.Green,
             x: 0,
             y: 0,
             disabled: true
         };
-        let rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        let rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         rowTile = setPositionTile(rowTile, tileTree);
 
         rowTile = insertPosition(
@@ -983,39 +983,39 @@ describe('create tiles list', () => {
         ]);
     });
     it('should return plate emtpy when board is empty', () => {
-        const tileOne: Tile[] = [];
+        const tileOne: TileFront[] = [];
         expect(toPlate(tileOne)).toEqual([]);
     });
     it('should transshape board from API to plate for Droplist', () => {
-        const tileOne: Tile = {
+        const tileOne: TileFront = {
             shape: Shape.Circle,
             color: Color.Purple,
             x: 0,
             y: 0,
             disabled: false
         };
-        const tileTwo: Tile = {
+        const tileTwo: TileFront = {
             shape: Shape.Circle,
             color: Color.Red,
             x: -1,
             y: 0,
             disabled: false
         };
-        const tiletree: Tile = {
+        const tiletree: TileFront = {
             shape: Shape.EightPointStar,
             color: Color.Red,
             x: 1,
             y: -1,
             disabled: false
         };
-        const tilefour: Tile = {
+        const tilefour: TileFront = {
             shape: Shape.Square,
             color: Color.Red,
             x: 0,
             y: -1,
             disabled: false
         };
-        let rowTile: Tile[] = setPositionTile([tileOne], tileTwo);
+        let rowTile: TileFront[] = setPositionTile([tileOne], tileTwo);
         rowTile = setPositionTile(rowTile, tiletree);
         rowTile = setPositionTile(rowTile, tilefour);
         expect(toPlate(rowTile)).toEqual([
@@ -1190,7 +1190,7 @@ describe('create tiles list', () => {
         ]);
     });
     it('should fix insert tile on board at top ', () => {
-        let rowTile: Tile[] = [
+        let rowTile: TileFront[] = [
             {
                 x: 3,
                 y: 3,
@@ -1325,7 +1325,7 @@ describe('create tiles list', () => {
                 disabled: false
             }
         ];
-        const inserPosition: Tile = {
+        const inserPosition: TileFront = {
             shape: 0,
             color: 0,
             x: 3,

@@ -145,7 +145,7 @@ describe('HttpTileRepositoryService', () => {
                         color: 2,
                         shape: 6
                     }
-                ]
+                ],tilesNumber: 0
             },
 
             isTurn: true

@@ -4,7 +4,7 @@ import { setPositionTile } from './SetPositionTile';
 import { positionIsNotFree } from './PositionIsFree';
 import { Tiles } from './tiles';
 
-export type Tile = {
+export type TileFront = {
     disabled: boolean;
 
     readonly shape: Shape;
@@ -13,7 +13,7 @@ export type Tile = {
     readonly x: number;
 };
 
-export const toNameImage = (tile: Tile) =>
+export const toNameImage = (tile: TileFront) =>
     tile.shape === 0
         ? ''
         : Object.keys(Color)[Object.values(Color).indexOf(tile.color)] +
@@ -21,9 +21,9 @@ export const toNameImage = (tile: Tile) =>
           '.svg';
 
 export type Login = {
-    pseudo: string;
+    userName: string;
     password: string;
-    isRemember: boolean;
+  RememberMe: boolean;
 };
 
 export type PlayerTile = {
@@ -39,7 +39,7 @@ export type PlayerTileToSwap = {
     playerId: number;
 };
 
-const shiftToRight = (tile: Tile): Tile => ({
+const shiftToRight = (tile: TileFront): TileFront => ({
     shape: tile.shape,
     color: tile.color,
     x: tile.x - 1,
@@ -47,10 +47,10 @@ const shiftToRight = (tile: Tile): Tile => ({
     disabled: true
 });
 
-export const onRight = (tile: Tile, xposition: number, newTile: Tile): boolean =>
+export const onRight = (tile: TileFront, xposition: number, newTile: TileFront): boolean =>
     tile.x >= xposition && tile.y === newTile.y;
 
-const shiftToLeft = (tile: Tile): Tile => ({
+const shiftToLeft = (tile: TileFront): TileFront => ({
     shape: tile.shape,
     color: tile.color,
     x: tile.x + 1,
@@ -58,7 +58,7 @@ const shiftToLeft = (tile: Tile): Tile => ({
     disabled: true
 });
 
-export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) =>
+export const otherTileInRow = (tileInsert: TileFront) => (tile: TileFront) =>
     tileInsert.y === tile.y &&
     !(
         tile.shape === tileInsert.shape &&
@@ -66,11 +66,11 @@ export const otherTileInRow = (tileInsert: Tile) => (tile: Tile) =>
         tile.disabled === tileInsert.disabled
     );
 
-const tileNotInRow = (tileInsert: Tile) => (tile: Tile) => tileInsert.y !== tile.y;
-export const onLeft = (xposition: number) => (tile: Tile) => tile.x < xposition;
+const tileNotInRow = (tileInsert: TileFront) => (tile: TileFront) => tileInsert.y !== tile.y;
+export const onLeft = (xposition: number) => (tile: TileFront) => tile.x < xposition;
 
 function placeTileToLeft(
-    rowTile: Tile[],
+    rowTile: TileFront[],
     xposition: number,
     newTile: {
         shape: Shape;
@@ -88,7 +88,7 @@ function placeTileToLeft(
     });
 }
 
-function placeTileToRigth(rowTile: Tile[], xposition: number) {
+function placeTileToRigth(rowTile: TileFront[], xposition: number) {
     return rowTile.map((tile) => {
         if (onLeft(xposition) && tile.disabled) {
             return shiftToRight(tile);
@@ -98,15 +98,15 @@ function placeTileToRigth(rowTile: Tile[], xposition: number) {
 }
 
 export const insertPosition = (
-    nexTiles: Tile[],
-    tileInsert: Tile,
+    nexTiles: TileFront[],
+    tileInsert: TileFront,
     xposition: number
-): Tile[] => {
+): TileFront[] => {
     if (tileInsert.disabled) {
         let rowTile = nexTiles.filter(otherTileInRow(tileInsert));
 
         const rowTilenotInsert = nexTiles.filter(tileNotInRow(tileInsert));
-        let newTile: Tile = {
+        let newTile: TileFront = {
             shape: tileInsert.shape,
             color: tileInsert.color,
             x: xposition,
@@ -165,7 +165,7 @@ export const getInsertTile = (
     tileInsert: Tiles,
     xposition: number,
     yposition: number
-): Tile => ({
+): TileFront => ({
     shape: tileInsert.shape,
     color: tileInsert.color,
     x: xposition,
@@ -173,7 +173,7 @@ export const getInsertTile = (
     disabled: true
 });
 
-export const toPlate = (rowTile: Tile[]): Tile[][] => {
+export const toPlate = (rowTile: TileFront[]): TileFront[][] => {
     const xmin: number = Math.min(...rowTile.map((tile) => tile.x));
     const xmax = Math.max(...rowTile.map((tile) => tile.x));
     const ymin = Math.min(...rowTile.map((tile) => tile.y));
@@ -186,7 +186,7 @@ export const toPlate = (rowTile: Tile[]): Tile[][] => {
     for (let k = ymin - 1; k <= ymax + 1; k++) {
         coordy = [...coordy, k];
     }
-    const result: Tile[][] = new Array(coordy.length).fill(null).map((_, indexY) =>
+    const result: TileFront[][] = new Array(coordy.length).fill(null).map((_, indexY) =>
         new Array(coordx.length).fill(null).map((_, indexX) => ({
             shape: 0,
             color: 0,

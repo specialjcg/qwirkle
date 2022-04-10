@@ -18,6 +18,8 @@ import { Observable } from 'rxjs';
 import { TileViewModel } from '../../domain/tiles';
 import { environment } from '../../environments/environment';
 import { Register } from '../../domain/register';
+import {Color} from "../../domain/Color";
+import {Shape} from "../../domain/Shape";
 
 export const backurl = environment.backend.baseURL;
 const headers = new HttpHeaders()
@@ -25,6 +27,8 @@ const headers = new HttpHeaders()
     .set('Content-Type', 'application/json; charset=utf-8');
 
 const httpOptions = { headers: headers, withCredentials: true };
+
+const toCsharp = (players: string[]) => ({Opponent1: players[0], Opponent2: players[0], Opponent3: players[0]});
 
 @Injectable({
     providedIn: 'root'
@@ -35,8 +39,8 @@ export default class HttpTileRepositoryService {
     constructor(private https: HttpClient) {}
 
     LoginUser(login: Login): Observable<boolean> {
-        localStorage.setItem('loginusername', login.pseudo);
-        this.loginusername = login.pseudo;
+        localStorage.setItem('loginusername', login.userName);
+        this.loginusername = login.userName;
         return this.https.post<boolean>(backurl + '/User/Login/', login, httpOptions);
     }
 
@@ -58,7 +62,7 @@ export default class HttpTileRepositoryService {
 
     async LogoutUser(): Promise<boolean> {
         return this.https
-            .get<boolean>(backurl + '/User/Logout', httpOptions)
+            .post<boolean>(backurl + '/User/Logout/','', httpOptions)
             .toPromise()
             .then();
     }
@@ -79,28 +83,28 @@ export default class HttpTileRepositoryService {
             .then();
     }
 
-    playTile(tiles: TileViewModel[]): Promise<Rack> {
+    playTile(tiles: { GameId: number; Tile: { color: Color; shape: Shape }; Coordinate: { X: number; Y: number } }[]): Promise<Rack> {
         return this.https
             .post<RestBoard>(backurl + '/Action/PlayTiles/', tiles, httpOptions)
             .toPromise()
             .then();
     }
 
-    rackChangeOrder(rack: TileViewModel[]): Promise<Rack> {
+  rackChangeOrder(rack: { GameId: number; Tile: { color: Color; shape: Shape }; RackPosition: number }[]): Promise<Rack> {
         return this.https
             .post<RestRack>(backurl + '/Action/ArrangeRack/', rack, httpOptions)
             .toPromise()
             .then((response) => toChangeRack(response));
     }
 
-    playTileSimulation(tiles: TileViewModel[]): Promise<RestRack> {
+  playTileSimulation(tiles: { GameId: number; Tile: { color: Color; shape: Shape }; Coordinate: { X: number; Y: number } }[]): Promise<RestRack> {
         return this.https
             .post<RestRack>(backurl + '/Action/PlayTilesSimulation/', tiles, httpOptions)
             .toPromise()
             .then();
     }
 
-    swapTile(tiles: TileViewModel[]): Promise<Rack> {
+  swapTile(tiles: { GameId: number; Tile: { color: Color; shape: Shape }; RackPosition: number }[]): Promise<Rack> {
         return this.https
             .post<RestBag>(backurl + '/Action/SwapTiles/', tiles, httpOptions)
             .toPromise()
@@ -123,9 +127,9 @@ export default class HttpTileRepositoryService {
         return this.https.get<number[]>(backurl + '/Game/UserGamesIds/', httpOptions);
     }
 
-    newGame(players: any): Promise<any> {
+    newGame(players: string[]): Promise<any> {
         return this.https
-            .post<any>(backurl + '/Game/New/', players, httpOptions)
+            .post<string[]>(backurl + '/Game/New/', toCsharp(players), httpOptions)
             .toPromise()
             .then();
     }
@@ -154,5 +158,20 @@ export default class HttpTileRepositoryService {
             .get<never>(backurl + '/Ai/BestMoves/' + gameId, httpOptions)
             .toPromise()
             .then();
+    }
+
+    listFavoriteGamer(): Observable<string[]> {
+        return this.https.get<string[]>(
+            backurl + '/User/BookmarkedOpponents/',
+            httpOptions
+        );
+    }
+
+    addFavoriteGamer(friendName: string): Observable<string> {
+        return this.https.get<string>(
+            backurl + '/User/AddBookmarkedOpponent/'+
+            friendName ,
+            httpOptions
+        );
     }
 }

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Tile } from '../../domain/Tile';
+import { TileFront } from '../../domain/Tile';
 
 @Component({
     selector: 'app-tile-pawn',
