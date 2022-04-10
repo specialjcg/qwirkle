@@ -18,7 +18,7 @@ import {
 import {
     getInsertTile,
     insertPosition,
-    Tile,
+    TileFront,
     toNameImage,
     toPlate
 } from '../../../domain/Tile';
@@ -40,13 +40,61 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReturnCode } from '../../../domain/code-return';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogCodeComponent } from '../../dialog-code/dialog-code.component';
+import { Color } from '../../../domain/Color';
+import { Shape } from '../../../domain/Shape';
 
 interface Rect {
-    x: number; // the x0 (top left) coordinate
-    y: number; // the y0 (top left) coordinate
-    width: number; // the x1 (bottom right) coordinate
-    height: number; // the y1 (bottom right) coordinate
+  x: number; // the x0 (top left) coordinate
+  y: number; // the y0 (top left) coordinate
+  width: number; // the x1 (bottom right) coordinate
+  height: number; // the y1 (bottom right) coordinate
 }
+
+
+const toTileModelCsharp = (playTileTempory: TileViewModel[]) => {
+
+  let result: { GameId: number; Tile: { color: Color; shape: Shape; }; Coordinate: { X: number; Y: number; }; }[]=[];
+  playTileTempory.map(playTileModel => {
+    const tilesharp = {
+      GameId: playTileModel.gameId,
+      Tile: {color: playTileModel.color, shape: playTileModel.shape},
+      Coordinate: {X: playTileModel.X, Y: playTileModel.Y}
+    };
+    result.push(tilesharp)
+  });
+
+return result;
+
+}
+
+
+const toSwapCsharp = (swapTile: TileViewModel[]) => {
+  let result: { GameId: number; Tile: { color: Color; shape: Shape; }; RackPosition: number; }[]=[];
+  swapTile.map((playTileModel,index) => {
+    const tilesharp = {
+      GameId: playTileModel.gameId,
+      Tile: {color: playTileModel.color, shape: playTileModel.shape},
+      RackPosition: index
+
+    };
+    result.push(tilesharp)
+  });
+  return result;
+};
+
+const toArrangeModelCsharp = (rackTile: TileViewModel[]) => {
+  let result: { GameId: number; Tile: { color: Color; shape: Shape; }; RackPosition: number; }[]=[];
+  rackTile.map((playTileModel,index) => {
+    const tilesharp = {
+      GameId: playTileModel.gameId,
+      Tile: {color: playTileModel.color, shape: playTileModel.shape},
+      RackPosition: index
+
+    };
+    result.push(tilesharp)
+  });
+  return result;
+};
 
 @Component({
     selector: 'app-gameqwirkle',
@@ -59,13 +107,13 @@ export class GameqwirkleComponent implements OnInit {
 
     title = 'qwirkle';
 
-    rack: Tile[] = [];
+    rack: TileFront[] = [];
 
-    board: Tile[] = [];
+    board: TileFront[] = [];
 
-    swap: Tile[] = [];
+    swap: TileFront[] = [];
 
-    plate: Tile[][] = [[]];
+    plate: TileFront[][] = [[]];
 
     playTile: TileViewModel[] = [];
 
@@ -73,7 +121,7 @@ export class GameqwirkleComponent implements OnInit {
 
     score: Rack = { code: 1, tilesPlayed: [], newRack: [], points: 0 };
 
-    voidTile: Tile[] = [{ disabled: false, shape: 0, color: 0, y: 0, x: 0 }];
+    voidTile: TileFront[] = [{ disabled: false, shape: 0, color: 0, y: 0, x: 0 }];
 
     totalScore = 0;
 
@@ -89,13 +137,13 @@ export class GameqwirkleComponent implements OnInit {
         gamePosition: 0,
         points: 0,
         lastTurnPoints: 0,
-        rack: { tiles: [] },
+        rack: { tiles: [] ,tilesNumber:0},
         isTurn: true
     };
 
     playerNameToPlay = '';
 
-    tilesLastPlayer: Tile[] = [];
+    tilesLastPlayer: TileFront[] = [];
 
     nameToTurn = '';
 
@@ -321,18 +369,18 @@ export class GameqwirkleComponent implements OnInit {
         return Math.max(...this.board.map((tile) => tile.x));
     }
 
-    getRackTileImage(tile: Tile): string {
+    getRackTileImage(tile: TileFront): string {
         return '../../assets/img/' + toNameImage(tile);
     }
 
-    getLineStyle(line: Tile[], index: number): string {
+    getLineStyle(line: TileFront[], index: number): string {
         if (line[0] !== undefined) {
             return 'translate(' + 0 + 'px,' + index * 100 + 'px)';
         }
         return '';
     }
 
-    drop(event: CdkDragDrop<Tile[], any>, index: number): void {
+    drop(event: CdkDragDrop<TileFront[], any>, index: number): void {
         this.board = insertPosition(
             this.board,
             getInsertTile(
@@ -355,7 +403,7 @@ export class GameqwirkleComponent implements OnInit {
         this.setTemporyScore();
     }
 
-    dropBot(tile: Tile): void {
+    dropBot(tile: TileFront): void {
         this.board.push(tile);
 
         this.removeTileInRack(tile);
@@ -365,7 +413,7 @@ export class GameqwirkleComponent implements OnInit {
         this.setTemporyScore();
     }
 
-    private swapTileFromBag(tile: Tile) {
+    private swapTileFromBag(tile: TileFront) {
         for (const tilebag of this.swap) {
             const index = this.rack.indexOf(tilebag);
             if (tilebag.color === tile.color && tilebag.shape === tile.shape) {
@@ -375,7 +423,7 @@ export class GameqwirkleComponent implements OnInit {
         }
     }
 
-    private removeTileInRack(tile: Tile) {
+    private removeTileInRack(tile: TileFront) {
         for (const tilerack of this.rack) {
             const index = this.rack.indexOf(tilerack);
             if (tilerack.color === tile.color && tilerack.shape === tile.shape) {
@@ -385,7 +433,7 @@ export class GameqwirkleComponent implements OnInit {
         }
     }
 
-    dropEmpty(event: CdkDragDrop<Tile[], any>): void {
+    dropEmpty(event: CdkDragDrop<TileFront[], any>): void {
         this.board = insertPosition(
             this.board,
             getInsertTile(event.previousContainer.data[event.previousIndex], 0, 0),
@@ -414,7 +462,7 @@ export class GameqwirkleComponent implements OnInit {
         );
 
         this.serviceQwirkle
-            .playTileSimulation(this.playTileTempory)
+            .playTileSimulation(toTileModelCsharp(this.playTileTempory))
             .then(async (resp) => {
                 this.score = toChangeRack(resp);
                 this.autoZoom().then();
@@ -440,6 +488,7 @@ export class GameqwirkleComponent implements OnInit {
                 this.player = board.players.find(
                     (player) => player.userId === this.player.userId
                 )!;
+                console.log(this.player);
                 if (this.player.rack.tiles !== null) {
                     this.player.rack.tiles.sort(
                         (a, b) => a.rackPosition - b.rackPosition
@@ -454,10 +503,10 @@ export class GameqwirkleComponent implements OnInit {
 
     async valid(): Promise<void> {
         this.playTile = fromBoard(
-            this.board.filter((tile: Tile) => tile.disabled),
+            this.board.filter((tile: TileFront) => tile.disabled),
             this.player.gameId
         );
-        this.serviceQwirkle.playTile(this.playTile).then(async (resp) => {
+        this.serviceQwirkle.playTile(toTileModelCsharp(this.playTile)).then(async (resp) => {
             this.score = resp;
             if (resp.code !== 1) {
                 this.dialog.open(DialogCodeComponent, {
@@ -479,7 +528,7 @@ export class GameqwirkleComponent implements OnInit {
     async swapTiles(): Promise<void> {
         this.swap = this.swap.filter((tile) => tile.disabled);
         this.swapTile = fromSwap(this.swap, this.gameId);
-        this.serviceQwirkle.swapTile(this.swapTile).then((resp) => {
+        this.serviceQwirkle.swapTile(toSwapCsharp(this.swapTile)).then((resp) => {
             this.swap = [];
             this.swapTile = [];
             this.game().then();
@@ -501,7 +550,7 @@ export class GameqwirkleComponent implements OnInit {
         });
     }
 
-    dropResult(event: CdkDragDrop<Tile[]>): void {
+    dropResult(event: CdkDragDrop<TileFront[]>): void {
         if (event.previousContainer === event.container) {
             moveItemInArray(
                 event.container.data,
@@ -528,7 +577,7 @@ export class GameqwirkleComponent implements OnInit {
                 this.rack.filter((tile) => tile),
                 this.gameId
             );
-            this.serviceQwirkle.rackChangeOrder(this.rackTile).then(async (rack) => {
+            this.serviceQwirkle.rackChangeOrder(toArrangeModelCsharp(this.rackTile)).then(async (rack) => {
                 this.player.rack.tiles.sort((a, b) => a.rackPosition - b.rackPosition);
                 this.rack = toRarrange(this.player.rack.tiles);
                 this.changeDetector.detectChanges();
@@ -625,13 +674,13 @@ export class GameqwirkleComponent implements OnInit {
     }
 
     private static setTilesBotProposal(result: TilesOnBoard[]) {
-        const tilesBots: Tile[] = [];
+        const tilesBots: TileFront[] = [];
         for (const tile of result) {
             tilesBots.push({
                 shape: tile.shape,
                 color: tile.color,
-                x: tile.coordinates.x,
-                y: tile.coordinates.y,
+                x: tile.coordinate.x,
+                y: tile.coordinate.y,
                 disabled: true
             });
         }
@@ -706,7 +755,7 @@ export class GameqwirkleComponent implements OnInit {
         };
     }
 
-    lastPlayer(tileDisplay: Tile): boolean {
+    lastPlayer(tileDisplay: TileFront): boolean {
         let accumulator = false;
         for (const tiles of this.tilesLastPlayer)
             accumulator =

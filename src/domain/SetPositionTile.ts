@@ -1,8 +1,8 @@
-import { Tile } from './Tile';
+import { TileFront } from './Tile';
 import { positionIsFree } from './PositionIsFree';
 import { Tiles } from './tiles';
 
-export const setPositionTile = (tiles: Tile[], tile: Tile): Tile[] => {
+export const setPositionTile = (tiles: TileFront[], tile: TileFront): TileFront[] => {
     const newTile = {
         shape: tile.shape,
         color: tile.color,
@@ -19,7 +19,7 @@ export const setPositionTile = (tiles: Tile[], tile: Tile): Tile[] => {
 
     return [...tiles];
 };
-export const toRarrange = (rack: Tiles[]): Tile[] =>
+export const toRarrange = (rack: Tiles[]): TileFront[] =>
     rack.map((tile, index) => {
         return {
             disabled: true,
@@ -29,7 +29,7 @@ export const toRarrange = (rack: Tiles[]): Tile[] =>
             shape: tile.shape
         };
     });
-export const toRarrangeRack = (rack: Tile[]): Tile[] =>
+export const toRarrangeRack = (rack: TileFront[]): TileFront[] =>
     rack.map((tile, index) => {
         return {
             disabled: true,
@@ -40,7 +40,7 @@ export const toRarrangeRack = (rack: Tile[]): Tile[] =>
         };
     });
 
-export const toTiles = (rack: Tile[]): Tiles[] =>
+export const toTiles = (rack: TileFront[]): Tiles[] =>
     rack.map((tile, index) => {
         return { color: tile.color, shape: tile.shape,  rackPosition: index };
     });

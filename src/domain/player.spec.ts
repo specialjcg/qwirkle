@@ -10,7 +10,7 @@ import {
     toWebPlayer,
     TilesOnBag
 } from './player';
-import { Tile } from './Tile';
+import { TileFront } from './Tile';
 
 describe('player', () => {
     it('should return player id', () => {
@@ -22,7 +22,8 @@ describe('player', () => {
             gamePosition: 0,
             points: 0,
             lastTurnPoints: 0,
-            rack: { tiles: [] },
+            rack: { tiles: [],
+              tilesNumber: 0 },
 
             isTurn: true
         };
@@ -37,7 +38,8 @@ describe('player', () => {
             gamePosition: 0,
             points: 0,
             lastTurnPoints: 0,
-            rack: { tiles: [] },
+            rack: { tiles: [] ,
+              tilesNumber: 0},
             isTurn: true
         };
         expect(toWebPlayer(player)).toEqual(1);
@@ -48,7 +50,7 @@ describe('player', () => {
             board: {
                 tiles: [
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 3,
                             y: -1
                         },
@@ -56,7 +58,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: -1
                         },
@@ -64,7 +66,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 7,
                             y: 3
                         },
@@ -73,7 +75,7 @@ describe('player', () => {
                         shape: 4
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 0
                         },
@@ -82,7 +84,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 1,
                             y: 0
                         },
@@ -91,7 +93,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 3,
                             y: 2
                         },
@@ -100,7 +102,7 @@ describe('player', () => {
                         shape: 6
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 1
                         },
@@ -109,7 +111,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: -1
                         },
@@ -118,7 +120,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 6,
                             y: 3
                         },
@@ -127,7 +129,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: -1,
                             y: 0
                         },
@@ -136,7 +138,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 0,
                             y: 0
                         },
@@ -145,7 +147,7 @@ describe('player', () => {
                         shape: 4
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: -2,
                             y: 0
                         },
@@ -154,7 +156,7 @@ describe('player', () => {
                         shape: 6
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: 2
                         },
@@ -163,7 +165,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 1,
                             y: 2
                         },
@@ -172,7 +174,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 5,
                             y: 3
                         },
@@ -181,7 +183,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: 3
                         },
@@ -190,7 +192,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 8,
                             y: 3
                         },
@@ -199,7 +201,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 2
                         },
@@ -250,7 +252,8 @@ describe('player', () => {
                                 color: 4,
                                 shape: 2
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     isTurn: false
                 },
@@ -294,7 +297,8 @@ describe('player', () => {
                                 color: 6,
                                 shape: 1
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     isTurn: true
                 }
@@ -341,7 +345,7 @@ describe('player', () => {
                             rackPosition: 0,
                             shape: 2
                         }
-                    ]
+                    ],tilesNumber: 0
                 },
                 userId: 3
             },
@@ -385,7 +389,7 @@ describe('player', () => {
                             rackPosition: 3,
                             shape: 1
                         }
-                    ]
+                    ],tilesNumber: 0
                 },
                 userId: 3
             }
@@ -397,7 +401,7 @@ describe('player', () => {
             board: {
                 tiles: [
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 3,
                             y: -1
                         },
@@ -405,7 +409,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: -1
                         },
@@ -414,7 +418,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 7,
                             y: 3
                         },
@@ -423,7 +427,7 @@ describe('player', () => {
                         shape: 4
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 0
                         },
@@ -432,7 +436,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 1,
                             y: 0
                         },
@@ -441,7 +445,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 3,
                             y: 2
                         },
@@ -450,7 +454,7 @@ describe('player', () => {
                         shape: 6
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 1
                         },
@@ -459,7 +463,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: -1
                         },
@@ -468,7 +472,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 6,
                             y: 3
                         },
@@ -477,7 +481,7 @@ describe('player', () => {
                         shape: 1
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: -1,
                             y: 0
                         },
@@ -486,7 +490,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 0,
                             y: 0
                         },
@@ -495,7 +499,7 @@ describe('player', () => {
                         shape: 4
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: -2,
                             y: 0
                         },
@@ -504,7 +508,7 @@ describe('player', () => {
                         shape: 6
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: 2
                         },
@@ -513,7 +517,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 1,
                             y: 2
                         },
@@ -522,7 +526,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 5,
                             y: 3
                         },
@@ -531,7 +535,7 @@ describe('player', () => {
                         shape: 2
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 4,
                             y: 3
                         },
@@ -540,7 +544,7 @@ describe('player', () => {
                         shape: 3
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 8,
                             y: 3
                         },
@@ -549,7 +553,7 @@ describe('player', () => {
                         shape: 5
                     },
                     {
-                        coordinates: {
+                        coordinate: {
                             x: 2,
                             y: 2
                         },
@@ -600,7 +604,8 @@ describe('player', () => {
                                 color: 4,
                                 shape: 2
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     isTurn: false
                 },
@@ -644,7 +649,8 @@ describe('player', () => {
                                 color: 6,
                                 shape: 1
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     isTurn: true
                 }
@@ -847,7 +853,8 @@ describe('player', () => {
                                 rackPosition: 0,
                                 shape: 2
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     userId: 3
                 },
@@ -897,7 +904,8 @@ describe('player', () => {
                                 rackPosition: 3,
                                 shape: 1
                             }
-                        ]
+                        ],
+                      tilesNumber: 0
                     },
                     userId: 3
                 }
@@ -923,7 +931,7 @@ describe('player', () => {
         });
     });
     it('should return rack tile to play', () => {
-        const result: Tile[] = [
+        const result: TileFront[] = [
             {
                 color: 1,
                 disabled: false,
@@ -1015,7 +1023,7 @@ describe('player', () => {
         ]);
     });
     it('should return rack tile to swap', () => {
-        const result: Tile[] = [
+        const result: TileFront[] = [
             {
                 color: 1,
                 disabled: false,

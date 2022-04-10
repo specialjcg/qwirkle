@@ -28,6 +28,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DialogCodeComponent } from './dialog-code/dialog-code.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {AngularSvgIconModule} from "angular-svg-icon";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 export class MyAppModule {}
 
@@ -53,16 +56,19 @@ export class MyAppModule {}
         WaitingPlayerComponent,
         DialogCodeComponent
     ],
-    imports: [
-        BrowserAnimationsModule,
-        AngularMaterialModule,
-        AppRoutingModule,
-        MatInputModule,
-        MatMenuModule,
-        MatProgressSpinnerModule,
-        MatDialogModule,
-        MatCheckboxModule
-    ],
+  imports: [
+    BrowserAnimationsModule,
+    AngularMaterialModule,
+    AppRoutingModule,
+    MatInputModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    AngularSvgIconModule,
+    MatTooltipModule
+  ],
     providers: [HttpTileRepositoryService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

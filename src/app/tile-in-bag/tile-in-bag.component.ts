@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Tile } from '../../domain/Tile';
+import { TileFront } from '../../domain/Tile';
 
 @Component({
     selector: 'app-tile-in-bag',
@@ -9,7 +9,7 @@ import { Tile } from '../../domain/Tile';
 export class TileInBagComponent implements OnInit {
     @Input() Bag = 108;
 
-    @Input() swap: Tile[] = [];
+    @Input() swap: TileFront[] = [];
 
     @Output() swapEvent = new EventEmitter();
 
