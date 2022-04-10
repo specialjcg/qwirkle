@@ -1,4 +1,4 @@
-import { Tile } from './Tile';
+import { TileFront } from './Tile';
 import { Color } from './Color';
 import { Shape } from './Shape';
 import { Tiles, TileViewModel } from './tiles';
@@ -11,14 +11,17 @@ export interface Player {
     gamePosition: number;
     points: number;
     lastTurnPoints: number;
-    rack: { tiles: Tiles[] };
+    rack: {
+      tiles: Tiles[];
+      tilesNumber:number;
+    };
     isTurn: boolean;
 }
 export const toWebPlayer = (result: Player): number => {
     return result.id;
 };
 
-export const toWebTiles = (result: Player): Tile[] => {
+export const toWebTiles = (result: Player): TileFront[] => {
     return result.rack.tiles.map((tile) => ({
         color: tile.color,
         shape: tile.shape,
@@ -34,7 +37,7 @@ interface Coord {
 }
 
 export interface TilesOnBoard {
-    coordinates: Coord;
+    coordinate: Coord;
     color: Color;
     shape: Shape;
 }
@@ -78,7 +81,7 @@ export interface RestTilesPlay {
     y: number;
 }
 export interface BoardGame {
-    boards: Tile[];
+    boards: TileFront[];
     players: Player[];
     bag: { tiles: TilesOnBag[] };
 }
@@ -89,8 +92,8 @@ export interface RestTilesSwap {
 export const toBoard = (result: RestBoard): BoardGame => {
     return {
         boards: result.board.tiles.map((tile1) => ({
-            x: tile1.coordinates.x,
-            y: tile1.coordinates.y,
+            x: tile1.coordinate.x,
+            y: tile1.coordinate.y,
             shape: tile1.shape,
             color: tile1.color,
             disabled: false
@@ -110,7 +113,7 @@ export const toChangeRack = (rack: RestRack): Rack => {
         points: rack.move.points
     };
 };
-export const fromBoard = (result: Tile[], gameId: number): TileViewModel[] => {
+export const fromBoard = (result: TileFront[], gameId: number): TileViewModel[] => {
     return result.map((tile) => ({
         gameId: gameId,
         shape: tile.shape,
@@ -119,7 +122,7 @@ export const fromBoard = (result: Tile[], gameId: number): TileViewModel[] => {
         Y: tile.y
     }));
 };
-export const fromSwap = (result: Tile[], GameId: number): TileViewModel[] => {
+export const fromSwap = (result: TileFront[], GameId: number): TileViewModel[] => {
     return result.map<TileViewModel>((tile) => ({
         gameId: GameId,
         color: tile.color,

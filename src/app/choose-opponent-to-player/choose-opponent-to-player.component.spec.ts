@@ -3,6 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ChooseOpponentToPlayerComponent} from './choose-opponent-to-player.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 describe('ChooseOpponentToPlayerComponent', () => {
   let component: ChooseOpponentToPlayerComponent;
@@ -11,7 +12,7 @@ describe('ChooseOpponentToPlayerComponent', () => {
     beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ChooseOpponentToPlayerComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule]
+      imports: [HttpClientTestingModule, RouterTestingModule,MatAutocompleteModule]
     }).compileComponents();
   });
 

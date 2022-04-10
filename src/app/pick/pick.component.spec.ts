@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PickComponent } from './pick.component';
-import { Tile } from '../../domain/Tile';
+import { TileFront } from '../../domain/Tile';
 import { DebugElement } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { never } from 'rxjs';
@@ -40,7 +40,7 @@ describe('PickComponent', () => {
     });
 
     it('should return true if   image is not empty', () => {
-        const tile: Tile = {
+        const tile: TileFront = {
             color: 6,
             disabled: true,
             shape: 2,
@@ -53,7 +53,7 @@ describe('PickComponent', () => {
         );
     });
     it('should drop a tile when empty ', () => {
-        const tile: Tile[] = [
+        const tile: TileFront[] = [
             {
                 color: 6,
                 disabled: true,
