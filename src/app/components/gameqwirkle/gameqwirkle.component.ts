@@ -147,7 +147,7 @@ export class GameqwirkleComponent implements OnInit {
 
     nameToTurn = '';
 
-    panzoomModel!: PanZoomModel;
+  panzoomModel!: PanZoomModel;
 
     panZoomConfigOptions: PanZoomConfigOptions = {
         zoomLevels: 10,

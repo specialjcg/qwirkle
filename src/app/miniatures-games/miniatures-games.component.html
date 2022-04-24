@@ -1,0 +1,26 @@
+
+
+  <mat-card class="container">
+    <div #scene id="scene" *ngIf="this.plate.length!==0" [style.--transform]="transform">
+      <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+
+          <div class="position-secondPlayer" *ngFor="let line of plate;let i=index"
+               [style.transform]="getLineStyle(line,i)">
+            <div  class="example-list2dboard"
+                 >
+
+              <div *ngFor="let tile of line;let j=index"  class="example-box2d"
+                   >
+                <app-tile-pawn [image]="getRackTileImage(tile)" >
+                  <app-tile-pawn  [image]="getRackTileImage(tile)"
+                                  ></app-tile-pawn></app-tile-pawn>
+
+              </div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </mat-card>
+
+
