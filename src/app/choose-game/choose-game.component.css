@@ -37,13 +37,9 @@ mat-form-field{
   margin-block: 2rem;
   gap: 2rem;
   width: 100vw;
-height: 100vh;
+height: 60vh;
 }
-img {
-  max-width: 100%;
-  display: block;
-  object-fit: cover;
-}
+
 
 .card {
   display: flex;

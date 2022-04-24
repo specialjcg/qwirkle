@@ -25,7 +25,7 @@ describe('ChooseGameComponent', () => {
     });
 
     it('should create', () => {
-        expect(component.games).toEqual({ listGameId: [] });
+        expect(component.listGamedId).toEqual({ listGameId: [] });
         expect(component.gameId).toEqual(0);
         expect(component).toBeTruthy();
     });
