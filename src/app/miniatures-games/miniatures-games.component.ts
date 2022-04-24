@@ -1,6 +1,5 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TileFront, toNameImage, toPlate} from "../../domain/Tile";
-import {PanZoomAPI, PanZoomConfig, PanZoomConfigOptions, PanZoomModel} from "ngx-panzoom";
 import HttpTileRepositoryService from "../../infra/httpRequest/http-tile-repository.service";
 
 @Component({
@@ -24,12 +23,17 @@ export class MiniaturesGamesComponent implements OnInit {
       let height =document.getElementById("scene")!.clientHeight;
       let largeur=(this.getXmax(board.boards) - this.getXmin(board.boards)) * 100;
       let hauteur=(this.getYmax(board.boards) - this.getYmin(board.boards)) * 100;
-      let scale=height/hauteur
-      if (largeur>hauteur){
-       scale= width/largeur
+      let scale=width/largeur
+      let translateX=width/largeur*35;
+      let translateY=width/largeur*15;
+
+      if (largeur<hauteur){
+       scale= height/hauteur
+        translateX=width/largeur;
+        translateY=height/hauteur*10;
       }
 
-      this.transform = "scale(" + scale + ")";
+      this.transform = "translate(-"+translateX+"%, -"+translateY+"%) scale(" + scale*.5+ ")";
     });
 
   }
