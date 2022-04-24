@@ -31,6 +31,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {AngularSvgIconModule} from "angular-svg-icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import { MiniaturesGamesComponent } from './miniatures-games/miniatures-games.component';
 
 export class MyAppModule {}
 
@@ -54,7 +55,8 @@ export class MyAppModule {}
         MenuComponent,
         RackSupportComponent,
         WaitingPlayerComponent,
-        DialogCodeComponent
+        DialogCodeComponent,
+        MiniaturesGamesComponent
     ],
   imports: [
     BrowserAnimationsModule,
