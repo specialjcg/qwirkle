@@ -167,7 +167,7 @@ navigateTo model route =
                 Just token ->
                     let
                         ( gameModel, gameCmd ) =
-                            Game.init model.baseUrl token gameId
+                            Game.init model.baseUrl token model.pseudo gameId
                     in
                     ( { model | route = route, page = GamePage gameModel }
                     , Cmd.batch

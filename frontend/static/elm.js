@@ -6713,8 +6713,8 @@ var $author$project$Page$Game$fetchGame = F3(
 			$author$project$Types$Game$gameStateDecoder,
 			$author$project$Page$Game$GotGameState);
 	});
-var $author$project$Page$Game$init = F3(
-	function (baseUrl, token, gameId) {
+var $author$project$Page$Game$init = F4(
+	function (baseUrl, token, pseudo, gameId) {
 		return _Utils_Tuple2(
 			{
 				bagCount: 0,
@@ -6727,7 +6727,7 @@ var $author$project$Page$Game$init = F3(
 				isPanning: false,
 				lastPlayedCoords: $elm$core$Set$empty,
 				loading: true,
-				myPseudo: '',
+				myPseudo: pseudo,
 				panStart: {x: 0, y: 0},
 				pendingPlacements: _List_Nil,
 				players: _List_Nil,
@@ -6950,7 +6950,7 @@ var $author$project$Main$navigateTo = F2(
 				var _v5 = model.token;
 				if (_v5.$ === 'Just') {
 					var token = _v5.a;
-					var _v6 = A3($author$project$Page$Game$init, model.baseUrl, token, gameId);
+					var _v6 = A4($author$project$Page$Game$init, model.baseUrl, token, model.pseudo, gameId);
 					var gameModel = _v6.a;
 					var gameCmd = _v6.b;
 					return _Utils_Tuple2(
@@ -7562,6 +7562,9 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
+var $author$project$Types$Player$isBot = function (pseudo) {
+	return A2($elm$core$String$startsWith, 'bot', pseudo);
+};
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
 		return true;
@@ -7965,7 +7968,27 @@ var $author$project$Page$Game$update = F2(
 				case 'GotGameState':
 					if (msg.a.$ === 'Ok') {
 						var state = msg.a.a;
-						var myPlayer = $elm$core$List$head(state.players);
+						var myPlayer = function () {
+							var _v1 = $elm$core$List$head(
+								A2(
+									$elm$core$List$filter,
+									function (p) {
+										return _Utils_eq(p.pseudo, model.myPseudo);
+									},
+									state.players));
+							if (_v1.$ === 'Just') {
+								var p = _v1.a;
+								return $elm$core$Maybe$Just(p);
+							} else {
+								return $elm$core$List$head(
+									A2(
+										$elm$core$List$filter,
+										function (p) {
+											return !$author$project$Types$Player$isBot(p.pseudo);
+										},
+										state.players));
+							}
+						}();
 						var currentPlayer = $elm$core$List$head(
 							A2(
 								$elm$core$List$filter,
@@ -8041,12 +8064,12 @@ var $author$project$Page$Game$update = F2(
 					}
 				case 'ClickBoardCell':
 					var coord = msg.a;
-					var _v1 = model.selectedRackIndex;
-					if (_v1.$ === 'Just') {
-						var idx = _v1.a;
-						var _v2 = A2($author$project$Page$Game$listGet, idx, model.rack);
-						if (_v2.$ === 'Just') {
-							var rackTile = _v2.a;
+					var _v2 = model.selectedRackIndex;
+					if (_v2.$ === 'Just') {
+						var idx = _v2.a;
+						var _v3 = A2($author$project$Page$Game$listGet, idx, model.rack);
+						if (_v3.$ === 'Just') {
+							var rackTile = _v3.a;
 							var placement = {coordinate: coord, face: rackTile.face};
 							var newRack = A2($author$project$Page$Game$listRemoveAt, idx, model.rack);
 							var newPending = _Utils_ap(
@@ -8072,14 +8095,14 @@ var $author$project$Page$Game$update = F2(
 					}
 				case 'RemovePending':
 					var coord = msg.a;
-					var _v3 = A2(
+					var _v4 = A2(
 						$elm$core$List$partition,
 						function (bt) {
 							return _Utils_eq(bt.coordinate, coord);
 						},
 						model.pendingPlacements);
-					var removed = _v3.a;
-					var kept = _v3.b;
+					var removed = _v4.a;
+					var kept = _v4.b;
 					var restoredRack = _Utils_ap(
 						model.rack,
 						A2(
@@ -9323,6 +9346,26 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $author$project$Page$Game$isSpectator = function (model) {
+	return (!$elm$core$List$isEmpty(model.players)) && A2(
+		$elm$core$List$all,
+		function (p) {
+			return $author$project$Types$Player$isBot(p.pseudo);
+		},
+		model.players);
+};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9340,10 +9383,29 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Page$Game$viewActions = function (model) {
-	return A2(
+	return $author$project$Page$Game$isSpectator(model) ? A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('game-actions')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('spectator-label')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('👁 Spectating')
+					]))
+			])) : A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
@@ -10027,7 +10089,6 @@ var $author$project$Page$Game$viewErrorToast = function (model) {
 var $author$project$Page$Game$GoToLobby = {$: 'GoToLobby'};
 var $author$project$Page$Game$Toggle3DView = {$: 'Toggle3DView'};
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Page$Game$viewHeader = F2(
 	function (pseudo, model) {
 		return A2(

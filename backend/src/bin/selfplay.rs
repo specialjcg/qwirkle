@@ -282,9 +282,12 @@ fn play_one_game(
         current = 1 - current;
     }
 
-    // Label with outcome
-    let diff = players[0].score - players[1].score;
-    let outcome_0: f32 = if diff > 0 { 1.0 } else if diff < 0 { -1.0 } else { 0.0 };
+    // Label with continuous score-diff signal (clamped to [-1, 1] via tanh)
+    // Blend with binary outcome for stability
+    let diff = (players[0].score - players[1].score) as f32;
+    let continuous_0 = (diff / 50.0).tanh();
+    let binary_0: f32 = if diff > 0.0 { 1.0 } else if diff < 0.0 { -1.0 } else { 0.0 };
+    let outcome_0: f32 = 0.7 * continuous_0 + 0.3 * binary_0;
 
     let mut out = Vec::new();
     for (pi, player) in players.iter().enumerate() {

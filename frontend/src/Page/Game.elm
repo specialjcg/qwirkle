@@ -11,7 +11,7 @@ import Json.Encode as Encode
 import Port
 import Set exposing (Set)
 import Types.Game exposing (GameState, gameStateDecoder)
-import Types.Player exposing (Player, displayName)
+import Types.Player as Player exposing (Player, displayName)
 import Types.Color exposing (colorToString)
 import Types.Shape exposing (shapeToString)
 import Types.Tile exposing (BoardTile, Coordinate, RackTile, TileFace)
@@ -99,8 +99,8 @@ type Msg
     | From3DPendingClick Coordinate
 
 
-init : String -> String -> Int -> ( Model, Cmd Msg )
-init baseUrl token gameId =
+init : String -> String -> String -> Int -> ( Model, Cmd Msg )
+init baseUrl token pseudo gameId =
     ( { gameId = gameId
       , baseUrl = baseUrl
       , token = token
@@ -109,7 +109,7 @@ init baseUrl token gameId =
       , players = []
       , bagCount = 0
       , currentTurnPseudo = ""
-      , myPseudo = ""
+      , myPseudo = pseudo
       , winner = Nothing
       , loading = True
       , error = Nothing
@@ -144,8 +144,19 @@ update msg model =
                         |> List.filter .isTurn
                         |> List.head
 
+                -- Find ME among the players. Strategy:
+                --   1. Match exact pseudo if known
+                --   2. Else fallback: first non-bot player (likely me)
+                --   3. Spectator games (all bots) → no rack
                 myPlayer =
-                    state.players |> List.head
+                    case state.players |> List.filter (\p -> p.pseudo == model.myPseudo) |> List.head of
+                        Just p ->
+                            Just p
+
+                        Nothing ->
+                            state.players
+                                |> List.filter (\p -> not (Player.isBot p.pseudo))
+                                |> List.head
 
                 newModel =
                     { model
@@ -796,8 +807,20 @@ viewRackArea model =
         ]
 
 
+isSpectator : Model -> Bool
+isSpectator model =
+    -- Spectator if all players are bots (no human in the game)
+    not (List.isEmpty model.players)
+        && List.all (\p -> Player.isBot p.pseudo) model.players
+
+
 viewActions : Model -> Html Msg
 viewActions model =
+    if isSpectator model then
+        div [ class "game-actions" ]
+            [ span [ class "spectator-label" ] [ text "👁 Spectating" ] ]
+
+    else
     div [ class "game-actions" ]
         [ if not (List.isEmpty model.pendingPlacements) then
             button

@@ -103,6 +103,13 @@ fn main() {
     let mut epochs_no_improve = 0;
 
     for epoch in 0..epochs {
+        // Cosine LR decay: lr * 0.5 * (1 + cos(pi * epoch / epochs))
+        // Decays smoothly from `lr` to 0 over the course of training.
+        let progress = epoch as f64 / epochs.max(1) as f64;
+        let cos_factor = 0.5 * (1.0 + (std::f64::consts::PI * progress).cos());
+        let cur_lr = lr * cos_factor.max(0.05); // floor at 5% to keep learning
+        opt.set_lr(cur_lr);
+
         let (tv, tp, tt) = train_epoch(
             &model, &samples, &train_indices, batch_size, policy_weight, &mut opt, &mut rng, device,
         );
@@ -114,8 +121,8 @@ fn main() {
         };
 
         println!(
-            "Epoch {}/{}: train[v={:.4} p={:.4} t={:.4}] val[v={:.4} p={:.4} t={:.4}]",
-            epoch + 1, epochs, tv, tp, tt, vv, vp, vt,
+            "Epoch {}/{}: train[v={:.4} p={:.4} t={:.4}] val[v={:.4} p={:.4} t={:.4}] lr={:.5}",
+            epoch + 1, epochs, tv, tp, tt, vv, vp, vt, cur_lr,
         );
 
         if vt < best_val_loss {
