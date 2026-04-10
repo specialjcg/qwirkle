@@ -1,0 +1,75 @@
+[package]
+name = "qwirkle-backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = { version = "0.8", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
+jsonwebtoken = "9"
+argon2 = "0.5"
+thiserror = "2"
+tower-http = { version = "0.6", features = ["cors", "fs"] }
+uuid = { version = "1", features = ["v4"] }
+rand = "0.8"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+password-hash = "0.5"
+futures = "0.3"
+tokio-stream = "0.1"
+tower = "0.5"
+
+# Neural bot (feature-gated)
+tch = { version = "0.17", optional = true }
+safetensors = { version = "0.4", optional = true }
+
+[features]
+default = []
+neural = ["tch", "safetensors"]
+
+[[bin]]
+name = "selfplay"
+path = "src/bin/selfplay.rs"
+required-features = ["neural"]
+
+[[bin]]
+name = "train_bot"
+path = "src/bin/train_bot.rs"
+required-features = ["neural"]
+
+[[bin]]
+name = "evaluate"
+path = "src/bin/evaluate.rs"
+required-features = ["neural"]
+
+[[bin]]
+name = "alphazero"
+path = "src/bin/alphazero.rs"
+required-features = ["neural"]
+
+[[bin]]
+name = "distill"
+path = "src/bin/distill.rs"
+required-features = ["neural"]
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.bench]
+inherits = "release"
+debug = true
+strip = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.dev.package."*"]
+opt-level = 3

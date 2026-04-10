@@ -1,46 +1,51 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# ── Rust backend ──
+/backend/target/
+/backend/Cargo.lock.bak
+*.rs.bk
 
-# compiled output
-/dist
-/tmp
-/out-tsc
-# Only exists if Bazel was run
-/bazel-out
+# ── Elm frontend ──
+/frontend/elm-stuff/
+/frontend/node_modules/
+/frontend/static/elm.js.map
+.history/
 
-# dependencies
-/node_modules
+# ── Local data & models (large binary blobs) ──
+/backend/data/
+/backend/models/
+/backend/qwirkle.db
+/backend/qwirkle.db-shm
+/backend/qwirkle.db-wal
+*.pkl
+*.pkl.chunk*
+*.bin
+*.pt
+*.onnx
+*.safetensors
 
-# profiling files
-chrome-profiler-events*.json
-speed-measure-plugin*.json
+# ── ML training artifacts ──
+*.log
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
+# ── Editors / IDEs ──
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
+.idea/
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*.sublime-workspace
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
+# ── OS ──
 .DS_Store
 Thumbs.db
+
+# ── Screenshots / paste images ──
+Image collée*.png
+*.png.tmp
+
+# ── Claude / agent local config ──
+/.claude/
