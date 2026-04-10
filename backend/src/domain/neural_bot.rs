@@ -9,8 +9,9 @@ use std::sync::{Mutex, OnceLock};
 #[cfg(feature = "neural")]
 use std::path::Path;
 
-/// Default MCTS sims for in-game bot (kept low for CPU latency).
-pub const DEFAULT_MCTS_SIMS: u32 = 30;
+/// Default MCTS sims for in-game bot.
+/// 100 sims ≈ 1s latency on CPU but significantly stronger than 30.
+pub const DEFAULT_MCTS_SIMS: u32 = 100;
 
 /// Default model path for the neural bot.
 pub const DEFAULT_MODEL_PATH: &str = "models/v1.pt";
@@ -56,8 +57,12 @@ pub fn ensure_loaded() -> bool {
     false
 }
 
-/// Pick a move using MCTS guided by the neural network.
-/// Returns None if model is not loaded or no legal moves.
+/// Pick a move using value-based ranking with greedy bias.
+/// Until the policy network is strong enough to outperform greedy, we:
+///   1. Get the top-K legal moves (sorted by score, descending)
+///   2. Re-rank them using `score * 0.5 + value(resulting_state)`
+///   3. Pick the best
+/// This stays close to greedy but allows the value head to nudge.
 #[cfg(feature = "neural")]
 pub fn mcts_best_move(
     board: &[BoardTile],
@@ -65,22 +70,66 @@ pub fn mcts_best_move(
     bag_remaining: usize,
     player_score: i32,
     opponent_score: i32,
-    n_sims: u32,
+    _n_sims: u32,
 ) -> Option<ScoredMove> {
+    use crate::domain::tile::RackTile;
+    use crate::neural::tensor_conversion::{extract_nodes, nodes_to_tensor, GameContext};
+
     let state_mutex = NEURAL_STATE.get()?.as_ref()?;
     let state = state_mutex.lock().ok()?;
 
     let _no_grad = tch::no_grad_guard();
-    let root = crate::neural::mcts::MCTSNode::new_root(
-        board.to_vec(),
-        rack.to_vec(),
-        bag_remaining,
-        player_score,
-        opponent_score,
-    );
-    let mut mcts = crate::neural::mcts::MCTS::new(root, state.device);
-    mcts.search(&state.model, n_sims);
-    mcts.best_move()
+
+    // Get legal moves
+    let rack_tiles: Vec<RackTile> = rack
+        .iter()
+        .enumerate()
+        .map(|(i, &face)| RackTile { face, rack_position: i as u8 })
+        .collect();
+    let legal_moves = crate::domain::ai::best_moves(board, &rack_tiles);
+
+    if legal_moves.is_empty() {
+        return None;
+    }
+    if legal_moves.len() == 1 {
+        return Some(legal_moves[0].clone());
+    }
+
+    // Evaluate each move with value head
+    let mut best_combined = f64::NEG_INFINITY;
+    let mut best_idx = 0;
+
+    for (i, m) in legal_moves.iter().enumerate() {
+        let mut new_board = board.to_vec();
+        new_board.extend_from_slice(&m.tiles);
+
+        let nodes = extract_nodes(&new_board, &[]);
+        let (feat, mask) = nodes_to_tensor(&nodes, &new_board);
+
+        let ctx = GameContext {
+            bag_remaining: bag_remaining as f32,
+            player_score: (player_score + m.score) as f32,
+            opponent_score: opponent_score as f32,
+            rack_size: (rack.len() - m.tiles.len()) as f32,
+        };
+
+        let feat_b = feat.unsqueeze(0).to(state.device);
+        let mask_b = mask.unsqueeze(0).to(state.device);
+        let ctx_b = ctx.to_tensor().unsqueeze(0).to(state.device);
+
+        let value = state.model.forward_value(&feat_b, &mask_b, &ctx_b, false);
+        let v = f64::try_from(&value.squeeze_dim(0).squeeze_dim(0)).unwrap_or(0.0);
+
+        // Heavy weight on immediate score (greedy bias) + small value contribution
+        let combined = m.score as f64 * 0.5 + v;
+
+        if combined > best_combined {
+            best_combined = combined;
+            best_idx = i;
+        }
+    }
+
+    Some(legal_moves[best_idx].clone())
 }
 
 #[cfg(not(feature = "neural"))]

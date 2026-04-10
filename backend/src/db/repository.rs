@@ -81,6 +81,18 @@ impl Repository {
         Ok(GameId(id))
     }
 
+    pub async fn is_spectator(&self, game_id: GameId, user_id: UserId) -> Result<bool, AppError> {
+        let row: Option<(Option<i64>,)> =
+            sqlx::query_as("SELECT spectator_user_id FROM games WHERE id = ?")
+                .bind(game_id.0)
+                .fetch_optional(&self.pool)
+                .await?;
+        Ok(row
+            .and_then(|(opt,)| opt)
+            .map(|sid| sid == user_id.0)
+            .unwrap_or(false))
+    }
+
     pub async fn create_spectate_game(&self, spectator_user_id: UserId) -> Result<GameId, AppError> {
         let id: i64 = sqlx::query_scalar(
             "INSERT INTO games (status, spectator_user_id) VALUES ('in_progress', ?) RETURNING id",

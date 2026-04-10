@@ -133,10 +133,13 @@ pub async fn delete_game(
 ) -> Result<StatusCode, AppError> {
     let gid = GameId(game_id);
 
-    // Verify user is a player in this game
+    // Allow if user is a player OR the spectator
     let players = state.repo.get_players(gid).await?;
-    if !players.iter().any(|p| p.user_id == user_id) {
-        return Err(AppError::Auth("not a player in this game".into()));
+    let is_player = players.iter().any(|p| p.user_id == user_id);
+    let is_spectator = state.repo.is_spectator(gid, user_id).await?;
+
+    if !is_player && !is_spectator {
+        return Err(AppError::Auth("not authorized to delete this game".into()));
     }
 
     state.repo.delete_game(gid).await?;

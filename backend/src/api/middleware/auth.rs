@@ -42,6 +42,11 @@ pub async fn jwt_auth(
     mut req: Request,
     next: Next,
 ) -> Result<Response, AppError> {
+    // Skip CORS preflight OPTIONS requests — let CORS layer handle them
+    if req.method() == axum::http::Method::OPTIONS {
+        return Ok(next.run(req).await);
+    }
+
     let header = req
         .headers()
         .get(AUTHORIZATION)

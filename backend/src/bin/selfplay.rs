@@ -19,6 +19,7 @@ use rand::Rng;
 use tch::{nn, no_grad_guard, Kind, Tensor, Device};
 
 use qwirkle_backend::domain::ai::{best_moves, ScoredMove};
+use qwirkle_backend::domain::rollout_bot::{rollout_best_move, DEFAULT_K_ROLLOUTS, DEFAULT_ROLLOUT_DEPTH};
 use qwirkle_backend::domain::tile::{BoardTile, RackTile, TileFace};
 use qwirkle_backend::neural::graph_transformer::{QwirkleNet, MAX_NODES, NUM_TILE_FACES, INPUT_DIM};
 use qwirkle_backend::neural::model_io::load_model;
@@ -58,11 +59,14 @@ fn main() {
     let out_path = parse_arg_str(&args, "--out").unwrap_or_else(|| "data/selfplay.bin".to_string());
     let max_turns = parse_arg(&args, "--max-turns").unwrap_or(200);
     let epsilon: f64 = parse_arg_f64(&args, "--epsilon").unwrap_or(0.1);
+    let use_rollout = args.iter().any(|a| a == "--rollout-bot");
     let model_path = parse_arg_str(&args, "--model");
 
     let use_neural = model_path.is_some();
     println!("Self-play: {num_games} games, epsilon={epsilon}");
-    if use_neural {
+    if use_rollout {
+        println!("  Mode: Rollout vs Rollout");
+    } else if use_neural {
         println!("  Mode: Neural vs Greedy");
     } else {
         println!("  Mode: Greedy vs Greedy (bootstrap)");
@@ -98,6 +102,7 @@ fn main() {
             max_turns,
             epsilon,
             device,
+            use_rollout,
         );
         all_samples.extend(samples);
 
@@ -123,6 +128,7 @@ fn play_one_game(
     max_turns: usize,
     epsilon: f64,
     device: Device,
+    use_rollout: bool,
 ) -> Vec<Sample> {
     let mut bag = TileFace::full_bag();
     bag.shuffle(rng);
@@ -200,7 +206,25 @@ fn play_one_game(
         ];
 
         // Choose move
-        let chosen_idx = if players[current].use_neural && model.is_some() {
+        let chosen_idx = if use_rollout {
+            // Rollout bot picks the best move via Monte Carlo
+            let rollout_move = rollout_best_move(
+                &board,
+                &players[current].rack,
+                &bag,
+                players[current].score,
+                players[opponent].score,
+                DEFAULT_K_ROLLOUTS,
+                DEFAULT_ROLLOUT_DEPTH,
+            );
+            if let Some(rm) = rollout_move {
+                // Find this move in the moves list
+                let idx = moves.iter().position(|m| m.tiles == rm.tiles).unwrap_or(0);
+                idx
+            } else {
+                0
+            }
+        } else if players[current].use_neural && model.is_some() {
             neural_pick(model.unwrap(), &board, &moves, &players, current, bag.len(), device, rng, epsilon)
         } else if rng.gen::<f64>() < epsilon && moves.len() > 1 {
             rng.gen_range(0..moves.len())

@@ -21,6 +21,7 @@ password-hash = "0.5"
 futures = "0.3"
 tokio-stream = "0.1"
 tower = "0.5"
+rayon = "1.10"
 
 # Neural bot (feature-gated)
 tch = { version = "0.17", optional = true }
@@ -54,6 +55,10 @@ required-features = ["neural"]
 name = "distill"
 path = "src/bin/distill.rs"
 required-features = ["neural"]
+
+[[bin]]
+name = "bench_rollout"
+path = "src/bin/bench_rollout.rs"
 
 [profile.release]
 opt-level = 3

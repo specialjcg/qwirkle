@@ -6,7 +6,8 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 use crate::domain::ai;
-use crate::domain::neural_bot::{bot_kind_from_pseudo, mcts_best_move, BotKind, DEFAULT_MCTS_SIMS};
+use crate::domain::neural_bot::{bot_kind_from_pseudo, BotKind};
+use crate::domain::rollout_bot::{rollout_best_move, DEFAULT_K_ROLLOUTS, DEFAULT_ROLLOUT_DEPTH};
 use crate::domain::error::{AppError, GameError};
 use crate::domain::game::{GameId, GameStatus};
 use crate::domain::rules::validate_and_score;
@@ -383,29 +384,29 @@ async fn auto_play_bot(
         BotKind::NeuralMcts => {
             let opp = game.players.iter().find(|p| p.id != bot_player_id);
             let opp_score = opp.map(|p| p.points).unwrap_or(0);
-            let bag_size = game.bag.len();
             let rack_faces: Vec<TileFace> = bot.rack.iter().map(|r| r.face).collect();
             let board_clone = game.board.clone();
+            let bag_clone = game.bag.clone();
             let rack_clone = bot.rack.clone();
             let bot_score = bot.points;
 
-            // Run MCTS in blocking thread to not stall the tokio runtime
-            // (MCTS does CPU-intensive NN forward passes)
-            let mcts_result = tokio::task::spawn_blocking(move || {
-                mcts_best_move(
+            // Pure rollout MCTS in blocking thread (CPU-intensive)
+            let result = tokio::task::spawn_blocking(move || {
+                rollout_best_move(
                     &board_clone,
                     &rack_faces,
-                    bag_size,
+                    &bag_clone,
                     bot_score,
                     opp_score,
-                    DEFAULT_MCTS_SIMS,
+                    DEFAULT_K_ROLLOUTS,
+                    DEFAULT_ROLLOUT_DEPTH,
                 )
             })
             .await
             .ok()
             .flatten();
 
-            mcts_result.or_else(|| ai::best_moves(&game.board, &rack_clone).into_iter().next())
+            result.or_else(|| ai::best_moves(&game.board, &rack_clone).into_iter().next())
         }
         BotKind::Greedy => ai::best_moves(&game.board, &bot.rack).into_iter().next(),
     };

@@ -32,21 +32,27 @@ use qwirkle_backend::neural::tensor_conversion::{
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let iterations = parse_arg(&args, "--iterations").unwrap_or(10);
+    let iterations = parse_arg(&args, "--iterations").unwrap_or(100);
     let selfplay_games = parse_arg(&args, "--selfplay-games").unwrap_or(100);
     let mcts_sims = parse_arg(&args, "--mcts-sims").unwrap_or(50);
-    let arena_games = parse_arg(&args, "--arena-games").unwrap_or(40);
+    let arena_games = parse_arg(&args, "--arena-games").unwrap_or(30);
     let win_threshold = parse_arg_f64(&args, "--win-threshold").unwrap_or(0.55);
     let out_dir = parse_arg_str(&args, "--out-dir").unwrap_or_else(|| "models/az".to_string());
     let init_model = parse_arg_str(&args, "--init-model");
+    let eval_every = parse_arg(&args, "--eval-every").unwrap_or(2);
+    let eval_games = parse_arg(&args, "--eval-games").unwrap_or(40);
+    let target_greedy_winrate = parse_arg_f64(&args, "--target-greedy-winrate").unwrap_or(1.0);
 
     println!("AlphaZero training:");
-    println!("  iterations:     {iterations}");
-    println!("  selfplay/iter:  {selfplay_games}");
-    println!("  mcts sims:      {mcts_sims}");
-    println!("  arena games:    {arena_games}");
-    println!("  win threshold:  {win_threshold}");
-    println!("  out dir:        {out_dir}");
+    println!("  iterations:        {iterations}");
+    println!("  selfplay/iter:     {selfplay_games}");
+    println!("  mcts sims:         {mcts_sims}");
+    println!("  arena games:       {arena_games}");
+    println!("  win threshold:     {win_threshold}");
+    println!("  eval every:        {eval_every} iters");
+    println!("  eval games:        {eval_games}");
+    println!("  target greedy:     {:.0}%", target_greedy_winrate * 100.0);
+    println!("  out dir:           {out_dir}");
 
     fs::create_dir_all(&out_dir).expect("create out dir");
 
@@ -70,6 +76,8 @@ fn main() {
         save_model(&best_vs, &best_path).expect("save initial best");
     }
 
+    let mut best_greedy_winrate = 0.0;
+
     for iter in 1..=iterations {
         println!("=== Iteration {iter}/{iterations} ===");
         let t0 = Instant::now();
@@ -85,7 +93,6 @@ fn main() {
             device,
             &samples_path,
         );
-        println!("    samples saved: {samples_path}");
 
         // 2. Train candidate
         println!("  [2/3] Training candidate...");
@@ -111,11 +118,146 @@ fn main() {
             println!("    -> Candidate rejected, keeping best");
         }
 
+        // Periodic eval vs greedy
+        if iter % eval_every == 0 {
+            println!("  [eval] Best vs Greedy ({eval_games} games)...");
+            let best_for_eval = QwirkleNet::new(&best_vs);
+            best_greedy_winrate = eval_vs_greedy(&best_for_eval, eval_games, mcts_sims as u32, device);
+            println!("    >> best vs greedy: {:.1}%", best_greedy_winrate * 100.0);
+
+            // Save snapshot with winrate in name
+            let snapshot = format!("{out_dir}/best_iter{iter}_g{:.0}.pt", best_greedy_winrate * 100.0);
+            fs::copy(&best_path, &snapshot).ok();
+
+            if best_greedy_winrate >= target_greedy_winrate {
+                println!("\n🎯 Target reached! best vs greedy = {:.1}% >= {:.0}%",
+                    best_greedy_winrate * 100.0, target_greedy_winrate * 100.0);
+                break;
+            }
+        }
+
+        // Cleanup intermediate samples to save disk
+        let _ = fs::remove_file(&samples_path);
+        let _ = fs::remove_file(&candidate_path);
+
         let elapsed = t0.elapsed().as_secs_f64();
-        println!("  iteration done in {elapsed:.1}s\n");
+        println!("  iteration done in {elapsed:.1}s | best_vs_greedy={:.1}%\n",
+            best_greedy_winrate * 100.0);
     }
 
-    println!("AlphaZero training complete. Best model: {best_path}");
+    println!("\nAlphaZero training complete.");
+    println!("  best model:        {best_path}");
+    println!("  best vs greedy:    {:.1}%", best_greedy_winrate * 100.0);
+}
+
+/// Evaluate a neural model against the greedy bot. Returns win rate of neural.
+fn eval_vs_greedy(model: &QwirkleNet, n_games: usize, mcts_sims: u32, device: Device) -> f64 {
+    let mut wins = 0;
+    let mut draws = 0;
+    let mut rng = thread_rng();
+
+    for game_idx in 0..n_games {
+        let neural_first = game_idx % 2 == 0;
+        let (n_score, g_score) = play_neural_vs_greedy(model, neural_first, mcts_sims, device, &mut rng);
+        if n_score > g_score {
+            wins += 1;
+        } else if n_score == g_score {
+            draws += 1;
+        }
+    }
+    (wins as f64 + 0.5 * draws as f64) / n_games as f64
+}
+
+fn play_neural_vs_greedy(
+    model: &QwirkleNet,
+    neural_first: bool,
+    mcts_sims: u32,
+    device: Device,
+    rng: &mut impl Rng,
+) -> (i32, i32) {
+    use qwirkle_backend::neural::mcts::{MCTSNode, MCTS};
+
+    let mut bag = TileFace::full_bag();
+    bag.shuffle(rng);
+
+    let mut racks: [Vec<TileFace>; 2] = [Vec::new(), Vec::new()];
+    let mut scores = [0i32, 0];
+    for player in &mut racks {
+        for _ in 0..6 {
+            if let Some(t) = bag.pop() { player.push(t); }
+        }
+    }
+
+    let mut board = Vec::new();
+    let mut current = 0usize;
+    let mut passes = 0;
+
+    for _ in 0..200 {
+        let opp = 1 - current;
+        let rack_tiles: Vec<RackTile> = racks[current]
+            .iter()
+            .enumerate()
+            .map(|(i, &f)| RackTile { face: f, rack_position: i as u8 })
+            .collect();
+
+        let legal = best_moves(&board, &rack_tiles);
+        if legal.is_empty() {
+            passes += 1;
+            if passes >= 4 { break; }
+            let hand = racks[current].clone();
+            for t in &hand { bag.push(*t); }
+            racks[current].clear();
+            bag.shuffle(rng);
+            for _ in 0..hand.len() {
+                if let Some(t) = bag.pop() { racks[current].push(t); }
+            }
+            current = 1 - current;
+            continue;
+        }
+        passes = 0;
+
+        // 0 = neural if neural_first else greedy
+        let is_neural_turn = if neural_first { current == 0 } else { current == 1 };
+
+        let chosen = if is_neural_turn {
+            // Use MCTS to pick neural's move
+            let root = MCTSNode::new_root(
+                board.clone(),
+                racks[current].clone(),
+                bag.len(),
+                scores[current],
+                scores[opp],
+            );
+            let mut mcts = MCTS::new(root, device);
+            mcts.search(model, mcts_sims);
+            mcts.best_move().unwrap_or_else(|| legal[0].clone())
+        } else {
+            legal[0].clone()
+        };
+
+        scores[current] += chosen.score;
+        for placed in &chosen.tiles {
+            board.push(*placed);
+            if let Some(pos) = racks[current].iter().position(|&f| f == placed.face) {
+                racks[current].remove(pos);
+            }
+        }
+        for _ in 0..chosen.tiles.len() {
+            if let Some(t) = bag.pop() { racks[current].push(t); }
+        }
+
+        if racks[current].is_empty() && bag.is_empty() {
+            scores[current] += 6;
+            break;
+        }
+        current = 1 - current;
+    }
+
+    if neural_first {
+        (scores[0], scores[1])
+    } else {
+        (scores[1], scores[0])
+    }
 }
 
 /// Run self-play games with MCTS, save samples.
@@ -285,13 +427,17 @@ fn play_one_game_mcts(
         current = 1 - current;
     }
 
-    // Label outcomes
-    let diff = scores[0] - scores[1];
-    let outcome_0: f32 = if diff > 0 { 1.0 } else if diff < 0 { -1.0 } else { 0.0 };
+    // Reward shaping: continuous score-diff signal blended with binary outcome
+    let diff = (scores[0] - scores[1]) as f32;
+    let binary_0: f32 = if diff > 0.0 { 1.0 } else if diff < 0.0 { -1.0 } else { 0.0 };
+    // Continuous: tanh(diff/30) gives smooth value in [-1, 1] sensitive to score gap
+    let continuous_0: f32 = (diff / 30.0).tanh();
+    // 70% continuous + 30% binary
+    let value_0 = 0.7 * continuous_0 + 0.3 * binary_0;
 
     let mut all = Vec::new();
     for pi in 0..2 {
-        let v = if pi == 0 { outcome_0 } else { -outcome_0 };
+        let v = if pi == 0 { value_0 } else { -value_0 };
         for mut s in std::mem::take(&mut samples_per_player[pi]) {
             s.value = v;
             all.push(s);
