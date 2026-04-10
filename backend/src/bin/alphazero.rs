@@ -27,7 +27,7 @@ use qwirkle_backend::neural::graph_transformer::QwirkleNet;
 use qwirkle_backend::neural::mcts::{MCTSNode, MCTS};
 use qwirkle_backend::neural::model_io::{load_model, save_model};
 use qwirkle_backend::neural::tensor_conversion::{
-    build_action_mask, extract_nodes, nodes_to_tensor, tile_face_index,
+    build_action_mask, compute_bag_distribution, extract_nodes, nodes_to_tensor, tile_face_index,
 };
 
 fn main() {
@@ -287,7 +287,7 @@ fn run_selfplay(
 struct SelfPlaySample {
     nodes: Vec<f32>,        // [MAX_NODES * INPUT_DIM]
     mask: Vec<u8>,          // [MAX_NODES]
-    context: [f32; 4],
+    context: [f32; 40],
     action_mask: Vec<u8>,   // bitpacked
     action_index: u32,      // best move from MCTS visits
     value: f32,             // game outcome from this player's POV
@@ -375,12 +375,13 @@ fn play_one_game_mcts(
         ).unwrap();
         let action_mask_bits = bitpack(&amask_flat);
 
-        let ctx = [
-            bag.len() as f32 / 108.0,
-            scores[current] as f32 / 200.0,
-            scores[opp] as f32 / 200.0,
-            racks[current].len() as f32 / 6.0,
-        ];
+        let bag_dist = compute_bag_distribution(&board, &racks[current]);
+        let mut ctx = [0.0f32; 40];
+        ctx[0] = bag.len() as f32 / 108.0;
+        ctx[1] = scores[current] as f32 / 200.0;
+        ctx[2] = scores[opp] as f32 / 200.0;
+        ctx[3] = racks[current].len() as f32 / 6.0;
+        ctx[4..40].copy_from_slice(&bag_dist);
 
         // Best move from MCTS visit counts
         let chosen = mcts.best_move().unwrap_or_else(|| legal[0].clone());
@@ -592,7 +593,7 @@ fn play_arena_game(
 
 // ── Serialization (same v3 format as selfplay.rs) ──
 
-const FORMAT_VERSION: u32 = 3;
+const FORMAT_VERSION: u32 = 4;
 
 fn save_selfplay(path: &str, samples: &[SelfPlaySample]) -> std::io::Result<()> {
     let mut file = fs::File::create(path)?;

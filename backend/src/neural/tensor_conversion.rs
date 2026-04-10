@@ -28,17 +28,43 @@ pub struct GameContext {
     pub player_score: f32,
     pub opponent_score: f32,
     pub rack_size: f32,
+    /// Per-face fraction remaining in the bag (or in opponent's rack).
+    /// = (3 - seen) / 3 where seen counts board tiles + my own rack.
+    /// Length 36 (6 colors × 6 shapes).
+    pub bag_distribution: [f32; 36],
 }
 
 impl GameContext {
     pub fn to_tensor(&self) -> Tensor {
-        Tensor::from_slice(&[
-            self.bag_remaining / 108.0,
-            self.player_score / 200.0,
-            self.opponent_score / 200.0,
-            self.rack_size / 6.0,
-        ])
+        let mut v = Vec::with_capacity(40);
+        v.push(self.bag_remaining / 108.0);
+        v.push(self.player_score / 200.0);
+        v.push(self.opponent_score / 200.0);
+        v.push(self.rack_size / 6.0);
+        v.extend_from_slice(&self.bag_distribution);
+        Tensor::from_slice(&v)
     }
+}
+
+/// Compute per-face "fraction in bag" features.
+/// 36 values: for each face, (3 - seen_count) / 3 where seen = on board + in my rack.
+/// Range [0, 1]. Higher = more remaining (or in opponent rack).
+pub fn compute_bag_distribution(board: &[BoardTile], my_rack: &[TileFace]) -> [f32; 36] {
+    let mut seen = [0u8; 36];
+    for t in board {
+        let idx = tile_face_index(&t.face);
+        seen[idx] = seen[idx].saturating_add(1);
+    }
+    for face in my_rack {
+        let idx = tile_face_index(face);
+        seen[idx] = seen[idx].saturating_add(1);
+    }
+    let mut dist = [0.0f32; 36];
+    for i in 0..36 {
+        let remaining = 3i8 - seen[i] as i8;
+        dist[i] = remaining.max(0) as f32 / 3.0;
+    }
+    dist
 }
 
 /// Extract graph nodes from a board state.
@@ -388,8 +414,34 @@ mod tests {
             player_score: 15.0,
             opponent_score: 10.0,
             rack_size: 6.0,
+            bag_distribution: [1.0; 36],
         };
         let t = ctx.to_tensor();
         assert_eq!(t.size(), vec![CONTEXT_DIM]);
+    }
+
+    #[test]
+    fn bag_distribution_empty_board() {
+        let dist = compute_bag_distribution(&[], &[]);
+        // No tiles seen → all faces have 3/3 remaining
+        for &v in &dist {
+            assert!((v - 1.0).abs() < 1e-6);
+        }
+    }
+
+    #[test]
+    fn bag_distribution_with_tiles() {
+        let board = vec![
+            bt(Color::Red, Shape::Circle, 0, 0),
+            bt(Color::Red, Shape::Circle, 1, 0),
+        ];
+        let rack = vec![TileFace { color: Color::Red, shape: Shape::Circle }];
+        let dist = compute_bag_distribution(&board, &rack);
+        // Red Circle = face index 18 (Red=3, Circle=0 → 3*6+0=18)
+        let red_circle_idx = 3 * 6 + 0;
+        // 3 seen → 0 remaining
+        assert_eq!(dist[red_circle_idx], 0.0);
+        // Other faces should be 1.0
+        assert_eq!(dist[0], 1.0);
     }
 }

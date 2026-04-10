@@ -73,7 +73,9 @@ pub fn mcts_best_move(
     _n_sims: u32,
 ) -> Option<ScoredMove> {
     use crate::domain::tile::RackTile;
-    use crate::neural::tensor_conversion::{extract_nodes, nodes_to_tensor, GameContext};
+    use crate::neural::tensor_conversion::{
+        compute_bag_distribution, extract_nodes, nodes_to_tensor, GameContext,
+    };
 
     let state_mutex = NEURAL_STATE.get()?.as_ref()?;
     let state = state_mutex.lock().ok()?;
@@ -106,11 +108,18 @@ pub fn mcts_best_move(
         let nodes = extract_nodes(&new_board, &[]);
         let (feat, mask) = nodes_to_tensor(&nodes, &new_board);
 
+        let mut new_rack = rack.to_vec();
+        for tile in &m.tiles {
+            if let Some(pos) = new_rack.iter().position(|&f| f == tile.face) {
+                new_rack.remove(pos);
+            }
+        }
         let ctx = GameContext {
             bag_remaining: bag_remaining as f32,
             player_score: (player_score + m.score) as f32,
             opponent_score: opponent_score as f32,
-            rack_size: (rack.len() - m.tiles.len()) as f32,
+            rack_size: new_rack.len() as f32,
+            bag_distribution: compute_bag_distribution(&new_board, &new_rack),
         };
 
         let feat_b = feat.unsqueeze(0).to(state.device);

@@ -19,7 +19,8 @@ pub const N_HEADS: i64 = 4;
 pub const N_LAYERS: usize = 4;
 pub const D_FF: i64 = 256;
 pub const DROPOUT: f64 = 0.1;
-pub const CONTEXT_DIM: i64 = 4;
+/// Context features: 4 base (bag size, scores, rack size) + 36 bag distribution.
+pub const CONTEXT_DIM: i64 = 4 + 36;
 pub const NUM_TILE_FACES: i64 = 36; // 6 colors × 6 shapes
 
 // ── Multi-Head Self-Attention ──

@@ -17,7 +17,7 @@ use crate::domain::ai::{best_moves, ScoredMove};
 use crate::domain::tile::{BoardTile, RackTile, TileFace};
 use super::graph_transformer::{QwirkleNet, MAX_NODES, NUM_TILE_FACES};
 use super::tensor_conversion::{
-    extract_nodes, nodes_to_tensor, tile_face_index, GameContext,
+    compute_bag_distribution, extract_nodes, nodes_to_tensor, tile_face_index, GameContext,
 };
 
 /// PUCB exploration constant.
@@ -228,6 +228,7 @@ impl MCTS {
             player_score: self.nodes[node_idx].player_score as f32,
             opponent_score: self.nodes[node_idx].opponent_score as f32,
             rack_size: self.nodes[node_idx].rack.len() as f32,
+            bag_distribution: compute_bag_distribution(&board, &self.nodes[node_idx].rack),
         };
 
         let feat_b = feat.unsqueeze(0).to(self.device);
