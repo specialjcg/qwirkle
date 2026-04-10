@@ -28,27 +28,29 @@ pub struct GameContext {
     pub player_score: f32,
     pub opponent_score: f32,
     pub rack_size: f32,
-    /// Per-face fraction remaining in the bag (or in opponent's rack).
-    /// = (3 - seen) / 3 where seen counts board tiles + my own rack.
-    /// Length 36 (6 colors × 6 shapes).
+    /// Per-face fraction remaining in bag/opponent.
+    /// = (3 - board_count - my_rack_count) / 3, in [0, 1]
     pub bag_distribution: [f32; 36],
+    /// Per-face count in MY rack (normalized by 3 since max 3 copies).
+    /// Tells the model exactly what tiles I hold.
+    pub rack_distribution: [f32; 36],
 }
 
 impl GameContext {
     pub fn to_tensor(&self) -> Tensor {
-        let mut v = Vec::with_capacity(40);
+        let mut v = Vec::with_capacity(76);
         v.push(self.bag_remaining / 108.0);
         v.push(self.player_score / 200.0);
         v.push(self.opponent_score / 200.0);
         v.push(self.rack_size / 6.0);
         v.extend_from_slice(&self.bag_distribution);
+        v.extend_from_slice(&self.rack_distribution);
         Tensor::from_slice(&v)
     }
 }
 
 /// Compute per-face "fraction in bag" features.
 /// 36 values: for each face, (3 - seen_count) / 3 where seen = on board + in my rack.
-/// Range [0, 1]. Higher = more remaining (or in opponent rack).
 pub fn compute_bag_distribution(board: &[BoardTile], my_rack: &[TileFace]) -> [f32; 36] {
     let mut seen = [0u8; 36];
     for t in board {
@@ -63,6 +65,21 @@ pub fn compute_bag_distribution(board: &[BoardTile], my_rack: &[TileFace]) -> [f
     for i in 0..36 {
         let remaining = 3i8 - seen[i] as i8;
         dist[i] = remaining.max(0) as f32 / 3.0;
+    }
+    dist
+}
+
+/// Compute per-face count in the player's own rack.
+/// 36 values in [0, 1] = count / 3 (max 3 copies of any face in the bag).
+pub fn compute_rack_distribution(rack: &[TileFace]) -> [f32; 36] {
+    let mut counts = [0u8; 36];
+    for face in rack {
+        let idx = tile_face_index(face);
+        counts[idx] = counts[idx].saturating_add(1);
+    }
+    let mut dist = [0.0f32; 36];
+    for i in 0..36 {
+        dist[i] = counts[i] as f32 / 3.0;
     }
     dist
 }
@@ -415,9 +432,26 @@ mod tests {
             opponent_score: 10.0,
             rack_size: 6.0,
             bag_distribution: [1.0; 36],
+            rack_distribution: [0.0; 36],
         };
         let t = ctx.to_tensor();
         assert_eq!(t.size(), vec![CONTEXT_DIM]);
+    }
+
+    #[test]
+    fn rack_distribution_counts() {
+        let rack = vec![
+            TileFace { color: Color::Red, shape: Shape::Circle },
+            TileFace { color: Color::Red, shape: Shape::Circle },
+            TileFace { color: Color::Blue, shape: Shape::Square },
+        ];
+        let dist = compute_rack_distribution(&rack);
+        let red_circle = 3 * 6 + 0;
+        let blue_square = 1 * 6 + 1;
+        assert!((dist[red_circle] - 2.0 / 3.0).abs() < 1e-6);
+        assert!((dist[blue_square] - 1.0 / 3.0).abs() < 1e-6);
+        // Other faces = 0
+        assert_eq!(dist[0], 0.0);
     }
 
     #[test]

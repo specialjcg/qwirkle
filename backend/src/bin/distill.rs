@@ -26,7 +26,7 @@ const AMASK_BYTES: usize = (AMASK_BITS + 7) / 8;
 struct Sample {
     features: Vec<f32>,
     mask: Vec<u8>,
-    context: [f32; 40],
+    context: [f32; 76],
     action_mask_bits: Vec<u8>,
     action_index: u32,
     value: f32,
@@ -236,7 +236,7 @@ fn load_samples(path: &str) -> std::io::Result<Vec<Sample>> {
     let data = fs::read(path)?;
     let mut c = 0usize;
     let version = r_u32(&data, &mut c);
-    assert!(version == 4, "Expected v4 format, got v{version}");
+    assert!(version == 5, "Expected v5 format, got v{version}");
     let num = r_u64(&data, &mut c) as usize;
     let mut samples = Vec::with_capacity(num);
     for _ in 0..num {
@@ -244,8 +244,8 @@ fn load_samples(path: &str) -> std::io::Result<Vec<Sample>> {
         for _ in 0..FEAT_SIZE { features.push(r_f32(&data, &mut c)); }
         let mask = data[c..c + MASK_SIZE].to_vec();
         c += MASK_SIZE;
-        let mut context = [0.0f32; 40];
-        for i in 0..40 {
+        let mut context = [0.0f32; 76];
+        for i in 0..76 {
             context[i] = r_f32(&data, &mut c);
         }
         let action_mask_bits = data[c..c + AMASK_BYTES].to_vec();

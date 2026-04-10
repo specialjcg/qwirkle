@@ -74,7 +74,7 @@ pub fn mcts_best_move(
 ) -> Option<ScoredMove> {
     use crate::domain::tile::RackTile;
     use crate::neural::tensor_conversion::{
-        compute_bag_distribution, extract_nodes, nodes_to_tensor, GameContext,
+        compute_bag_distribution, compute_rack_distribution, extract_nodes, nodes_to_tensor, GameContext,
     };
 
     let state_mutex = NEURAL_STATE.get()?.as_ref()?;
@@ -120,6 +120,7 @@ pub fn mcts_best_move(
             opponent_score: opponent_score as f32,
             rack_size: new_rack.len() as f32,
             bag_distribution: compute_bag_distribution(&new_board, &new_rack),
+            rack_distribution: compute_rack_distribution(&new_rack),
         };
 
         let feat_b = feat.unsqueeze(0).to(state.device);

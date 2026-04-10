@@ -24,8 +24,8 @@ use qwirkle_backend::domain::tile::{BoardTile, RackTile, TileFace};
 use qwirkle_backend::neural::graph_transformer::{QwirkleNet, MAX_NODES, NUM_TILE_FACES, INPUT_DIM};
 use qwirkle_backend::neural::model_io::load_model;
 use qwirkle_backend::neural::tensor_conversion::{
-    build_action_mask, compute_bag_distribution, extract_nodes, nodes_to_tensor,
-    tile_face_index, GameContext,
+    build_action_mask, compute_bag_distribution, compute_rack_distribution,
+    extract_nodes, nodes_to_tensor, tile_face_index, GameContext,
 };
 
 /// Compact sample: ~11.3 KB per sample instead of ~67 KB.
@@ -33,7 +33,7 @@ use qwirkle_backend::neural::tensor_conversion::{
 struct Sample {
     features: Vec<f32>,     // [MAX_NODES * INPUT_DIM] = 2816 floats
     mask: Vec<u8>,          // [MAX_NODES] = 128 bytes (bool as u8)
-    context: [f32; 40],     // 4 base + 36 bag distribution
+    context: [f32; 76],     // 4 base + 36 bag distribution
     action_mask_bits: Vec<u8>, // bitpacked [MAX_NODES * 36] = 576 bytes
     action_index: u32,      // flat index into [MAX_NODES * 36], u32::MAX = pass
     value: f32,             // +1 / -1 / 0
@@ -49,7 +49,7 @@ struct SimPlayer {
 struct PendingSample {
     features: Vec<f32>,
     mask: Vec<u8>,
-    context: [f32; 40],
+    context: [f32; 76],
     action_mask_bits: Vec<u8>,
     action_index: u32,
 }
@@ -200,12 +200,14 @@ fn play_one_game(
         let action_mask_bits = bitpack(&amask_flat);
 
         let bag_dist = compute_bag_distribution(&board, &players[current].rack);
-        let mut ctx = [0.0f32; 40];
+        let rack_dist = compute_rack_distribution(&players[current].rack);
+        let mut ctx = [0.0f32; 76];
         ctx[0] = bag.len() as f32 / 108.0;
         ctx[1] = players[current].score as f32 / 200.0;
         ctx[2] = players[opponent].score as f32 / 200.0;
         ctx[3] = players[current].rack.len() as f32 / 6.0;
         ctx[4..40].copy_from_slice(&bag_dist);
+        ctx[40..76].copy_from_slice(&rack_dist);
 
         // Choose move
         let chosen_idx = if use_rollout {
@@ -339,6 +341,7 @@ fn neural_pick(
             opponent_score: players[opponent].score as f32,
             rack_size: new_rack.len() as f32,
             bag_distribution: compute_bag_distribution(&new_board, &new_rack),
+            rack_distribution: compute_rack_distribution(&new_rack),
         };
 
         let feat_b = feat.unsqueeze(0).to(device);
@@ -368,7 +371,7 @@ fn neural_pick(
 //   action_index: u32
 //   value: f32
 
-const FORMAT_VERSION: u32 = 4;
+const FORMAT_VERSION: u32 = 5;
 const FEAT_SIZE: usize = (MAX_NODES * INPUT_DIM) as usize;   // 2816
 const MASK_SIZE: usize = MAX_NODES as usize;                  // 128
 const AMASK_BITS: usize = (MAX_NODES * NUM_TILE_FACES) as usize; // 4608
@@ -419,8 +422,8 @@ pub fn load_samples(path: &str) -> std::io::Result<Vec<Sample>> {
         let mask = data[c..c + MASK_SIZE].to_vec();
         c += MASK_SIZE;
 
-        let mut context = [0.0f32; 40];
-        for i in 0..40 {
+        let mut context = [0.0f32; 76];
+        for i in 0..76 {
             context[i] = r_f32(&data, &mut c);
         }
 

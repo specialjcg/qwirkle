@@ -18,8 +18,8 @@ use qwirkle_backend::neural::graph_transformer::{QwirkleNet, MAX_NODES, NUM_TILE
 use qwirkle_backend::neural::mcts::{MCTSNode, MCTS};
 use qwirkle_backend::neural::model_io::load_model;
 use qwirkle_backend::neural::tensor_conversion::{
-    build_action_mask, compute_bag_distribution, extract_nodes, nodes_to_tensor,
-    tile_face_from_index, GameContext,
+    build_action_mask, compute_bag_distribution, compute_rack_distribution,
+    extract_nodes, nodes_to_tensor, tile_face_from_index, GameContext,
 };
 
 /// Which strategy a player uses.
@@ -277,6 +277,7 @@ fn neural_choose_move(
             opponent_score: players[opponent].score as f32,
             rack_size: new_rack.len() as f32,
             bag_distribution: compute_bag_distribution(&new_board, &new_rack),
+            rack_distribution: compute_rack_distribution(&new_rack),
         };
 
         let feat_batch = feat.unsqueeze(0).to(device);
