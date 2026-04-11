@@ -19,7 +19,7 @@ use std::time::Instant;
 
 use rand::seq::SliceRandom;
 use rand::{thread_rng, Rng};
-use tch::{nn, Device};
+use tch::{nn, Device, Tensor};
 
 use qwirkle_backend::domain::ai::best_moves;
 use qwirkle_backend::domain::tile::{BoardTile, RackTile, TileFace};
@@ -100,33 +100,31 @@ fn main() {
         let candidate_path = format!("{out_dir}/iter{iter}_candidate.pt");
         train_candidate(&samples_path, &best_path, &candidate_path, device);
 
-        // 3. Arena
-        println!("  [3/3] Arena: candidate vs best ({arena_games} games)...");
+        // 3. Arena vs GREEDY (not previous self) — prevents drift.
+        // Candidate must beat greedy by at least as much as the current best does.
+        println!("  [3/3] Arena: candidate vs GREEDY ({arena_games} games)...");
         let mut cand_vs = nn::VarStore::new(device);
         let cand_model = QwirkleNet::new(&cand_vs);
         load_model(&mut cand_vs, &candidate_path).expect("load candidate");
 
-        let best_model_arena = QwirkleNet::new(&best_vs);
+        let cand_vs_greedy = eval_vs_greedy(&cand_model, arena_games, mcts_sims as u32, device);
+        println!("    candidate vs greedy: {:.1}%", cand_vs_greedy * 100.0);
 
-        let win_rate = arena(&cand_model, &best_model_arena, arena_games, (mcts_sims / 2) as u32, device);
-        println!("    candidate win rate: {:.1}%", win_rate * 100.0);
-
-        if win_rate >= win_threshold {
-            println!("    -> Candidate accepted as new best!");
+        // Accept if candidate beats greedy AND (exceeds best_so_far OR is at least win_threshold)
+        let accept = cand_vs_greedy >= best_greedy_winrate && cand_vs_greedy >= win_threshold;
+        if accept {
+            println!("    -> Candidate accepted as new best! ({:.1}% >= {:.1}% prev)",
+                cand_vs_greedy * 100.0, best_greedy_winrate * 100.0);
             fs::copy(&candidate_path, &best_path).expect("copy best");
-            best_vs = cand_vs; // promote
+            best_vs = cand_vs;
+            best_greedy_winrate = cand_vs_greedy;
         } else {
-            println!("    -> Candidate rejected, keeping best");
+            println!("    -> Candidate rejected (best stays at {:.1}% vs greedy)",
+                best_greedy_winrate * 100.0);
         }
 
-        // Periodic eval vs greedy
+        // Snapshot every N iters
         if iter % eval_every == 0 {
-            println!("  [eval] Best vs Greedy ({eval_games} games)...");
-            let best_for_eval = QwirkleNet::new(&best_vs);
-            best_greedy_winrate = eval_vs_greedy(&best_for_eval, eval_games, mcts_sims as u32, device);
-            println!("    >> best vs greedy: {:.1}%", best_greedy_winrate * 100.0);
-
-            // Save snapshot with winrate in name
             let snapshot = format!("{out_dir}/best_iter{iter}_g{:.0}.pt", best_greedy_winrate * 100.0);
             fs::copy(&best_path, &snapshot).ok();
 
@@ -149,6 +147,69 @@ fn main() {
     println!("\nAlphaZero training complete.");
     println!("  best model:        {best_path}");
     println!("  best vs greedy:    {:.1}%", best_greedy_winrate * 100.0);
+}
+
+/// Value-only move picking: enumerate legal moves, eval each resulting state
+/// with the NN value head, pick the best by `score * 0.5 + value`.
+fn neural_value_pick(
+    model: &QwirkleNet,
+    board: &[BoardTile],
+    rack: &[TileFace],
+    legal_moves: &[qwirkle_backend::domain::ai::ScoredMove],
+    player_score: i32,
+    opponent_score: i32,
+    bag_remaining: usize,
+    device: Device,
+) -> Option<qwirkle_backend::domain::ai::ScoredMove> {
+    if legal_moves.is_empty() {
+        return None;
+    }
+    if legal_moves.len() == 1 {
+        return Some(legal_moves[0].clone());
+    }
+
+    let _no_grad = tch::no_grad_guard();
+    let mut best_idx = 0;
+    let mut best_combined = f64::NEG_INFINITY;
+
+    for (i, m) in legal_moves.iter().enumerate() {
+        let mut new_board = board.to_vec();
+        new_board.extend_from_slice(&m.tiles);
+
+        let mut new_rack = rack.to_vec();
+        for tile in &m.tiles {
+            if let Some(pos) = new_rack.iter().position(|&f| f == tile.face) {
+                new_rack.remove(pos);
+            }
+        }
+
+        let nodes = extract_nodes(&new_board, &[]);
+        let (feat, mask) = nodes_to_tensor(&nodes, &new_board);
+
+        let bag_dist = compute_bag_distribution(&new_board, &new_rack);
+        let rack_dist = compute_rack_distribution(&new_rack);
+        let mut ctx_arr = [0.0f32; 76];
+        ctx_arr[0] = bag_remaining as f32 / 108.0;
+        ctx_arr[1] = (player_score + m.score) as f32 / 200.0;
+        ctx_arr[2] = opponent_score as f32 / 200.0;
+        ctx_arr[3] = new_rack.len() as f32 / 6.0;
+        ctx_arr[4..40].copy_from_slice(&bag_dist);
+        ctx_arr[40..76].copy_from_slice(&rack_dist);
+
+        let feat_b = feat.unsqueeze(0).to(device);
+        let mask_b = mask.unsqueeze(0).to(device);
+        let ctx_b = Tensor::from_slice(&ctx_arr).unsqueeze(0).to(device);
+
+        let (value, _) = model.forward(&feat_b, &mask_b, &ctx_b, false);
+        let v = f64::try_from(&value.squeeze_dim(0).squeeze_dim(0)).unwrap_or(0.0);
+
+        let combined = m.score as f64 * 0.5 + v;
+        if combined > best_combined {
+            best_combined = combined;
+            best_idx = i;
+        }
+    }
+    Some(legal_moves[best_idx].clone())
 }
 
 /// Evaluate a neural model against the greedy bot. Returns win rate of neural.
@@ -221,17 +282,12 @@ fn play_neural_vs_greedy(
         let is_neural_turn = if neural_first { current == 0 } else { current == 1 };
 
         let chosen = if is_neural_turn {
-            // Use MCTS to pick neural's move
-            let root = MCTSNode::new_root(
-                board.clone(),
-                racks[current].clone(),
-                bag.len(),
-                scores[current],
-                scores[opp],
-            );
-            let mut mcts = MCTS::new(root, device);
-            mcts.search(model, mcts_sims);
-            mcts.best_move().unwrap_or_else(|| legal[0].clone())
+            // Value-only mode: evaluate each candidate move with the NN value head,
+            // pick the one with best (score*0.5 + value). This is faster and stronger
+            // than MCTS when the policy is weak.
+            let _ = mcts_sims;
+            neural_value_pick(model, &board, &racks[current], &legal, scores[current], scores[opp], bag.len(), device)
+                .unwrap_or_else(|| legal[0].clone())
         } else {
             legal[0].clone()
         };
@@ -262,6 +318,8 @@ fn play_neural_vs_greedy(
 }
 
 /// Run self-play games with MCTS, save samples.
+/// Half the games are neural vs neural, half neural vs greedy.
+/// This ensures the model learns to play against a strong baseline.
 fn run_selfplay(
     model: &QwirkleNet,
     n_games: usize,
@@ -273,7 +331,14 @@ fn run_selfplay(
     let mut rng = thread_rng();
 
     for game_idx in 0..n_games {
-        let samples = play_one_game_mcts(model, mcts_sims, device, &mut rng);
+        // Alternate: 50% pure self-play, 50% vs greedy
+        let vs_greedy = game_idx % 2 == 0;
+        let samples = if vs_greedy {
+            let neural_first = (game_idx / 2) % 2 == 0;
+            play_one_game_vs_greedy(model, mcts_sims, neural_first, device, &mut rng)
+        } else {
+            play_one_game_mcts(model, mcts_sims, device, &mut rng)
+        };
         all_samples.extend(samples);
 
         if (game_idx + 1) % 20 == 0 {
@@ -448,6 +513,156 @@ fn play_one_game_mcts(
         }
     }
     all
+}
+
+/// Neural (MCTS) vs Greedy self-play. Records ONLY the neural player's samples.
+/// Used to ensure the training data includes positions against a strong baseline.
+fn play_one_game_vs_greedy(
+    model: &QwirkleNet,
+    mcts_sims: u32,
+    neural_first: bool,
+    device: Device,
+    rng: &mut impl Rng,
+) -> Vec<SelfPlaySample> {
+    use qwirkle_backend::neural::graph_transformer::{MAX_NODES, NUM_TILE_FACES};
+    use qwirkle_backend::neural::mcts::{MCTSNode, MCTS};
+    use tch::Kind;
+
+    let neural_idx = if neural_first { 0usize } else { 1usize };
+
+    let mut bag = TileFace::full_bag();
+    bag.shuffle(rng);
+
+    let mut racks: [Vec<TileFace>; 2] = [Vec::new(), Vec::new()];
+    let mut scores = [0i32, 0];
+    for player in &mut racks {
+        for _ in 0..6 {
+            if let Some(t) = bag.pop() { player.push(t); }
+        }
+    }
+
+    let mut board: Vec<BoardTile> = Vec::new();
+    let mut current = 0usize;
+    let mut passes = 0;
+    let mut neural_samples: Vec<SelfPlaySample> = Vec::new();
+
+    for _turn in 0..200 {
+        let opp = 1 - current;
+        let rack_tiles: Vec<RackTile> = racks[current]
+            .iter()
+            .enumerate()
+            .map(|(i, &face)| RackTile { face, rack_position: i as u8 })
+            .collect();
+
+        let legal = best_moves(&board, &rack_tiles);
+        if legal.is_empty() {
+            passes += 1;
+            if passes >= 4 { break; }
+            let hand = racks[current].clone();
+            for t in &hand { bag.push(*t); }
+            racks[current].clear();
+            bag.shuffle(rng);
+            for _ in 0..hand.len() {
+                if let Some(t) = bag.pop() { racks[current].push(t); }
+            }
+            current = 1 - current;
+            continue;
+        }
+        passes = 0;
+
+        let chosen = if current == neural_idx {
+            // Record state for neural player
+            let nodes = extract_nodes(&board, &[]);
+            let (feat_t, mask_t) = nodes_to_tensor(&nodes, &board);
+            let amask_t = build_action_mask(&nodes, &board, &racks[current]);
+
+            let feat_vec: Vec<f32> = Vec::<f32>::try_from(feat_t.flatten(0, -1)).unwrap();
+            let mask_vec: Vec<u8> = Vec::<i64>::try_from(mask_t.to_kind(Kind::Int64))
+                .unwrap().iter().map(|&v| v as u8).collect();
+            let amask_flat: Vec<i64> = Vec::<i64>::try_from(
+                amask_t.flatten(0, -1).to_kind(Kind::Int64)
+            ).unwrap();
+            let action_mask_bits = bitpack(&amask_flat);
+
+            let bag_dist = compute_bag_distribution(&board, &racks[current]);
+            let rack_dist = compute_rack_distribution(&racks[current]);
+            let mut ctx = [0.0f32; 76];
+            ctx[0] = bag.len() as f32 / 108.0;
+            ctx[1] = scores[current] as f32 / 200.0;
+            ctx[2] = scores[opp] as f32 / 200.0;
+            ctx[3] = racks[current].len() as f32 / 6.0;
+            ctx[4..40].copy_from_slice(&bag_dist);
+            ctx[40..76].copy_from_slice(&rack_dist);
+
+            // MCTS
+            let root = MCTSNode::new_root(
+                board.clone(),
+                racks[current].clone(),
+                bag.len(),
+                scores[current],
+                scores[opp],
+            );
+            let mut mcts = MCTS::new(root, device);
+            mcts.search(model, mcts_sims);
+            let chosen = mcts.best_move().unwrap_or_else(|| legal[0].clone());
+
+            // Action index
+            let action_index = if let Some(first) = chosen.tiles.first() {
+                let mut idx = u32::MAX;
+                for (ni, n) in nodes.iter().enumerate() {
+                    if n.coordinate == first.coordinate && n.is_candidate {
+                        idx = (ni * NUM_TILE_FACES as usize + tile_face_index(&first.face)) as u32;
+                        break;
+                    }
+                }
+                idx
+            } else {
+                u32::MAX
+            };
+
+            neural_samples.push(SelfPlaySample {
+                nodes: feat_vec,
+                mask: mask_vec,
+                context: ctx,
+                action_mask: action_mask_bits,
+                action_index,
+                value: 0.0, // filled at end
+            });
+
+            chosen
+        } else {
+            // Greedy opponent
+            legal[0].clone()
+        };
+
+        scores[current] += chosen.score;
+        for placed in &chosen.tiles {
+            board.push(*placed);
+            if let Some(pos) = racks[current].iter().position(|&f| f == placed.face) {
+                racks[current].remove(pos);
+            }
+        }
+        for _ in 0..chosen.tiles.len() {
+            if let Some(t) = bag.pop() { racks[current].push(t); }
+        }
+
+        if racks[current].is_empty() && bag.is_empty() {
+            scores[current] += 6;
+            break;
+        }
+        current = 1 - current;
+    }
+
+    // Label from neural's perspective
+    let diff = (scores[neural_idx] - scores[1 - neural_idx]) as f32;
+    let continuous = (diff / 50.0).tanh();
+    let binary: f32 = if diff > 0.0 { 1.0 } else if diff < 0.0 { -1.0 } else { 0.0 };
+    let value = 0.7 * continuous + 0.3 * binary;
+
+    for s in &mut neural_samples {
+        s.value = value;
+    }
+    neural_samples
 }
 
 /// Train a candidate model from samples, starting from current best.
