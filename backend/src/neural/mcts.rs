@@ -141,10 +141,13 @@ impl MCTS {
                 // Unexpanded: Q=0, only U term
                 C_PUCT * child.prior * (parent_visits as f32).sqrt()
             } else {
-                let q = self.nodes[child.child_idx as usize].q_value();
+                // NEGAMAX: child.q_value() is from CHILD's perspective (opponent).
+                // Parent must NEGATE to get the value from its own POV.
+                let child_node = &self.nodes[child.child_idx as usize];
+                let q_from_parent = -child_node.q_value();
                 let u = C_PUCT * child.prior * (parent_visits as f32).sqrt()
-                    / (1.0 + self.nodes[child.child_idx as usize].visits as f32);
-                q + u
+                    / (1.0 + child_node.visits as f32);
+                q_from_parent + u
             };
 
             if score > best_score {
