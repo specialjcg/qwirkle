@@ -225,6 +225,15 @@ impl NetConfig {
         d_ff: 128,
         dropout: 0.05,
     };
+
+    /// Large network: 4x parameters of TEACHER for stronger play.
+    pub const LARGE: Self = Self {
+        d_model: 128,
+        n_heads: 8,
+        n_layers: 6,
+        d_ff: 512,
+        dropout: 0.1,
+    };
 }
 
 impl QwirkleNet {

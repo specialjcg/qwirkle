@@ -52,6 +52,12 @@ struct PendingSample {
     context: [f32; 76],
     action_mask_bits: Vec<u8>,
     action_index: u32,
+    /// Score of the player at the moment this sample was recorded.
+    /// Used for long-term reward shaping.
+    score_at_sample: i32,
+    opponent_score_at_sample: i32,
+    /// Index in the player's sample list (turn number for that player).
+    turn_idx: usize,
 }
 
 fn main() {
@@ -253,12 +259,16 @@ fn play_one_game(
             u32::MAX
         };
 
+        let turn_idx = players[current].samples.len();
         players[current].samples.push(PendingSample {
             features: feat_vec,
             mask: mask_bool,
             context: ctx,
             action_mask_bits,
             action_index,
+            score_at_sample: players[current].score,
+            opponent_score_at_sample: players[opponent].score,
+            turn_idx,
         });
 
         // Apply move
@@ -282,24 +292,48 @@ fn play_one_game(
         current = 1 - current;
     }
 
-    // Label with continuous score-diff signal (clamped to [-1, 1] via tanh)
-    // Blend with binary outcome for stability
-    let diff = (players[0].score - players[1].score) as f32;
-    let continuous_0 = (diff / 50.0).tanh();
-    let binary_0: f32 = if diff > 0.0 { 1.0 } else if diff < 0.0 { -1.0 } else { 0.0 };
-    let outcome_0: f32 = 0.7 * continuous_0 + 0.3 * binary_0;
+    // Long-term reward shaping:
+    // For each sample, value = blend of:
+    //   - immediate "future delta" over the next K=5 turns of THIS player
+    //   - final game outcome (score diff)
+    // This gives a richer signal than just the binary outcome.
+    let final_diff = (players[0].score - players[1].score) as f32;
+    let final_continuous_0 = (final_diff / 50.0).tanh();
+    let final_binary_0: f32 = if final_diff > 0.0 { 1.0 } else if final_diff < 0.0 { -1.0 } else { 0.0 };
+    let final_outcome_0: f32 = 0.7 * final_continuous_0 + 0.3 * final_binary_0;
+
+    let lookahead = 5usize; // K turns ahead
 
     let mut out = Vec::new();
     for (pi, player) in players.iter().enumerate() {
-        let outcome = if pi == 0 { outcome_0 } else { -outcome_0 };
-        for s in &player.samples {
+        let final_value = if pi == 0 { final_outcome_0 } else { -final_outcome_0 };
+        let n_samples = player.samples.len();
+
+        for (i, s) in player.samples.iter().enumerate() {
+            // Look K turns ahead in this player's samples
+            let lookahead_idx = (i + lookahead).min(n_samples - 1);
+            let future = &player.samples[lookahead_idx];
+
+            // Score gained by this player in those K turns
+            let player_delta = (future.score_at_sample - s.score_at_sample) as f32;
+            // Score gained by opponent in those K turns
+            let opp_delta = (future.opponent_score_at_sample - s.opponent_score_at_sample) as f32;
+            // Net advantage gained
+            let net_delta = player_delta - opp_delta;
+
+            // Convert to [-1, 1] via tanh
+            let lookahead_value = (net_delta / 30.0).tanh();
+
+            // Blend: 50% lookahead + 50% final outcome
+            let value = 0.5 * lookahead_value + 0.5 * final_value;
+
             out.push(Sample {
                 features: s.features.clone(),
                 mask: s.mask.clone(),
                 context: s.context,
                 action_mask_bits: s.action_mask_bits.clone(),
                 action_index: s.action_index,
-                value: outcome,
+                value,
             });
         }
     }

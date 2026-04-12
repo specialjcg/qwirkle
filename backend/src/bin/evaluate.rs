@@ -47,6 +47,7 @@ fn main() {
     let num_games = parse_arg(&args, "--games").unwrap_or(200);
     let max_turns = parse_arg(&args, "--max-turns").unwrap_or(200);
     let mcts_sims: u32 = parse_arg(&args, "--mcts").map(|n| n as u32).unwrap_or(0);
+    let use_large = args.iter().any(|a| a == "--large");
 
     println!("Evaluation: Neural{} vs Greedy bot",
         if mcts_sims > 0 { format!(" (MCTS {} sims)", mcts_sims) } else { String::new() });
@@ -55,13 +56,19 @@ fn main() {
     if mcts_sims > 0 {
         println!("  mcts sims: {mcts_sims}");
     }
+    if use_large { println!("  arch:      LARGE"); }
 
     // Load model
     let device = Device::cuda_if_available();
     println!("  device:    {:?}", device);
 
     let mut vs = nn::VarStore::new(device);
-    let model = QwirkleNet::new(&vs);
+    let cfg = if use_large {
+        qwirkle_backend::neural::graph_transformer::NetConfig::LARGE
+    } else {
+        qwirkle_backend::neural::graph_transformer::NetConfig::TEACHER
+    };
+    let model = QwirkleNet::new_with_config(&vs, cfg);
     load_model(&mut vs, &model_path).expect("Failed to load model");
     println!("Model loaded.\n");
 

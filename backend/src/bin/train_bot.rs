@@ -43,6 +43,7 @@ fn main() {
     let weight_decay: f64 = parse_arg_f64(&args, "--weight-decay").unwrap_or(1e-4);
     let policy_weight: f64 = parse_arg_f64(&args, "--policy-weight").unwrap_or(1.0);
     let max_samples = parse_arg(&args, "--max-samples");
+    let use_large = args.iter().any(|a| a == "--large");
 
     println!("Training config:");
     println!("  data:           {data_path}");
@@ -90,7 +91,14 @@ fn main() {
     println!("Device: {:?}", device);
 
     let vs = nn::VarStore::new(device);
-    let model = QwirkleNet::new(&vs);
+    let cfg = if use_large {
+        println!("  arch:           LARGE (6 layers, d=128)");
+        qwirkle_backend::neural::graph_transformer::NetConfig::LARGE
+    } else {
+        println!("  arch:           TEACHER (4 layers, d=64)");
+        qwirkle_backend::neural::graph_transformer::NetConfig::TEACHER
+    };
+    let model = QwirkleNet::new_with_config(&vs, cfg);
 
     let mut opt = nn::Adam {
         wd: weight_decay,

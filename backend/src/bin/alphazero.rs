@@ -43,27 +43,37 @@ fn main() {
     let eval_every = parse_arg(&args, "--eval-every").unwrap_or(2);
     let eval_games = parse_arg(&args, "--eval-games").unwrap_or(40);
     let target_greedy_winrate = parse_arg_f64(&args, "--target-greedy-winrate").unwrap_or(1.0);
+    let use_large = args.iter().any(|a| a == "--large");
+    let ismcts_samples = parse_arg(&args, "--ismcts").map(|n| n as u32).unwrap_or(1);
 
     println!("AlphaZero training:");
     println!("  iterations:        {iterations}");
     println!("  selfplay/iter:     {selfplay_games}");
     println!("  mcts sims:         {mcts_sims}");
+    println!("  ismcts samples:    {ismcts_samples}");
     println!("  arena games:       {arena_games}");
     println!("  win threshold:     {win_threshold}");
     println!("  eval every:        {eval_every} iters");
     println!("  eval games:        {eval_games}");
     println!("  target greedy:     {:.0}%", target_greedy_winrate * 100.0);
+    println!("  arch:              {}", if use_large { "LARGE" } else { "TEACHER" });
     println!("  out dir:           {out_dir}");
 
     fs::create_dir_all(&out_dir).expect("create out dir");
 
     let device = Device::cuda_if_available();
-    println!("  device:         {:?}\n", device);
+    println!("  device:            {:?}\n", device);
+
+    let net_cfg = if use_large {
+        qwirkle_backend::neural::graph_transformer::NetConfig::LARGE
+    } else {
+        qwirkle_backend::neural::graph_transformer::NetConfig::TEACHER
+    };
 
     // Initialize best model
     let best_path = format!("{out_dir}/best.pt");
     let mut best_vs = nn::VarStore::new(device);
-    let _best_model = QwirkleNet::new(&best_vs);
+    let _best_model = QwirkleNet::new_with_config(&best_vs, net_cfg);
 
     if let Some(init) = init_model {
         println!("Loading initial model from {init}");
@@ -77,7 +87,16 @@ fn main() {
         save_model(&best_vs, &best_path).expect("save initial best");
     }
 
-    let mut best_greedy_winrate = 0.0;
+    // Evaluate the initial best model so we have a real baseline.
+    println!("Evaluating initial best vs greedy ({eval_games} games)...");
+    let initial_model = QwirkleNet::new_with_config(&best_vs, net_cfg);
+    let mut best_greedy_winrate = eval_vs_greedy(&initial_model, eval_games, mcts_sims as u32, device);
+    println!("Initial best vs greedy: {:.1}%\n", best_greedy_winrate * 100.0);
+
+    if best_greedy_winrate >= target_greedy_winrate {
+        println!("🎯 Initial model already meets target. Done.");
+        return;
+    }
 
     for iter in 1..=iterations {
         println!("=== Iteration {iter}/{iterations} ===");
@@ -85,7 +104,7 @@ fn main() {
 
         // 1. Self-play with current best model
         println!("  [1/3] Self-play ({selfplay_games} games, {mcts_sims} MCTS sims)...");
-        let best_model_iter = QwirkleNet::new(&best_vs);
+        let best_model_iter = QwirkleNet::new_with_config(&best_vs, net_cfg);
         let samples_path = format!("{out_dir}/iter{iter}_samples.bin");
         run_selfplay(
             &best_model_iter,
@@ -98,13 +117,13 @@ fn main() {
         // 2. Train candidate
         println!("  [2/3] Training candidate...");
         let candidate_path = format!("{out_dir}/iter{iter}_candidate.pt");
-        train_candidate(&samples_path, &best_path, &candidate_path, device);
+        train_candidate(&samples_path, &best_path, &candidate_path, device, use_large);
 
         // 3. Arena vs GREEDY (not previous self) — prevents drift.
         // Candidate must beat greedy by at least as much as the current best does.
         println!("  [3/3] Arena: candidate vs GREEDY ({arena_games} games)...");
         let mut cand_vs = nn::VarStore::new(device);
-        let cand_model = QwirkleNet::new(&cand_vs);
+        let cand_model = QwirkleNet::new_with_config(&cand_vs, net_cfg);
         load_model(&mut cand_vs, &candidate_path).expect("load candidate");
 
         let cand_vs_greedy = eval_vs_greedy(&cand_model, arena_games, mcts_sims as u32, device);
@@ -386,6 +405,7 @@ fn play_one_game_mcts(
     let mut current = 0usize;
     let mut consecutive_passes = 0;
     let mut samples_per_player: [Vec<SelfPlaySample>; 2] = [Vec::new(), Vec::new()];
+    let mut turn_count = 0usize;
 
     for _turn in 0..200 {
         let opp = 1 - current;
@@ -423,7 +443,8 @@ fn play_one_game_mcts(
             scores[opp],
         );
         let mut mcts = MCTS::new(root, device);
-        mcts.search(model, mcts_sims);
+        // Use Dirichlet noise for exploration in self-play
+        mcts.search_with_noise(model, mcts_sims, 0.3, 0.25);
 
         // Record state with MCTS-derived target
         let nodes = extract_nodes(&board, &[]);
@@ -451,8 +472,10 @@ fn play_one_game_mcts(
         ctx[4..40].copy_from_slice(&bag_dist);
         ctx[40..76].copy_from_slice(&rack_dist);
 
-        // Best move from MCTS visit counts
-        let chosen = mcts.best_move().unwrap_or_else(|| legal[0].clone());
+        // Temperature schedule: stochastic for first 10 moves, greedy after
+        let temperature = if turn_count < 10 { 1.0 } else { 0.0 };
+        let chosen = mcts.sample_move(temperature).unwrap_or_else(|| legal[0].clone());
+        turn_count += 1;
 
         let action_index = if let Some(first) = chosen.tiles.first() {
             let mut idx = u32::MAX;
@@ -603,8 +626,9 @@ fn play_one_game_vs_greedy(
                 scores[opp],
             );
             let mut mcts = MCTS::new(root, device);
-            mcts.search(model, mcts_sims);
-            let chosen = mcts.best_move().unwrap_or_else(|| legal[0].clone());
+            mcts.search_with_noise(model, mcts_sims, 0.3, 0.25);
+            let temperature = if neural_samples.len() < 10 { 1.0 } else { 0.0 };
+            let chosen = mcts.sample_move(temperature).unwrap_or_else(|| legal[0].clone());
 
             // Action index
             let action_index = if let Some(first) = chosen.tiles.first() {
@@ -666,31 +690,35 @@ fn play_one_game_vs_greedy(
 }
 
 /// Train a candidate model from samples, starting from current best.
-fn train_candidate(samples_path: &str, init_path: &str, out_path: &str, device: Device) {
+fn train_candidate(samples_path: &str, init_path: &str, out_path: &str, device: Device, large: bool) {
     use std::process::Command;
-    // Find train_bot binary in same directory as the current executable
     let train_bot_path = std::env::current_exe()
         .ok()
         .and_then(|p| p.parent().map(|d| d.join("train_bot")))
         .unwrap_or_else(|| std::path::PathBuf::from("./train_bot"));
 
+    let mut args: Vec<String> = vec![
+        "--data".into(), samples_path.into(),
+        "--epochs".into(), "20".into(),
+        "--batch".into(), "128".into(),
+        "--lr".into(), "0.0005".into(),
+        "--out".into(), out_path.into(),
+        "--patience".into(), "5".into(),
+        "--max-samples".into(), "20000".into(),
+    ];
+    if large {
+        args.push("--large".into());
+    }
+
     let status = Command::new(&train_bot_path)
-        .args([
-            "--data", samples_path,
-            "--epochs", "20",
-            "--batch", "128",
-            "--lr", "0.0005",
-            "--out", out_path,
-            "--patience", "5",
-            "--max-samples", "20000",
-        ])
+        .args(&args)
         .env("LD_LIBRARY_PATH", std::env::var("LD_LIBRARY_PATH").unwrap_or_default())
         .status()
         .expect("run train_bot");
     if !status.success() {
         eprintln!("Warning: train_bot returned non-zero");
     }
-    let _ = (init_path, device); // could load init_path as warm start
+    let _ = (init_path, device);
 }
 
 /// Arena: candidate vs best, return win rate of candidate.

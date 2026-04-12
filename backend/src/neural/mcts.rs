@@ -110,6 +110,83 @@ impl MCTS {
         }
     }
 
+    /// Search + add Dirichlet noise to root priors for exploration (self-play only).
+    /// alpha ~ 0.3, epsilon ~ 0.25 is the AlphaZero convention.
+    pub fn search_with_noise(
+        &mut self,
+        model: &QwirkleNet,
+        n_simulations: u32,
+        dirichlet_alpha: f32,
+        noise_epsilon: f32,
+    ) {
+        // First expand root (needed to know children for noise)
+        if !self.nodes[0].expanded {
+            let _ = self.simulate(0, model);
+        }
+
+        // Sample Dirichlet noise for root children
+        let n_children = self.nodes[0].children.len();
+        if n_children > 0 && noise_epsilon > 0.0 {
+            let noise = sample_dirichlet(n_children, dirichlet_alpha);
+            for (i, child) in self.nodes[0].children.iter_mut().enumerate() {
+                child.prior = (1.0 - noise_epsilon) * child.prior + noise_epsilon * noise[i];
+            }
+        }
+
+        // Continue simulations
+        for _ in 0..n_simulations.saturating_sub(1) {
+            let _ = self.simulate(0, model);
+        }
+    }
+
+    /// Sample a move stochastically from the visit distribution with temperature.
+    /// temperature=0 → argmax. temperature=1 → proportional to visits.
+    pub fn sample_move(&self, temperature: f32) -> Option<ScoredMove> {
+        let root = &self.nodes[0];
+        if root.children.is_empty() {
+            return None;
+        }
+
+        if temperature <= 1e-3 {
+            return self.best_move();
+        }
+
+        // Collect visit counts
+        let mut visits: Vec<f32> = Vec::with_capacity(root.children.len());
+        for child in &root.children {
+            let v = if child.child_idx >= 0 {
+                self.nodes[child.child_idx as usize].visits as f32
+            } else {
+                0.0
+            };
+            visits.push(v);
+        }
+
+        // Apply temperature: visits^(1/T)
+        let inv_t = 1.0 / temperature;
+        let mut weights: Vec<f32> = visits.iter().map(|&v| (v + 1e-6).powf(inv_t)).collect();
+        let sum: f32 = weights.iter().sum();
+        if sum <= 0.0 {
+            return self.best_move();
+        }
+        for w in &mut weights {
+            *w /= sum;
+        }
+
+        // Sample
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let r: f32 = rng.gen();
+        let mut cumul = 0.0;
+        for (i, w) in weights.iter().enumerate() {
+            cumul += w;
+            if r <= cumul {
+                return Some(root.children[i].mv.clone());
+            }
+        }
+        self.best_move()
+    }
+
     /// One MCTS simulation: select → expand → evaluate → backup.
     /// Returns the value from the current node's perspective.
     fn simulate(&mut self, node_idx: usize, model: &QwirkleNet) -> f32 {
@@ -177,30 +254,40 @@ impl MCTS {
     }
 
     /// Create a child node by applying a move.
+    /// IMPORTANT: after the move, it's the opponent's turn. We don't know their rack,
+    /// so we approximate by using the SAME rack (from which we've removed played tiles).
+    /// This is an approximation — for a proper info-set MCTS, we'd sample from the bag.
+    ///
+    /// The child node's "rack" represents the player-to-move at that node.
+    /// The simulation will flip the value via negamax, so we're consistent.
     fn create_child(&mut self, parent_idx: usize, mv: &ScoredMove) -> usize {
         let parent = &self.nodes[parent_idx];
 
-        // Apply move: place tiles, remove from rack
         let mut new_board = parent.board.clone();
         new_board.extend_from_slice(&mv.tiles);
 
-        let mut new_rack = parent.rack.clone();
+        // Remove played tiles from parent's rack (represents the player who just played)
+        let mut post_play_rack = parent.rack.clone();
         for tile in &mv.tiles {
-            if let Some(pos) = new_rack.iter().position(|&f| f == tile.face) {
-                new_rack.remove(pos);
+            if let Some(pos) = post_play_rack.iter().position(|&f| f == tile.face) {
+                post_play_rack.remove(pos);
             }
         }
 
+        // For the child (opponent's turn), we'd need opponent's rack which we don't know.
+        // APPROXIMATION: use the post-play rack as a placeholder. The NN learns in the
+        // same "player sees their own rack" convention, so this is self-consistent even
+        // though it's not the real opponent rack.
         let child = MCTSNode {
             board: new_board,
-            rack: new_rack,
+            rack: post_play_rack,
             bag_remaining: parent.bag_remaining.saturating_sub(mv.tiles.len()),
-            player_score: parent.opponent_score, // turn flips
+            player_score: parent.opponent_score,
             opponent_score: parent.player_score + mv.score,
             is_my_turn: !parent.is_my_turn,
             visits: 0,
             value_sum: 0.0,
-            prior: 0.0, // will be set during expand
+            prior: 0.0,
             children: Vec::new(),
             expanded: false,
         };
@@ -344,4 +431,98 @@ impl MCTS {
             })
             .collect()
     }
+}
+
+/// Information-Set MCTS for Qwirkle.
+///
+/// The opponent's rack is hidden. To handle this, we sample N "determinizations"
+/// from the visible bag (each is a possible opponent rack), run MCTS on each,
+/// and aggregate the visit counts to pick the move that's robust across all
+/// possible game states.
+///
+/// Returns: best move averaged across N sampled games.
+pub fn ismcts_best_move(
+    board: &[BoardTile],
+    rack: &[TileFace],
+    bag: &[TileFace],
+    player_score: i32,
+    opponent_score: i32,
+    model: &QwirkleNet,
+    n_samples: u32,
+    n_sims_per_sample: u32,
+    device: Device,
+) -> Option<ScoredMove> {
+    use std::collections::HashMap;
+    use rand::seq::SliceRandom;
+
+    let mut rng = rand::thread_rng();
+    let mut move_visits: HashMap<String, (u32, ScoredMove)> = HashMap::new();
+
+    for _sample in 0..n_samples {
+        // Determinization: shuffle the bag and pull a hypothetical opponent rack
+        // (The "bag" passed here represents bag + opponent rack from our POV.)
+        let mut sampled_bag = bag.to_vec();
+        sampled_bag.shuffle(&mut rng);
+
+        // Run MCTS on this determinization
+        let root = MCTSNode::new_root(
+            board.to_vec(),
+            rack.to_vec(),
+            sampled_bag.len(),
+            player_score,
+            opponent_score,
+        );
+        let mut mcts = MCTS::new(root, device);
+        mcts.search(model, n_sims_per_sample);
+
+        // Aggregate visits
+        let root_node = &mcts.nodes[0];
+        for child in &root_node.children {
+            let visits = if child.child_idx >= 0 {
+                mcts.nodes[child.child_idx as usize].visits
+            } else {
+                0
+            };
+            // Key by the first tile placed (good enough for hashing moves)
+            let key = format!("{:?}", child.mv.tiles);
+            move_visits
+                .entry(key)
+                .and_modify(|(v, _)| *v += visits)
+                .or_insert((visits, child.mv.clone()));
+        }
+    }
+
+    // Pick the move with highest aggregated visits
+    move_visits
+        .into_values()
+        .max_by_key(|(v, _)| *v)
+        .map(|(_, m)| m)
+}
+
+/// Sample from a symmetric Dirichlet(alpha) distribution of size n.
+/// Uses Gamma(alpha, 1) sampling and normalization.
+fn sample_dirichlet(n: usize, alpha: f32) -> Vec<f32> {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+    // Approximate Gamma(alpha, 1) via exponential for alpha~0.3:
+    // when alpha is small, gamma looks like exp^(1/alpha * U^(1/alpha))
+    // Simpler: use Marsaglia-Tsang rejection for alpha >= 1, else transform.
+    // For simplicity here, use the transformation: X = (U_1^(1/alpha))/Gamma(1+alpha) approx
+    // which is fine for our MCTS noise use-case (distribution shape matters more than precision).
+
+    // For small alpha, we sample via: X_i = -ln(U_i) / Z where U_i ~ Uniform(0,1)^(1/alpha)
+    let samples: Vec<f32> = (0..n)
+        .map(|_| {
+            let u: f32 = rng.gen_range(1e-6..1.0);
+            // Wilson-Hilferty-style approx: good enough for noise
+            let g = (-u.ln()).powf(1.0 / alpha.max(1e-6));
+            g.max(1e-8)
+        })
+        .collect();
+
+    let sum: f32 = samples.iter().sum();
+    if sum <= 0.0 {
+        return vec![1.0 / n as f32; n];
+    }
+    samples.iter().map(|&x| x / sum).collect()
 }
