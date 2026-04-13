@@ -48,6 +48,7 @@ fn main() {
     let max_turns = parse_arg(&args, "--max-turns").unwrap_or(200);
     let mcts_sims: u32 = parse_arg(&args, "--mcts").map(|n| n as u32).unwrap_or(0);
     let use_large = args.iter().any(|a| a == "--large");
+    let use_student = args.iter().any(|a| a == "--student");
 
     println!("Evaluation: Neural{} vs Greedy bot",
         if mcts_sims > 0 { format!(" (MCTS {} sims)", mcts_sims) } else { String::new() });
@@ -63,7 +64,9 @@ fn main() {
     println!("  device:    {:?}", device);
 
     let mut vs = nn::VarStore::new(device);
-    let cfg = if use_large {
+    let cfg = if use_student {
+        qwirkle_backend::neural::graph_transformer::NetConfig::STUDENT
+    } else if use_large {
         qwirkle_backend::neural::graph_transformer::NetConfig::LARGE
     } else {
         qwirkle_backend::neural::graph_transformer::NetConfig::TEACHER
