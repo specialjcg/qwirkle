@@ -57,9 +57,12 @@ fn main() {
     let device = Device::cuda_if_available();
     println!("  device:      {:?}\n", device);
 
+    let large_teacher = args.iter().any(|a| a == "--large-teacher");
+
     // Load teacher (frozen)
+    let teacher_cfg = if large_teacher { NetConfig::LARGE } else { NetConfig::TEACHER };
     let mut teacher_vs = nn::VarStore::new(device);
-    let teacher = QwirkleNet::new_with_config(&teacher_vs, NetConfig::TEACHER);
+    let teacher = QwirkleNet::new_with_config(&teacher_vs, teacher_cfg);
     load_model(&mut teacher_vs, &teacher_path).expect("load teacher");
     teacher_vs.freeze();
     println!("Teacher loaded ({} params)", teacher_param_count(&teacher_vs));
