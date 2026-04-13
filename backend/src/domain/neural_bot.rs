@@ -14,7 +14,7 @@ use std::path::Path;
 pub const DEFAULT_MCTS_SIMS: u32 = 100;
 
 /// Default model path for the neural bot.
-pub const DEFAULT_MODEL_PATH: &str = "models/v1.pt";
+pub const DEFAULT_MODEL_PATH: &str = "models/v7_large_az_best.pt";
 
 #[cfg(feature = "neural")]
 struct NeuralBotState {
@@ -36,9 +36,25 @@ pub fn ensure_loaded() -> bool {
             return None;
         }
 
+        // Detect model config from env or model path
+        let net_cfg = match std::env::var("QWIRKLE_MODEL_CONFIG").as_deref() {
+            Ok("large") => crate::neural::graph_transformer::NetConfig::LARGE,
+            Ok("student") => crate::neural::graph_transformer::NetConfig::STUDENT,
+            _ => {
+                // Auto-detect: if path contains "large", use LARGE; "student" → STUDENT
+                if model_path.contains("large") {
+                    crate::neural::graph_transformer::NetConfig::LARGE
+                } else if model_path.contains("student") {
+                    crate::neural::graph_transformer::NetConfig::STUDENT
+                } else {
+                    crate::neural::graph_transformer::NetConfig::TEACHER
+                }
+            }
+        };
+
         let device = tch::Device::cuda_if_available();
         let mut vs = tch::nn::VarStore::new(device);
-        let model = crate::neural::graph_transformer::QwirkleNet::new(&vs);
+        let model = crate::neural::graph_transformer::QwirkleNet::new_with_config(&vs, net_cfg);
         match crate::neural::model_io::load_model(&mut vs, &model_path) {
             Ok(_) => {
                 tracing::info!("Neural bot loaded from {model_path} on {:?}", device);
