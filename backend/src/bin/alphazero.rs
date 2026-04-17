@@ -700,7 +700,7 @@ fn train_candidate(samples_path: &str, init_path: &str, out_path: &str, device: 
     let mut args: Vec<String> = vec![
         "--data".into(), samples_path.into(),
         "--epochs".into(), "20".into(),
-        "--batch".into(), "128".into(),
+        "--batch".into(), "32".into(),
         "--lr".into(), "0.0005".into(),
         "--out".into(), out_path.into(),
         "--patience".into(), "5".into(),
